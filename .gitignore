@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/netbullAPI/.vs/netbullAPI
+/netbullAPI/netbullAPI/obj
