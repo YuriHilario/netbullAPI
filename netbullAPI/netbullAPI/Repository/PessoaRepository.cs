@@ -22,6 +22,15 @@ namespace netbullAPI.Repository
         {
             return _PessoaContexto.Pessoas.Where(x => x.pessoa_id == id).FirstOrDefault();
         }
+        
+        public Pessoa BuscaPessoaPorDocumento(int documento)
+        {
+            return _PessoaContexto.Pessoas.Where(x => x.pessoa_documento == documento).FirstOrDefault();
+        }
+        public IEnumerable<Pessoa> BuscaPessoasPorNome(string nome)
+        {
+            return _PessoaContexto.Pessoas.Where(x => x.pessoa_nome.Contains(nome)).AsEnumerable();
+        }
     };
 
 
