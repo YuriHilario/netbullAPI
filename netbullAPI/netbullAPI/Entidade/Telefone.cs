@@ -11,6 +11,5 @@ namespace netbullAPI.Entidade
         public int telefone_numero { get; set; }
         [ForeignKey("Pessoa")]
         public int telefone_idPessoa { get; set; }
-        public Pessoa Pessoa { get; set; }
     }
 }
