@@ -25,7 +25,6 @@ namespace netbullAPI.Negocio
             }
         }
 
-
         public bool AdicionaTelefone(Telefone telefone)
         {
             try
@@ -36,6 +35,16 @@ namespace netbullAPI.Negocio
             {
                 return false;
             }
+        }
+
+        public bool AtualizaTelefone(Telefone telefone)
+        {
+            return _telefoneRepository.AtualizaTelefone(telefone);         
+        }
+
+        public bool DeletaTelefone(int id)
+        {
+            return _telefoneRepository.DeletaTelefone(id);
         }
     }
 }

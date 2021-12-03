@@ -44,17 +44,17 @@ namespace netbullAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public void Put([FromBody] Telefone telefone)
+        [HttpPut]
+        public bool Put([FromBody] Telefone telefone)
         {
-
+            return NE_Telefone.AtualizaTelefone(telefone);
         }
 
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public bool Delete(int id)
         {
-
+            return NE_Telefone.DeletaTelefone(id);
         }
     }
 }
