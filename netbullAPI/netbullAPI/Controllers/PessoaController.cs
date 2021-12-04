@@ -1,10 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Negocio;
 using netbullAPI.Entidade;
+using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
 
 namespace netbullAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PessoaController : ControllerBase
