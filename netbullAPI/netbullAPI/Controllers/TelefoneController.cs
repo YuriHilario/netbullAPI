@@ -1,18 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Entidade;
+using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
+using netbullAPI.Util;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace netbullAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class TelefoneController : ControllerBase
+    public class TelefoneController : BaseController
     {
         private NE_Telefone NE_Telefone;
-        public TelefoneController(netbullDBContext netbullDBContext)
+        public TelefoneController(INotificador notificador, netbullDBContext netbullDBContext) : base(notificador)
         {
             NE_Telefone = new NE_Telefone(netbullDBContext);
         }
