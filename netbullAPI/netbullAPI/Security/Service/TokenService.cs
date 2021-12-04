@@ -31,11 +31,6 @@ namespace netbullAPI.Security.Service
                     algorithm:SecurityAlgorithms.HmacSha256Signature)
             };
 
-            //foreach(var role in user.ListaRoles)
-            //{
-            //    tokenDescriptor.Subject.AddClaim(new Claim(ClaimTypes.Role, role.Descricao));
-            //}
-
             var token  = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }

@@ -2,9 +2,9 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace netbullAPI.Security.Util
+namespace netbullAPI.Util
 {
-    public class Utilitarios
+    public class Criptografia
     {
         public static string HashValue(string value)
         {

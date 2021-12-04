@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using netbullAPI.Interfaces;
+using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
-using netbullAPI.Security.Models;
 using netbullAPI.Security.Negocio;
 using netbullAPI.Security.Persistencia;
 using netbullAPI.Security.Service;
@@ -14,9 +14,37 @@ var builder = WebApplication.CreateBuilder(args);
 var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("TokenConfigurations").GetSection("JwtKey").Value);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen( s =>
+{
+    s.SwaggerDoc("v1", new OpenApiInfo { Title = "NetBullAPI", Version = "v1" });
+
+    s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = @"Cabeçalho de autorização JWT usando o esquema Bearer.
+                        Digite 'Bearer' [espaço] e então seu token na entrada de texto abaixo.
+                        Exemplo:'Bearer 12345abcdef' "
+    });
+    s.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                          {
+                              Reference = new OpenApiReference
+                              {
+                                  Type = ReferenceType.SecurityScheme,
+                                  Id = "Bearer"
+                              }
+                          },
+                         new string[] {}
+                    }
+                });
+});
 
 builder.Services.AddDbContext<netbullDBContext>(opts =>
 {
@@ -31,21 +59,18 @@ builder.Services.AddAuthentication(authOptions =>
 {
     bearerOptions.TokenValidationParameters = new TokenValidationParameters
     {     
-        // Tempo de tolerância para a expiração de um token (utilizado
-        // caso haja problemas de sincronismo de horário entre diferentes
-        // computadores envolvidos no processo de comunicação)
-        ClockSkew = TimeSpan.Zero,
-
         IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuerSigningKey = true,// Valida a assinatura de um token recebido
-        ValidateLifetime = true, // Verifica se um token recebido ainda é válido
+        ValidateIssuerSigningKey = true,
         ValidateAudience = false,
         ValidateIssuer = false
     };
 });
 
-builder.Services.AddSingleton<NE_User>();
-builder.Services.AddTransient<TokenService>(); 
+builder.Services.AddScoped<NE_User>();
+builder.Services.AddScoped<INotificador, Notificador>(); // Por Requisição
+
+builder.Services.AddTransient<UserDAO>();
+builder.Services.AddTransient<TokenService>(); // Por método
 
 var app = builder.Build();
 
@@ -58,6 +83,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,25 +1,38 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using netbullAPI.Interfaces;
 using netbullAPI.Security.Models;
 using netbullAPI.Security.Negocio;
 using netbullAPI.Security.Service;
+using netbullAPI.Util;
+using System.Net;
 
 namespace netbullAPI.Security.Controllers
 {
     [ApiController]
-    public class ContaController : ControllerBase
+    [Route("[controller]")]
+    public class ContaController : BaseController
     {
+        public ContaController(INotificador notificador) : base(notificador) {}
+
         [AllowAnonymous]
-        [HttpPost("v1/registar")]
-        public IActionResult Register([FromServices] NE_User neUser, User user)
+        [HttpPost("v1/registrar")]
+        public IActionResult Register([FromServices] NE_User neUser, [FromBody]User user)
         {
             user = neUser.CadastroDeUser(user);
-
             if (user.user_id == 0)
             {
-                return BadRequest();
+                return BadRequest(
+                   new
+                   {
+                       status = HttpStatusCode.BadRequest,
+                       Error = Notificacoes()
+                   });
             }
-            return Created($"/{user.user_id}", user);
+            else
+            {
+                return Created($"/{user.user_id}", user);
+            }
         }
 
         [AllowAnonymous]
@@ -35,11 +48,21 @@ namespace netbullAPI.Security.Controllers
             if (loginSenhaOK)
             {
                 var token = _tokenService.GenerateToken(usuConsulta);
-                return Ok(token);
+                return Ok (
+                    new 
+                    { 
+                       status = HttpStatusCode.OK,
+                       Token = token
+                    });
             }
             else
             {
-                return Unauthorized();
+                return Unauthorized(
+                    new
+                    {
+                        status = HttpStatusCode.Unauthorized,
+                        Error = Notificacoes()
+                    });
             }
         }
     }

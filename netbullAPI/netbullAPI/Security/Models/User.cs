@@ -13,12 +13,5 @@ namespace netbullAPI.Security.Models
         public string user_email { get; set; }
         [Required]
         public string user_accessKey { get; set; }
-
-        //public List<Role> ListaRoles { get; set; }
-
-        //public User()
-        //{
-        //    ListaRoles = new List<Role>();
-        //}
     }
 }

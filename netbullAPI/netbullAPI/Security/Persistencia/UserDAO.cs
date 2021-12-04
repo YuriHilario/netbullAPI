@@ -1,75 +1,77 @@
 ﻿using Dapper;
+using netbullAPI.Interfaces;
+using netbullAPI.Negocio;
 using netbullAPI.Security.Models;
-using System.Data.SqlClient;
-using System.Linq;
 
 namespace netbullAPI.Security.Persistencia
 {
-    public class UserDAO
+    public class UserDAO : DaoBase
     {
-        private IConfiguration _configuration;
-
-        public UserDAO()
-        {
-        }
-        public UserDAO(IConfiguration configuration)
+        protected IConfiguration _configuration;
+        public UserDAO(INotificador notificador, IConfiguration configuration) : base(notificador, configuration)
         {
             _configuration = configuration;
         }
 
         internal User CadastroDeUser(User usu)
         {
-            try
-            {
-                string sqlUser = $@" INSERT INTO Users ( user_nome, user_email,user_accesskey)
-                                            VALUES({usu.user_id}, {usu.user_nome}, {usu.user_email}, {usu.user_accessKey})";
-                //string sqlRoles = $@"INSERT INTO Roles (role_descricao,role_idUser)
-                //                     VALUES(@role_descricao, @role_idUser)";
+            var usuRecuperado = RecuperarUsuario(usu);
 
-                using (SqlConnection conexao = new SqlConnection())
+            if(usuRecuperado == null)
+            {
+                try
                 {
-                    conexao.Open();
+                    string sqlUser = $@" INSERT INTO users ( user_nome, user_email,user_accesskey)
+                                            VALUES( '{usu.user_nome}', '{usu.user_email}', '{usu.user_accessKey}')";
 
-                    using (var transaction = conexao.BeginTransaction(_configuration.GetConnectionString("NetBullConnection")))
+                    var connection = getConnection();
+
+                    using (connection)
                     {
-                        var retornoAluno = conexao.Execute(sqlUser, usu, transaction);
+                        connection.Open();
 
-                        //foreach (var role in usu.ListaRoles)
-                        //{
-                        //    role.role_idUser = usu.user_id;
-                        //}
+                        using (var transaction = connection.BeginTransaction())
+                        {
+                            connection.Execute(sqlUser, usu, transaction);
 
-                        //var retornoRoles = conexao.Execute(sqlRoles, usu.ListaRoles, transaction);
-
-                        transaction.Commit();
+                            transaction.Commit();
+                        }
                     }
+
+                    usu = RecuperarUsuario(usu);
+                    
+                    return usu; 
                 }
+                catch (Exception ex)
+                {
+                    Notificar(ex.Message);
+                    return usu;
+                }
+            }
+            else {
+                Notificar("Usuário já cadastrado.");
+                usu.user_id = 0;
                 return usu;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            }          
         }
 
         internal User RecuperarUsuario(User usu)
         {
             try
             {
-                string sqlUser = $@" SELECT * Users WHERE user_id = user_id and user_nome = @user_nome";
-                //string sqlRoles = $@"INSERT INTO Roles (role_descricao,role_idUser)
-                //                     VALUES(@role_descricao, @role_idUser)";
-
+                string sqlUser = $@" SELECT * FROM users WHERE user_nome = '{usu.user_nome}'";
                 User user;
 
-                using (SqlConnection conexao = new SqlConnection())
+                var connection = getConnection();
+
+                using (connection)
                 {
 
-                    conexao.Open();
+                    connection.Open();
 
-                    using (var transaction = conexao.BeginTransaction(_configuration.GetConnectionString("NetBullConnection")))
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        user = conexao.Query<User>(sqlUser, param: new { user_nome = usu.user_nome }, transaction).FirstOrDefault();
+                        user = connection.Query<User>(sqlUser, usu, transaction).FirstOrDefault();
                         transaction.Commit();
                     }
                 }
@@ -78,7 +80,8 @@ namespace netbullAPI.Security.Persistencia
             }
             catch (Exception ex)
             {
-                return null;
+                Notificar(ex.Message);
+                return usu;
             }
 
         }
