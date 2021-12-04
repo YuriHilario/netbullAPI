@@ -12,6 +12,6 @@ namespace netbullAPI.Entidade
         public string endereco_complemento { get; set; }
         [ForeignKey("Pessoa")]
         public int endereco_idpessoa { get; set; }
-        public Pessoa Pessoa { get; set; }
+
     }
 }
