@@ -19,42 +19,92 @@ namespace netbullAPI.Controllers
         
         // GET api/<TelefoneController>/5
         [HttpGet("{id}")]
-        public IEnumerable<Telefone> GetPorId(int id)
+        public IActionResult GetPorId(int id)
         {
             try
             {
-                return NE_Telefone.BuscaTelefoneCliente(id);
+                return Ok(NE_Telefone.BuscaTelefoneCliente(id));
             }
             catch (Exception e)
             {
-                return null;
+                return BadRequest(
+                    new
+                    {
+                        mensagem = e.Message,
+                        sucesso = false
+                    });
             }
         }
 
         [HttpPost]
-        public bool Post([FromBody] Telefone telefone)
+        public IActionResult Post([FromBody] Telefone telefone)
         {
             try
             {
-                return NE_Telefone.AdicionaTelefone(telefone);
+                return Ok(NE_Telefone.AdicionaTelefone(telefone)) ;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return false;
+                return BadRequest(
+                new
+                {
+                    mensagem = e.Message,
+                    sucesso = false
+                });
             }
         }
 
         [HttpPut]
-        public bool Put([FromBody] Telefone telefone)
+        public IActionResult Put([FromBody] Telefone telefone)
         {
-            return NE_Telefone.AtualizaTelefone(telefone);
+            try
+            {
+                return Ok(NE_Telefone.AtualizaTelefone(telefone));
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(
+                new
+                {
+                    mensagem = e.Message,
+                    sucesso = false
+                });
+            }
         }
 
 
         [HttpDelete("{id}")]
-        public bool Delete(int id)
+        public IActionResult Delete(int id)
         {
-            return NE_Telefone.DeletaTelefone(id);
+            try
+            {
+                var resp = NE_Telefone.DeletaTelefone(id);
+                if (resp)
+                    return Ok(
+                        new
+                        {
+                            mensagem = "Registro deletado com sucesso",
+                            sucesso = true
+                        });
+                else
+                    return BadRequest(
+                        new
+                        {
+                            mensagem = "Não foi possível deletar registro",
+                            sucesso = false
+                        });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(
+                    new
+                    {
+                        mensagem = e.Message,
+                        sucesso = false
+                    });
+            }
+            
         }
     }
 }
