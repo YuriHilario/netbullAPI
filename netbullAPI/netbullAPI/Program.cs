@@ -67,9 +67,11 @@ builder.Services.AddAuthentication(authOptions =>
 });
 
 builder.Services.AddScoped<NE_User>();
+builder.Services.AddScoped<NE_Telefone>();
 builder.Services.AddScoped<INotificador, Notificador>(); // Por Requisição
 
 builder.Services.AddTransient<UserDAO>();
+builder.Services.AddTransient<DAOTelefone>();
 builder.Services.AddTransient<TokenService>(); // Por método
 
 var app = builder.Build();

@@ -15,19 +15,17 @@ namespace netbullAPI.Controllers
     [ApiController]
     public class TelefoneController : BaseController
     {
-        private NE_Telefone NE_Telefone;
-        public TelefoneController(INotificador notificador, netbullDBContext netbullDBContext) : base(notificador)
+        public TelefoneController(INotificador notificador) : base(notificador)
         {
-            NE_Telefone = new NE_Telefone(netbullDBContext);
         }
         
         // GET api/<TelefoneController>/5
         [HttpGet("{id}")]
-        public IActionResult GetPorId(int id)
+        public IActionResult GetPorId([FromServices] NE_Telefone ne_Telefone, int id)
         {
             try
             {
-                return Ok(NE_Telefone.BuscaTelefoneCliente(id));
+                return Ok(ne_Telefone.BuscaTelefoneCliente(id));
             }
             catch (Exception e)
             {
@@ -41,11 +39,11 @@ namespace netbullAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Telefone telefone)
+        public IActionResult Post([FromServices] NE_Telefone ne_Telefone, [FromBody] Telefone telefone)
         {
             try
             {
-                return Ok(NE_Telefone.AdicionaTelefone(telefone)) ;
+                return Ok(ne_Telefone.AdicionaTelefone(telefone)) ;
             }
             catch (Exception e)
             {
@@ -59,11 +57,11 @@ namespace netbullAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] Telefone telefone)
+        public IActionResult Put([FromServices] NE_Telefone ne_Telefone,[FromBody] Telefone telefone)
         {
             try
             {
-                return Ok(NE_Telefone.AtualizaTelefone(telefone));
+                return Ok(ne_Telefone.AtualizaTelefone(telefone));
 
             }
             catch (Exception e)
@@ -79,11 +77,11 @@ namespace netbullAPI.Controllers
 
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromServices] NE_Telefone ne_Telefone,int id)
         {
             try
             {
-                var resp = NE_Telefone.DeletaTelefone(id);
+                var resp = ne_Telefone.DeletaTelefone(id);
                 if (resp)
                     return Ok(
                         new
