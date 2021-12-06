@@ -16,14 +16,25 @@ namespace netbullAPI.Persistencia
         {
             try
             {
-                var tels = from telefone in _netbullDBContext.Telefones
-                           where telefone.telefone_idPessoa == id
-                           select telefone;
-                return tels;
+                var pessoa = _netbullDBContext.Pessoas.Where(p => p.pessoa_id == id).FirstOrDefault();
+                //Verifica se o cliente informado ja existe no banco
+                if (pessoa == null)
+                {
+                    Notificar("Cliente informado inexistente");
+                    return null;
+                }
+                else
+                {
+                    var tels = from telefone in _netbullDBContext.Telefones
+                               where telefone.telefone_idPessoa == id
+                               select telefone;
+                    return tels;
+                }                
             }
             catch (Exception e)
             {
-                throw e;
+                Notificar(e.Message);
+                return null;
             }
         }
 
@@ -34,7 +45,10 @@ namespace netbullAPI.Persistencia
                 var pessoa = _netbullDBContext.Pessoas.Where(p => p.pessoa_id == telefone.telefone_idPessoa);
                 //Verifica se o cliente informado ja existe no banco
                 if (pessoa == null)
+                {
                     Notificar("Cliente informado inexistente");
+                    return null;
+                }
 
                 var novoTelefone = new Telefone()
                 {
@@ -50,44 +64,67 @@ namespace netbullAPI.Persistencia
             }
             catch (Exception e)
             {
-                throw e;
+                Notificar(e.Message);
+                return null;
             }
         }
 
-        public Telefone AtualizaTelefone(Telefone telefone)
+        public bool AtualizaTelefone(Telefone telefone)
         {
             try
             {
                 var pessoa = _netbullDBContext.Pessoas.Where(x => x.pessoa_id == telefone.telefone_idPessoa).FirstOrDefault();
                 //Verifica se o cliente informado ja existe no banco
                 if (pessoa == null)
-                    throw new Exception("Cliente informado inexistente");
+                {
+                    Notificar("Cliente informado inexistente");
+                    return false;
+                }
                 var telefoneExistente = _netbullDBContext.Telefones.Where(t => t.telefone_id == telefone.telefone_id).FirstOrDefault();
                 if (telefoneExistente == null)
-                    throw new Exception("Telefone informado inexistente");
+                {
+                    Notificar("Telefone informado inexistente");
+                    return false;
+                }
 
                 if (telefoneExistente.telefone_idPessoa != telefone.telefone_idPessoa)
-                    throw new Exception("Pessoa registrada para este telefone é diferente da informada");
+                {
+                    Notificar("Pessoa registrada para este telefone é diferente da informada");
+                    return false;
+                }
 
-                ValidaTelefone(telefone.telefone_numero);
-
-                telefoneExistente.telefone_numero = telefone.telefone_numero;
-                _netbullDBContext.Update(telefoneExistente);
-                _netbullDBContext.SaveChanges();
-                return telefone;
+                if (ValidaTelefone(telefone.telefone_numero))
+                {
+                    telefoneExistente.telefone_numero = telefone.telefone_numero;
+                    _netbullDBContext.Update(telefoneExistente);
+                    _netbullDBContext.SaveChanges();
+                    return true;
+                }
+                else
+                    return false;
+                
             }
             catch (Exception e)
             {
-                throw e;
+                Notificar(e.Message);
+                return false;
             }
         }
 
-        private void ValidaTelefone(int telefone)
+        private bool ValidaTelefone(int telefone)
         {
             if (telefone == 0)
-                throw new Exception("Valor de telefone informado inválido");
+            {
+                Notificar("Valor de telefone informado inválido");
+                return false;
+            }
             else if (telefone.ToString().Length < 8)
-                throw new Exception("Formatação de telefone informada é inválida");
+            {
+                Notificar("Formatação de telefone informada é inválida");
+                return false;
+            }
+
+            return true;
         }
 
         public bool DeletaTelefone(int id)
@@ -96,15 +133,19 @@ namespace netbullAPI.Persistencia
             {
                 var telefoneExistente = _netbullDBContext.Telefones.Where(t => t.telefone_id == id).FirstOrDefault();
                 if (telefoneExistente == null)
-                    throw new Exception("Telefone informado inexistente");
+                {
+                    Notificar("Telefone informado inexistente");
+                    return false;
+                }
                 _netbullDBContext.Remove(telefoneExistente);
                 _netbullDBContext.SaveChanges();
+                Notificar("Telefone deletado com sucesso");
                 return true;
             }
             catch (Exception e)
             {
-
-                throw e;
+                Notificar(e.Message);
+                return false;
             }
         }
     }
