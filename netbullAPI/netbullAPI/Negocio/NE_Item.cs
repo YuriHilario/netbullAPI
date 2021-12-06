@@ -6,21 +6,21 @@ namespace netbullAPI.Negocio
 {
     public class NE_Item
     {
-        private ItemRepository PE_Item;
+        private DAOItem _daoItem;
 
-        public NE_Item(netbullDBContext PessoaContexto)
+        public NE_Item(netbullDBContext PessoaContexto, DAOItem daoItem)
         {
-            PE_Item = new ItemRepository(PessoaContexto);
+            _daoItem = daoItem;
         }
 
         public IEnumerable<Item> BuscaItens()
         {
-            return PE_Item.BuscaItens();
+            return _daoItem.BuscaItens();
         }
 
         public Item BuscaItemPorId(int id)
         {
-            return PE_Item.BuscaItemPorId(id);
+            return _daoItem.BuscaItemPorId(id);
         }
     }
 }

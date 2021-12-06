@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
+using netbullAPI.Repository;
 using netbullAPI.Security.Negocio;
 using netbullAPI.Security.Persistencia;
 using netbullAPI.Security.Service;
@@ -68,11 +69,14 @@ builder.Services.AddAuthentication(authOptions =>
 
 builder.Services.AddScoped<NE_User>();
 builder.Services.AddScoped<NE_Telefone>();
+builder.Services.AddScoped<NE_Item>();
 builder.Services.AddScoped<INotificador, Notificador>(); // Por Requisição
 
 builder.Services.AddTransient<UserDAO>();
 builder.Services.AddTransient<DAOTelefone>();
+builder.Services.AddTransient<DAOItem>();
 builder.Services.AddTransient<TokenService>(); // Por método
+
 
 var app = builder.Build();
 
