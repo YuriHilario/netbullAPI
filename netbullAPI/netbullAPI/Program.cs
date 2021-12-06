@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
+using netbullAPI.Repository;
 using netbullAPI.Security.Negocio;
 using netbullAPI.Security.Persistencia;
 using netbullAPI.Security.Service;
