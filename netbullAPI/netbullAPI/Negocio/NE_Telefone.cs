@@ -14,51 +14,22 @@ namespace netbullAPI.Negocio
 
         public IEnumerable<Telefone>  BuscaTelefoneCliente(int id)
         {
-            try
-            {
-                return _daoTelefone.BuscaTelefoneCliente(id);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            return _daoTelefone.BuscaTelefoneCliente(id);            
         }
 
         public Telefone AdicionaTelefone(Telefone telefone)
         {
-            try
-            {
-                return _daoTelefone.AdicionaTelefone(telefone);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            return _daoTelefone.AdicionaTelefone(telefone);
         }
 
-        public Telefone AtualizaTelefone(Telefone telefone)
+        public bool AtualizaTelefone(Telefone telefone)
         {
-            try
-            {
-                return _daoTelefone.AtualizaTelefone(telefone);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }        
+            return _daoTelefone.AtualizaTelefone(telefone);
         }
 
         public bool DeletaTelefone(int id)
         {
-            try
-            {
-                return _daoTelefone.DeletaTelefone(id);
-            }
-            catch (Exception e)
-            {
-
-                throw e;
-            }
+            return _daoTelefone.DeletaTelefone(id);
         }
     }
 }

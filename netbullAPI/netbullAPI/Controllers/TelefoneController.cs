@@ -5,6 +5,7 @@ using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
 using netbullAPI.Util;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,15 +26,30 @@ namespace netbullAPI.Controllers
         {
             try
             {
-                return Ok(ne_Telefone.BuscaTelefoneCliente(id));
+                var telefones = ne_Telefone.BuscaTelefoneCliente(id);
+                if(telefones == null)
+                    return BadRequest(
+                            new
+                            {
+                                status = HttpStatusCode.BadRequest,
+                                Error = Notificacoes()
+                            });
+                else
+                    return Ok(
+                        new
+                        {
+                            telefones = ne_Telefone.BuscaTelefoneCliente(id),
+                            status = HttpStatusCode.OK,
+                            Error = Notificacoes()
+                        });               
             }
             catch (Exception e)
             {
                 return BadRequest(
                     new
                     {
-                        mensagem = e.Message,
-                        sucesso = false
+                        status = HttpStatusCode.BadRequest,
+                        Error = Notificacoes()
                     });
             }
         }
@@ -43,15 +59,24 @@ namespace netbullAPI.Controllers
         {
             try
             {
-                return Ok(ne_Telefone.AdicionaTelefone(telefone)) ;
+                var nvTelefone = ne_Telefone.AdicionaTelefone(telefone);
+                if (nvTelefone != null)
+                    return Created($"/{nvTelefone.telefone_id}", nvTelefone);
+                else
+                    return BadRequest(
+                            new
+                            {
+                                status = HttpStatusCode.BadRequest,
+                                Error = Notificacoes()
+                            });
             }
             catch (Exception e)
             {
                 return BadRequest(
                 new
                 {
-                    mensagem = e.Message,
-                    sucesso = false
+                    status = HttpStatusCode.BadRequest,
+                    Error = Notificacoes()
                 });
             }
         }
@@ -61,7 +86,21 @@ namespace netbullAPI.Controllers
         {
             try
             {
-                return Ok(ne_Telefone.AtualizaTelefone(telefone));
+                if(ne_Telefone.AtualizaTelefone(telefone))
+                    return Ok(
+                            new
+                            {
+                                telefone = telefone,
+                                status = HttpStatusCode.OK,
+                                Error = Notificacoes()
+                            });
+                else
+                    return BadRequest(
+                            new
+                            {
+                                status = HttpStatusCode.BadRequest,
+                                Error = Notificacoes()
+                            });
 
             }
             catch (Exception e)
@@ -69,8 +108,8 @@ namespace netbullAPI.Controllers
                 return BadRequest(
                 new
                 {
-                    mensagem = e.Message,
-                    sucesso = false
+                    status = HttpStatusCode.BadRequest,
+                    Error = Notificacoes()
                 });
             }
         }
@@ -86,15 +125,15 @@ namespace netbullAPI.Controllers
                     return Ok(
                         new
                         {
-                            mensagem = "Registro deletado com sucesso",
-                            sucesso = true
+                            status = HttpStatusCode.OK,
+                            Error = Notificacoes(),
                         });
                 else
                     return BadRequest(
                         new
                         {
-                            mensagem = "Não foi possível deletar registro",
-                            sucesso = false
+                            status = HttpStatusCode.BadRequest,
+                            Error = Notificacoes()
                         });
             }
             catch (Exception e)
@@ -102,8 +141,8 @@ namespace netbullAPI.Controllers
                 return BadRequest(
                     new
                     {
-                        mensagem = e.Message,
-                        sucesso = false
+                        status = HttpStatusCode.BadRequest,
+                        Error = Notificacoes()
                     });
             }
             
