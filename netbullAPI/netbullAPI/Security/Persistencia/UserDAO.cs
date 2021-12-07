@@ -17,7 +17,7 @@ namespace netbullAPI.Security.Persistencia
         {
             var usuRecuperado = RecuperarUsuario(usu);
 
-            if(usuRecuperado == null)
+            if (usuRecuperado == null)
             {
                 try
                 {
@@ -39,8 +39,8 @@ namespace netbullAPI.Security.Persistencia
                     }
 
                     usu = RecuperarUsuario(usu);
-                    
-                    return usu; 
+
+                    return usu;
                 }
                 catch (Exception ex)
                 {
@@ -48,11 +48,42 @@ namespace netbullAPI.Security.Persistencia
                     return usu;
                 }
             }
-            else {
+            else
+            {
                 Notificar("Usuário já cadastrado.");
                 usu.user_id = 0;
                 return usu;
-            }          
+            }
+        }
+
+        internal List<User> getAllUsers()
+        {
+            List<User> users = null;
+            try
+            {
+                string sqlUser = $@" SELECT user_id, user_nome, user_email FROM users ";
+                var connection = getConnection();
+
+
+                using (connection)
+                {
+
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        users = connection.Query<User>(sqlUser, transaction).ToList();
+                        transaction.Commit();
+                    }
+                }
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+                Notificar(ex.Message);
+                return users;
+            }
         }
 
         internal User RecuperarUsuario(User usu)

@@ -1,5 +1,4 @@
 ﻿using netbullAPI.Interfaces;
-using netbullAPI.Negocio;
 using netbullAPI.Security.Models;
 using netbullAPI.Security.Persistencia;
 using netbullAPI.Util;
@@ -7,15 +6,20 @@ using System.Data;
 
 namespace netbullAPI.Security.Negocio
 {
-    public class NE_User : NEBase
-
+    public class NE_User
     {
         private UserDAO _userDao;
 
-        public NE_User(INotificador notificador, UserDAO userDao) : base(notificador)
+        public NE_User(UserDAO userDao)
         {
             _userDao = userDao;
         }
+
+        public List<User> getAllUsers()
+        {
+            return _userDao.getAllUsers();
+        }
+
         internal User CadastroDeUser(User usu)
         {
             //UserDAO _userDAO = new UserDAO();
@@ -34,26 +38,16 @@ namespace netbullAPI.Security.Negocio
 
         public User VerificarUsuarioSenha(User usu, out bool usuarioSenhaOK)
         {
+            usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
+
             var usuConsulta = _userDao.RecuperarUsuario(usu);
+            if (usuConsulta.user_accessKey == usu.user_accessKey)
+                usuarioSenhaOK = true;
+            else
+                usuarioSenhaOK = false;
 
-                if (usuConsulta == null)
-                {
-                    usuarioSenhaOK = false;
-                    Notificar("Usuário não existe");
-                    return usuConsulta;
-                }
-                else
-                {
-                    usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
+            return usuConsulta;
 
-                    if (usuConsulta.user_accessKey == usu.user_accessKey)
-                        usuarioSenhaOK = true;
-                    else
-                        usuarioSenhaOK = false;
-
-                    return usuConsulta;
-                }
-            
         }
 
     }
