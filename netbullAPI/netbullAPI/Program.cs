@@ -1,7 +1,9 @@
+using DAO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Negocio;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
@@ -67,6 +69,11 @@ builder.Services.AddAuthentication(authOptions =>
 });
 
 builder.Services.AddScoped<NE_User>();
+builder.Services.AddScoped<NE_Endereco>();
+builder.Services.AddTransient<DAO_Endereco>();
+
+
+
 builder.Services.AddScoped<NE_Telefone>();
 builder.Services.AddScoped<INotificador, Notificador>(); // Por Requisição
 
