@@ -34,7 +34,7 @@ namespace netbullAPI.Persistencia
             catch (Exception e)
             {
                 Notificar(e.Message);
-                return null;
+                throw e;
             }
         }
 
@@ -42,7 +42,7 @@ namespace netbullAPI.Persistencia
         {
             try
             {
-                var pessoa = _netbullDBContext.Pessoas.Where(p => p.pessoa_id == telefone.telefone_idPessoa);
+                var pessoa = _netbullDBContext.Pessoas.Where(p => p.pessoa_id == telefone.telefone_idPessoa).FirstOrDefault();
                 //Verifica se o cliente informado ja existe no banco
                 if (pessoa == null)
                 {
@@ -65,7 +65,7 @@ namespace netbullAPI.Persistencia
             catch (Exception e)
             {
                 Notificar(e.Message);
-                return null;
+                throw e;
             }
         }
 
@@ -107,7 +107,7 @@ namespace netbullAPI.Persistencia
             catch (Exception e)
             {
                 Notificar(e.Message);
-                return false;
+                throw e;
             }
         }
 
@@ -145,7 +145,7 @@ namespace netbullAPI.Persistencia
             catch (Exception e)
             {
                 Notificar(e.Message);
-                return false;
+                throw e;
             }
         }
     }

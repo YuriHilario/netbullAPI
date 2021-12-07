@@ -19,8 +19,13 @@ namespace netbullAPI.Controllers
         public TelefoneController(INotificador notificador) : base(notificador)
         {
         }
-        
-        // GET api/<TelefoneController>/5
+
+        /// <summary>
+        /// Busca lista de telefones atribuidas ao cliente informado
+        /// </summary>
+        /// <param name="ne_Telefone"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public IActionResult GetPorId([FromServices] NE_Telefone ne_Telefone, int id)
         {
@@ -28,10 +33,10 @@ namespace netbullAPI.Controllers
             {
                 var telefones = ne_Telefone.BuscaTelefoneCliente(id);
                 if(telefones == null)
-                    return BadRequest(
+                    return NotFound(
                             new
                             {
-                                status = HttpStatusCode.BadRequest,
+                                status = HttpStatusCode.NotFound,
                                 Error = Notificacoes()
                             });
                 else
@@ -54,6 +59,12 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Inclusão de novo telefone ao cliente
+        /// </summary>
+        /// <param name="ne_Telefone"></param>
+        /// <param name="telefone"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Post([FromServices] NE_Telefone ne_Telefone, [FromBody] Telefone telefone)
         {
@@ -63,7 +74,7 @@ namespace netbullAPI.Controllers
                 if (nvTelefone != null)
                     return Created($"/{nvTelefone.telefone_id}", nvTelefone);
                 else
-                    return BadRequest(
+                    return NotFound(
                             new
                             {
                                 status = HttpStatusCode.BadRequest,
@@ -81,6 +92,12 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualização do número de telefone do cliente
+        /// </summary>
+        /// <param name="ne_Telefone"></param>
+        /// <param name="telefone"></param>
+        /// <returns></returns>
         [HttpPut]
         public IActionResult Put([FromServices] NE_Telefone ne_Telefone,[FromBody] Telefone telefone)
         {
@@ -95,7 +112,7 @@ namespace netbullAPI.Controllers
                                 Error = Notificacoes()
                             });
                 else
-                    return BadRequest(
+                    return NotFound(
                             new
                             {
                                 status = HttpStatusCode.BadRequest,
@@ -114,7 +131,12 @@ namespace netbullAPI.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Remoção do telefone informado do cliente
+        /// </summary>
+        /// <param name="ne_Telefone"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public IActionResult Delete([FromServices] NE_Telefone ne_Telefone,int id)
         {
@@ -129,7 +151,7 @@ namespace netbullAPI.Controllers
                             Error = Notificacoes(),
                         });
                 else
-                    return BadRequest(
+                    return NotFound(
                         new
                         {
                             status = HttpStatusCode.BadRequest,
