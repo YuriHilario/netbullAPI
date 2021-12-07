@@ -53,6 +53,7 @@ namespace Negocio
         }
 
         public bool AtualizaEndereco(int idEndereco, string? logradouro, int? numero, string? compl)
+        }     
         public bool AtualizaEndereco(Endereco endereco)
         {
             try
@@ -98,34 +99,6 @@ namespace Negocio
                     }
                 }
             return _daoEndereco.AtualizaEnderecoPatch(idEndereco, logradouro); 
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public bool AtualizaNumero(int idEndereco, int numero)
-        {
-            try
-            {
-                Endereco endereco = _EnderecoContexto.Enderecos.Where(x => x.endereco_id == idEndereco).FirstOrDefault();
-                if (endereco == null)
-                    return false;
-                else
-                {
-                    using (_EnderecoContexto)
-                    {
-                        endereco.endereco_numero = numero;
-                        _EnderecoContexto.SaveChanges();
-                        return true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
         }
 
         public bool ApagaEndereco(int idEndereco)

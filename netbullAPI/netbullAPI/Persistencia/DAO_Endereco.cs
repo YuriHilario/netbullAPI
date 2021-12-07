@@ -80,7 +80,7 @@ namespace DAO
                     _netbullDBContext.Enderecos.Add(attEndereco);
                     _netbullDBContext.SaveChanges();
                     Notificar("Endereço informado não existe.Criando um novo");
-                    return false;
+                    return true;
                 }
                 else
                 {

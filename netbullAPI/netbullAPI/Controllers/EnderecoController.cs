@@ -13,12 +13,9 @@ namespace netbullAPI.Controllers
     public class EnderecoController : BaseController
     public class EnderecoController : ControllerBase
     {
-        private List<Pessoa> listaPessoas;
-        private NE_Endereco neEndereco;
         public EnderecoController(INotificador notificador) : base(notificador)
         public EnderecoController(netbullDBContext EnderecoContexto)
         {
-            neEndereco = new NE_Endereco(EnderecoContexto);
         }
 
         //GET: api/<EnderecoController>
