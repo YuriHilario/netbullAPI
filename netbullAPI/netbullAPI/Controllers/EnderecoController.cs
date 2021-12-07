@@ -12,11 +12,8 @@ namespace netbullAPI.Controllers
     [Route("api/[controller]")]
     public class EnderecoController : BaseController
     {
-        private List<Pessoa> listaPessoas;
-        private NE_Endereco neEndereco;
         public EnderecoController(INotificador notificador) : base(notificador)
         {
-            neEndereco = new NE_Endereco(EnderecoContexto);
         }
 
         //GET: api/<EnderecoController>
