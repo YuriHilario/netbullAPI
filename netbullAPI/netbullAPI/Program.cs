@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -15,7 +16,7 @@ var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("TokenConfigu
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen( s =>
+builder.Services.AddSwaggerGen(s =>
 {
     s.SwaggerDoc("v1", new OpenApiInfo { Title = "NetBullAPI", Version = "v1" });
 
@@ -51,6 +52,15 @@ builder.Services.AddDbContext<netbullDBContext>(opts =>
     opts.UseNpgsql(builder.Configuration.GetConnectionString("NetBullConnection"));
 });
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyPolicy",
+        builder => builder.WithOrigins("http://localhost:4200", "http://localhost:4200")
+    .AllowAnyHeader()
+    .AllowAnyMethod());
+});
+
 builder.Services.AddAuthentication(authOptions =>
 {
     authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,7 +68,7 @@ builder.Services.AddAuthentication(authOptions =>
 }).AddJwtBearer(bearerOptions =>
 {
     bearerOptions.TokenValidationParameters = new TokenValidationParameters
-    {     
+    {
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuerSigningKey = true,
         ValidateAudience = false,
@@ -76,6 +86,13 @@ builder.Services.AddTransient<TokenService>(); // Por método
 
 var app = builder.Build();
 
+app.UseCors(builder => builder
+.AllowAnyOrigin()
+.AllowAnyMethod()
+.AllowAnyHeader()
+);
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -83,10 +100,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("*");
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers().RequireCors("MyPolicy");
+//});
 
 app.MapControllers();
 

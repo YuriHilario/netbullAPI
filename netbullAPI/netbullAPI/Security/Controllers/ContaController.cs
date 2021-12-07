@@ -57,12 +57,25 @@ namespace netbullAPI.Security.Controllers
             }
             else
             {
-                return Unauthorized(
+                if(usuConsulta == null)
+                {
+                    return NotFound(
                     new
                     {
-                        status = HttpStatusCode.Unauthorized,
+                        status = HttpStatusCode.NotFound,
                         Error = Notificacoes()
                     });
+                }
+                else
+                {
+                    return Unauthorized(
+                   new
+                   {
+                       status = HttpStatusCode.Unauthorized,
+                       Error = Notificacoes()
+                   });
+                }
+               
             }
         }
     }
