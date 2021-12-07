@@ -16,6 +16,7 @@ namespace netbullAPI.Controllers
         private NE_Endereco neEndereco;
         public EnderecoController(INotificador notificador) : base(notificador)
         {
+            neEndereco = new NE_Endereco(EnderecoContexto);
         }
 
         //GET: api/<EnderecoController>
@@ -37,7 +38,7 @@ namespace netbullAPI.Controllers
         {
             try
             {
-                if (endereco == null)
+            if (endereco == null)
                 {
                     Notificar("Endereço vazio.");
                     return NotFound(HttpStatusCode.NoContent);
@@ -46,7 +47,7 @@ namespace netbullAPI.Controllers
                 return Ok(neEndereco.CadastraNovoEndereco(endereco) 
                     ? new { mensagem = "Inserido com sucesso.", sucesso = true } 
                 : new { mensagem = "Problema ao inserir.", sucesso = false });
-            }
+        }
            catch(Exception ex)
             {
                return BadRequest(
@@ -93,7 +94,7 @@ namespace netbullAPI.Controllers
             try
             {
                 if (idEndereco == 0)
-                {
+        {
                     Notificar("Id do Endereço ou o logradouro está vazio.");
                     return NotFound(HttpStatusCode.NoContent);
                 }
@@ -118,8 +119,8 @@ namespace netbullAPI.Controllers
         public IActionResult ApagaEndereco([FromServices] NE_Endereco neEndereco, int idEndereco)
         {
             try
-            {
-                if (idEndereco == 0)
+        {
+            if (idEndereco == 0)
                     return NotFound(new { mensagem = "O idEndereço não foi informado." , sucesso = false});
 
                 var resp = neEndereco.ApagaEndereco(idEndereco);
@@ -147,7 +148,8 @@ namespace netbullAPI.Controllers
                         sucesso = false
                     });
             }
-           
+            
+            return neEndereco.ApagaEndereco(idEndereco) ?  Ok() : BadRequest();
         }
     };
 
