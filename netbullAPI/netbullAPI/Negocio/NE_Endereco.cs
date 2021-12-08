@@ -14,28 +14,28 @@ namespace Negocio
             _daoEndereco = daoEndereco;
         }
 
-        public IEnumerable<Endereco> BuscaEnderecosPessoa(int idPessoa)
+        public async Task<IEnumerable<Endereco>> BuscaEnderecosPessoa(int idPessoa)
         {
-            return _daoEndereco.BuscaEnderecosPessoa(idPessoa);
+            return await _daoEndereco.BuscaEnderecosPessoa(idPessoa);
         }
 
-        public bool CadastraNovoEndereco(Endereco endereco)
+        public async Task<bool> CadastraNovoEndereco(Endereco endereco)
         {
-            return _daoEndereco.CadastrarNovoEndereco(endereco);
+            return await _daoEndereco.CadastrarNovoEndereco(endereco);
         }     
-        public bool AtualizaEndereco(Endereco endereco)
+        public async Task<bool> AtualizaEndereco(Endereco endereco)
         {
-           return _daoEndereco.AtualizaEndereco(endereco);
+           return await _daoEndereco.AtualizaEndereco(endereco);
         }
 
-        public bool AtualizaEnderecoPatch(int idEndereco, Endereco logradouro)
+        public async Task<bool> AtualizaEnderecoPatch(int idEndereco, Endereco logradouro)
         {
-            return _daoEndereco.AtualizaEnderecoPatch(idEndereco, logradouro); 
+            return await _daoEndereco.AtualizaEnderecoPatch(idEndereco, logradouro); 
         }
 
-        public bool ApagaEndereco(int idEndereco)
+        public async Task<bool> ApagaEndereco(int idEndereco)
         {
-            return _daoEndereco.ApagaEndereco(idEndereco);
+            return await _daoEndereco.ApagaEndereco(idEndereco);
         }
     }
 }

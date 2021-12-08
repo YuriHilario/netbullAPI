@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Negocio;
 using netbullAPI.Entidade;
@@ -17,10 +18,11 @@ namespace netbullAPI.Controllers
         }
 
         //GET: api/<EnderecoController>
+        [Authorize]
         [HttpGet("{idPessoa}")]
-        public IActionResult /*IEnumerable<Endereco>*/ Get([FromServices] NE_Endereco neEndereco, int idPessoa)
+        public async Task<IActionResult> /*IEnumerable<Endereco>*/ Get([FromServices] NE_Endereco neEndereco, int idPessoa)
         {
-            IEnumerable<Endereco> listaEnderecos = neEndereco.BuscaEnderecosPessoa(idPessoa);
+            IEnumerable<Endereco> listaEnderecos = await neEndereco.BuscaEnderecosPessoa(idPessoa);
 
             if (!listaEnderecos.Any())
                 return NotFound(HttpStatusCode.NotFound);
@@ -28,10 +30,10 @@ namespace netbullAPI.Controllers
             return Created("Lista obtida", listaEnderecos);
         }
 
-
+        [Authorize]
         [HttpPost]
         // POST api/<EnderecoController>
-        public IActionResult CadastrarNovoEndereco([FromServices] NE_Endereco neEndereco, [FromBody] Endereco endereco)
+        public async Task<IActionResult> CadastrarNovoEndereco([FromServices] NE_Endereco neEndereco, [FromBody] Endereco endereco)
         {
             try
             {
@@ -41,7 +43,7 @@ namespace netbullAPI.Controllers
                     return NotFound(HttpStatusCode.NoContent);
                 }
 
-                return Ok(neEndereco.CadastraNovoEndereco(endereco) 
+                return Ok(await neEndereco.CadastraNovoEndereco(endereco) 
                     ? new { mensagem = "Inserido com sucesso.", sucesso = true } 
                 : new { mensagem = "Problema ao inserir.", sucesso = false });
         }
@@ -57,9 +59,10 @@ namespace netbullAPI.Controllers
 
         }
 
+        [Authorize]
         [HttpPut]
         // PUT api/<EnderecoController>
-        public IActionResult AtualizaEndereco([FromServices] NE_Endereco neEndereco, Endereco endereco)
+        public async Task<IActionResult> AtualizaEndereco([FromServices] NE_Endereco neEndereco, Endereco endereco)
         {
             try
             {
@@ -69,7 +72,7 @@ namespace netbullAPI.Controllers
                     return NotFound(HttpStatusCode.NoContent);
                 }
 
-                return Ok(neEndereco.AtualizaEndereco(endereco) 
+                return Ok(await neEndereco.AtualizaEndereco(endereco) 
                     ? new { mensagem = "Atualizado com sucesso.", sucesso = true}
                 : new { mensagem = "Problema ao atualizar.", sucesso = false });
             }
@@ -84,9 +87,10 @@ namespace netbullAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpPatch("{idEndereco}")]
         // PATCH api/<EnderecoController>
-        public IActionResult AtualizaEnderecoPatch([FromServices] NE_Endereco neEndereco, int idEndereco, [FromBody] Endereco endereco)
+        public async Task<IActionResult> AtualizaEnderecoPatch([FromServices] NE_Endereco neEndereco, int idEndereco, [FromBody] Endereco endereco)
         {
             try
             {
@@ -96,7 +100,7 @@ namespace netbullAPI.Controllers
                     return NotFound(HttpStatusCode.NoContent);
                 }
 
-                return Ok(neEndereco.AtualizaEnderecoPatch(idEndereco, endereco) 
+                return Ok(await neEndereco.AtualizaEnderecoPatch(idEndereco, endereco) 
                     ? new { mensagem = "Atualizado com sucesso.", sucesso = true}
                     : new { mensagem = "Problema ao inserir.", sucesso = false });
             }
@@ -111,16 +115,17 @@ namespace netbullAPI.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("{idEndereco}")]
         // DELETE api/<EnderecoController>
-        public IActionResult ApagaEndereco([FromServices] NE_Endereco neEndereco, int idEndereco)
+        public async Task<IActionResult> ApagaEndereco([FromServices] NE_Endereco neEndereco, int idEndereco)
         {
             try
         {
             if (idEndereco == 0)
                     return NotFound(new { mensagem = "O idEndereço não foi informado." , sucesso = false});
 
-                var resp = neEndereco.ApagaEndereco(idEndereco);
+                var resp = await neEndereco.ApagaEndereco(idEndereco);
                 if (resp)
                     return Ok(
                         new
@@ -144,9 +149,7 @@ namespace netbullAPI.Controllers
                         mensagem = e.Message,
                         sucesso = false
                     });
-            }
-            
-            return neEndereco.ApagaEndereco(idEndereco) ?  Ok() : BadRequest();
+            }    
         }
     };
 

@@ -1,4 +1,6 @@
 
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
@@ -15,22 +17,15 @@ namespace DAO
             _netbullDBContext = netbullDBContext;
         }
 
-        public IEnumerable<Endereco> BuscaEnderecosPessoa(int idPessoa)
+        public async Task<IEnumerable<Endereco>> BuscaEnderecosPessoa(int idPessoa)
         {
-            return _netbullDBContext.Enderecos.Where(x => x.endereco_idpessoa == idPessoa);
+            return await Task.FromResult(await _netbullDBContext.Enderecos.Where(x => x.endereco_idpessoa == idPessoa).ToListAsync());
         }
 
-        public bool CadastrarNovoEndereco(Endereco novoEndereco)
+        public async Task<bool> CadastrarNovoEndereco(Endereco novoEndereco)
         {
-            //verificar se pessoa e endereço existem
             try
             {
-                //var pessoa = (from p in _netbullDBContext.Pessoas
-                //              where p.pessoa_id == novoEndereco.endereco_idpessoa
-                //              select p).FirstOrDefault();
-                //if (pessoa == null)
-                //    Notificar("Cliente informado inexistente.");
-
                 int encontrouEndereco = (from end in _netbullDBContext.Enderecos
                                          where end.endereco_idpessoa == novoEndereco.endereco_idpessoa
                                          && end.endereco_logradouro == novoEndereco.endereco_logradouro
@@ -46,17 +41,17 @@ namespace DAO
                 using (_netbullDBContext)
                 {
                     _netbullDBContext.Enderecos.Add(novoEndereco);
-                    _netbullDBContext   .SaveChanges();
+                    await _netbullDBContext.SaveChangesAsync(); 
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new NotImplementedException();
             }
         }
 
-        public bool AtualizaEndereco(Endereco attEndereco)
+        public async Task<bool> AtualizaEndereco(Endereco attEndereco)
         {
             try
             {
@@ -75,32 +70,26 @@ namespace DAO
                 var enderecoExistente = (from e in _netbullDBContext.Enderecos
                                          where e.endereco_id == attEndereco.endereco_id
                                          select e).FirstOrDefault();
-                if (enderecoExistente == null)
-                {
-                    _netbullDBContext.Enderecos.Add(attEndereco);
-                    _netbullDBContext.SaveChanges();
-                    Notificar("Endereço informado não existe.Criando um novo");
-                    return true;
-                }
-                else
+                if (enderecoExistente != null)
                 {
                     using (_netbullDBContext)
                     {
                         enderecoExistente.endereco_logradouro = attEndereco.endereco_logradouro == null ? enderecoExistente.endereco_logradouro : attEndereco.endereco_logradouro;
                         enderecoExistente.endereco_numero = (attEndereco.endereco_numero == 0 ? enderecoExistente.endereco_numero : attEndereco.endereco_numero);
                         enderecoExistente.endereco_complemento = (attEndereco.endereco_complemento == null ? enderecoExistente.endereco_complemento : attEndereco.endereco_complemento);
-                        _netbullDBContext.SaveChanges();
+                        await _netbullDBContext.SaveChangesAsync();
                         return true;
                     }
                 }
+                return false;
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new NotImplementedException();
             }
         }
 
-        public bool AtualizaEnderecoPatch(int idEndereco, Endereco endereco)
+        public async Task<bool> AtualizaEnderecoPatch(int idEndereco, Endereco endereco)
         {
             try
             {
@@ -118,18 +107,18 @@ namespace DAO
                     enderecoExistente.endereco_logradouro = endereco.endereco_logradouro == null || endereco.endereco_logradouro == "string" ? enderecoExistente.endereco_logradouro : endereco.endereco_logradouro;
                     enderecoExistente.endereco_numero = (endereco.endereco_numero == 0 ? enderecoExistente.endereco_numero : endereco.endereco_numero);
                     enderecoExistente.endereco_complemento = (endereco.endereco_complemento == null || endereco.endereco_complemento == "string" ? enderecoExistente.endereco_complemento : endereco.endereco_complemento);
-                    _netbullDBContext.SaveChanges();
+                    await _netbullDBContext.SaveChangesAsync();
                     return true;
                 }
 
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new NotImplementedException();
             }
         }
 
-        public bool AtualizaNumero(int idEndereco, Endereco endereco)
+        public async Task<bool> AtualizaNumero(int idEndereco, Endereco endereco)
         {
             try
             {
@@ -145,7 +134,7 @@ namespace DAO
                 using (_netbullDBContext)
                 {
                     enderecoExistente.endereco_numero = endereco.endereco_numero;
-                    _netbullDBContext.SaveChanges();
+                    await _netbullDBContext.SaveChangesAsync();
                     return true;
                 }
 
@@ -156,7 +145,7 @@ namespace DAO
             }
         }
 
-        public bool AtualizaComplemento(int idEndereco, Endereco endereco)
+        public async Task<bool> AtualizaComplemento(int idEndereco, Endereco endereco)
         {
             try
             {
@@ -172,7 +161,7 @@ namespace DAO
                 using (_netbullDBContext)
                 {
                     enderecoExistente.endereco_complemento = endereco.endereco_complemento;
-                    _netbullDBContext.SaveChanges();
+                    await _netbullDBContext.SaveChangesAsync();
                     return true;
                 }
 
@@ -183,7 +172,7 @@ namespace DAO
             }
         }
 
-        public bool ApagaEndereco(int idEndereco)
+        public async Task<bool> ApagaEndereco(int idEndereco)
         {
             try
             {
@@ -196,7 +185,7 @@ namespace DAO
                 else
                 {
                     _netbullDBContext.Enderecos.Remove(endereco);
-                    _netbullDBContext.SaveChanges();
+                    await _netbullDBContext.SaveChangesAsync();
                     return true;
                 }
 
