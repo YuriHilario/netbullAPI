@@ -15,40 +15,49 @@ namespace netbullAPI.Security.Negocio
             _userDao = userDao;
         }
 
-        public List<User> getAllUsers()
+        public async Task <List<User>> getAllUsers()
         {
-            return _userDao.getAllUsers();
+            return await _userDao.getAllUsers();
         }
 
-        internal User CadastroDeUser(User usu)
+        internal async Task<User> CadastroDeUser(User usu)
         {
             //UserDAO _userDAO = new UserDAO();
             usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
 
-            usu = _userDao.CadastroDeUser(usu);
+            usu = await _userDao.CadastroDeUser(usu);
 
             return usu;
         }
 
-        public User RecuperarUsuario(User usu)
+        public async Task<User> RecuperarUsuario(User usu)
         {
-            usu = _userDao.RecuperarUsuario(usu);
+            usu =  await _userDao.RecuperarUsuario(usu);
             return usu;
         }
 
-        public User VerificarUsuarioSenha(User usu, out bool usuarioSenhaOK)
+        public async Task<User> VerificarUsuarioSenha(User usu)
         {
             usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
 
-            var usuConsulta = _userDao.RecuperarUsuario(usu);
-            if (usuConsulta.user_accessKey == usu.user_accessKey)
-                usuarioSenhaOK = true;
-            else
-                usuarioSenhaOK = false;
-
-            return usuConsulta;
-
+            var usuConsulta =  await _userDao.RecuperarUsuario(usu);
+            if(usuConsulta != null)
+            {
+                if (usuConsulta.user_accessKey == usu.user_accessKey)
+                {
+                    return usuConsulta;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            return null;
         }
 
+        internal async Task<bool> DeleteUser(int id)
+        {
+            return await _userDao.DeleteUser(id);
+        }
     }
 }

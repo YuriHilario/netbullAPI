@@ -13,9 +13,9 @@ namespace netbullAPI.Security.Persistencia
             _configuration = configuration;
         }
 
-        internal User CadastroDeUser(User usu)
+        internal async Task<User> CadastroDeUser(User usu)
         {
-            var usuRecuperado = RecuperarUsuario(usu);
+            var usuRecuperado = await RecuperarUsuario(usu);
 
             if (usuRecuperado == null)
             {
@@ -38,7 +38,7 @@ namespace netbullAPI.Security.Persistencia
                         }
                     }
 
-                    usu = RecuperarUsuario(usu);
+                    usu = await RecuperarUsuario(usu);
 
                     return usu;
                 }
@@ -56,14 +56,53 @@ namespace netbullAPI.Security.Persistencia
             }
         }
 
-        internal List<User> getAllUsers()
+        internal async Task<bool> DeleteUser(int id)
+        {
+            var retorno = false;
+            try
+            {
+                var listaUsu = await getAllUsers();
+
+                if( listaUsu.Exists(l=> l.user_id == id))
+                {
+                    string sqlUser = $@" DELETE FROM users WHERE user_id = '{id}'";
+
+                    var connection = getConnection();
+
+                    using (connection)
+                    {
+                        connection.Open();
+
+                        using (var transaction = connection.BeginTransaction())
+                        {
+                            connection.Execute(sqlUser, transaction);
+                            transaction.Commit();
+                        }
+                    }
+
+                    retorno = true;
+                }
+                else
+                {
+                    Notificar("Usuário informado não foi encontrado.");
+                    retorno = false;
+                }          
+            }
+            catch (Exception ex)
+            {
+                Notificar(ex.Message);
+                retorno = false;
+            }
+            return retorno;
+        }
+
+        internal async Task<List<User>> getAllUsers()
         {
             List<User> users = null;
             try
             {
                 string sqlUser = $@" SELECT user_id, user_nome, user_email FROM users ";
                 var connection = getConnection();
-
 
                 using (connection)
                 {
@@ -86,7 +125,7 @@ namespace netbullAPI.Security.Persistencia
             }
         }
 
-        internal User RecuperarUsuario(User usu)
+        internal async Task<User> RecuperarUsuario(User usu)
         {
             try
             {

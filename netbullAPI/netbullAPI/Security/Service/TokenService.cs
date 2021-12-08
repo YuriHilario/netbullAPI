@@ -15,7 +15,7 @@ namespace netbullAPI.Security.Service
             _configuration = configuration;
         }
 
-        public string GenerateToken(User user)
+        public async Task<string> GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetSection("TokenConfigurations").GetSection("JwtKey").Value);
