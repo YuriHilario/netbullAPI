@@ -15,6 +15,7 @@ namespace netbullAPI.Controllers
     {
         public EnderecoController(INotificador notificador) : base(notificador)
         {
+            neEndereco = new NE_Endereco(EnderecoContexto);
         }
 
         /// <summary>
@@ -145,7 +146,7 @@ namespace netbullAPI.Controllers
         {
             if (idEndereco == 0)
                     return NotFound(new { mensagem = "O idEndereço não foi informado." , sucesso = false});
-
+            
                 var resp = await neEndereco.ApagaEndereco(idEndereco);
                 if (resp)
                     return Ok(
