@@ -240,7 +240,6 @@ namespace netbullAPI.Security.Persistencia
                 Notificar("Não foi possível recuperar usuario.");
                 return usu;
             }
-
         }
     }
 }

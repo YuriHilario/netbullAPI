@@ -22,7 +22,6 @@ namespace netbullAPI.Security.Negocio
 
         internal async Task<User> CadastroDeUser(User usu)
         {
-            //UserDAO _userDAO = new UserDAO();
             usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
 
             usu = await _userDao.CadastroDeUser(usu);
