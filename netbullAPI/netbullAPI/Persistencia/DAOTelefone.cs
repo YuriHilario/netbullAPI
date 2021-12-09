@@ -38,11 +38,11 @@ namespace netbullAPI.Persistencia
             }
         }
 
-        public Telefone AdicionaTelefone(Telefone telefone)
+        public Telefone AdicionaTelefone(RegistrarTelefoneViewModel registrarTelefoneViewModel)
         {
             try
             {
-                var pessoa = _netbullDBContext.Pessoas.Where(p => p.pessoa_id == telefone.telefone_idPessoa).FirstOrDefault();
+                var pessoa = _netbullDBContext.Pessoas.Where(p => p.pessoa_id == registrarTelefoneViewModel.telefone_idPessoa).FirstOrDefault();
                 //Verifica se o cliente informado ja existe no banco
                 if (pessoa == null)
                 {
@@ -54,8 +54,8 @@ namespace netbullAPI.Persistencia
                 {
                     //Criado id dessa forma pois não tem autoincremento implementado
                     telefone_id = _netbullDBContext.Telefones.Max(m => m.telefone_id) + 1,
-                    telefone_idPessoa = telefone.telefone_idPessoa,
-                    telefone_numero = telefone.telefone_numero
+                    telefone_idPessoa = registrarTelefoneViewModel.telefone_idPessoa,
+                    telefone_numero = registrarTelefoneViewModel.telefone_numero
                 };
 
                 _netbullDBContext.Add(novoTelefone);

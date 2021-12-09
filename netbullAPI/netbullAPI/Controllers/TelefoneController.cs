@@ -27,7 +27,7 @@ namespace netbullAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public IActionResult GetPorId([FromServices] NE_Telefone ne_Telefone, int id)
+        public async Task<IActionResult> GetPorId([FromServices] NE_Telefone ne_Telefone, int id)
         {
             try
             {
@@ -66,11 +66,11 @@ namespace netbullAPI.Controllers
         /// <param name="telefone"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Post([FromServices] NE_Telefone ne_Telefone, [FromBody] Telefone telefone)
+        public async Task<IActionResult> Post([FromServices] NE_Telefone ne_Telefone, [FromBody] RegistrarTelefoneViewModel registrarTelefoneViewModel)
         {
             try
             {
-                var nvTelefone = ne_Telefone.AdicionaTelefone(telefone);
+                var nvTelefone = ne_Telefone.AdicionaTelefone(registrarTelefoneViewModel);
                 if (nvTelefone != null)
                     return Created($"/{nvTelefone.telefone_id}", nvTelefone);
                 else
@@ -99,7 +99,7 @@ namespace netbullAPI.Controllers
         /// <param name="telefone"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult Put([FromServices] NE_Telefone ne_Telefone,[FromBody] Telefone telefone)
+        public async Task<IActionResult> Put([FromServices] NE_Telefone ne_Telefone,[FromBody] Telefone telefone)
         {
             try
             {
@@ -138,7 +138,7 @@ namespace netbullAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromServices] NE_Telefone ne_Telefone,int id)
+        public async Task<IActionResult> Delete([FromServices] NE_Telefone ne_Telefone,int id)
         {
             try
             {
