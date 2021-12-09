@@ -17,7 +17,10 @@ namespace netbullAPI.Controllers
         {
         }
 
-        //GET: api/<EnderecoController>
+        /// <summary>
+        /// Busca lista de endereços do cliente informado.
+        /// </summary>
+        /// <param name="idPessoa">Indica qual cliente está sendo consultado.</param>
         [Authorize]
         [HttpGet("{idPessoa}")]
         public async Task<IActionResult> /*IEnumerable<Endereco>*/ Get([FromServices] NE_Endereco neEndereco, int idPessoa)
@@ -30,6 +33,10 @@ namespace netbullAPI.Controllers
             return Created("Lista obtida", listaEnderecos);
         }
 
+        /// <summary>
+        /// Inclusão de novo endereço do cliente.
+        /// <param name="endereco"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         // POST api/<EnderecoController>
@@ -59,6 +66,10 @@ namespace netbullAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Atualização de um endereço do cliente.
+        /// <param name="endereco"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPut]
         // PUT api/<EnderecoController>
@@ -87,6 +98,11 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualização de um endereço do cliente (PATCH).
+        /// <param name="idEndereco"></param>
+        /// <param name="endereco"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("{idEndereco}")]
         // PATCH api/<EnderecoController>
@@ -102,7 +118,7 @@ namespace netbullAPI.Controllers
 
                 return Ok(await neEndereco.AtualizaEnderecoPatch(idEndereco, endereco) 
                     ? new { mensagem = "Atualizado com sucesso.", sucesso = true}
-                    : new { mensagem = "Problema ao inserir.", sucesso = false });
+                    : new { mensagem = "Problema ao atualizar.", sucesso = false });
             }
             catch (Exception ex)
             {
@@ -115,6 +131,10 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove um endereço do cliente.
+        /// <param name="idEndereco"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpDelete("{idEndereco}")]
         // DELETE api/<EnderecoController>
