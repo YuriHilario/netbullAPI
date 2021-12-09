@@ -9,6 +9,8 @@ using netbullAPI.Persistencia;
 using netbullAPI.Security.Negocio;
 using netbullAPI.Security.Persistencia;
 using netbullAPI.Security.Service;
+using netbullAPI.Util;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +20,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(s =>
 {
-    s.SwaggerDoc("v1", new OpenApiInfo { Title = "NetBullAPI", Version = "v1" });
+    s.OperationFilter<AuthResponsesOperationFilter>();
+
+    s.SwaggerDoc("v1", new OpenApiInfo { 
+        Title = "NetBullAPI", 
+        Version = "v1",
+        Description = "ASP.NET Core Web API para controle de pedidos e clientes",
+        TermsOfService = new Uri("https://example.com/terms")
+    });
+
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    s.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
     s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
@@ -31,20 +43,6 @@ builder.Services.AddSwaggerGen(s =>
                         Digite 'Bearer' [espaço] e então seu token na entrada de texto abaixo.
                         Exemplo:'Bearer 12345abcdef' "
     });
-    s.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                          new OpenApiSecurityScheme
-                          {
-                              Reference = new OpenApiReference
-                              {
-                                  Type = ReferenceType.SecurityScheme,
-                                  Id = "Bearer"
-                              }
-                          },
-                         new string[] {}
-                    }
-                });
 });
 
 builder.Services.AddDbContext<netbullDBContext>(opts =>
@@ -92,8 +90,6 @@ app.UseCors(builder => builder
 .AllowAnyHeader()
 );
 
-
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -103,15 +99,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("MyPolicy");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapControllers().RequireCors("MyPolicy");
-//});
 
 app.MapControllers();
 
