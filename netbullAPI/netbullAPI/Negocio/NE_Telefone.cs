@@ -17,9 +17,9 @@ namespace netbullAPI.Negocio
             return _daoTelefone.BuscaTelefoneCliente(id);            
         }
 
-        public Telefone AdicionaTelefone(Telefone telefone)
+        public Telefone AdicionaTelefone(RegistrarTelefoneViewModel registrarTelefoneViewModel)
         {
-            return _daoTelefone.AdicionaTelefone(telefone);
+            return _daoTelefone.AdicionaTelefone(registrarTelefoneViewModel);
         }
 
         public bool AtualizaTelefone(Telefone telefone)
