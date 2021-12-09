@@ -22,7 +22,6 @@ namespace netbullAPI.Security.Negocio
 
         internal async Task<User> CadastroDeUser(User usu)
         {
-            //UserDAO _userDAO = new UserDAO();
             usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
 
             usu = await _userDao.CadastroDeUser(usu);
@@ -40,24 +39,20 @@ namespace netbullAPI.Security.Negocio
         {
             usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
 
-            var usuConsulta =  await _userDao.RecuperarUsuario(usu);
-            if(usuConsulta != null)
-            {
-                if (usuConsulta.user_accessKey == usu.user_accessKey)
-                {
-                    return usuConsulta;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            return null;
+            var verificado = await _userDao.VerificarUsuarioSenha(usu);
+            
+            return verificado;
         }
 
         internal async Task<bool> DeleteUser(int id)
         {
             return await _userDao.DeleteUser(id);
+        }
+
+        internal async Task<bool> alterarSenha(User usu)
+        {
+            usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
+            return await _userDao.alterarSenha(usu);
         }
     }
 }
