@@ -15,12 +15,13 @@ namespace netbullAPI.Security.Persistencia
 
         internal async Task<User> CadastroDeUser(User usu)
         {
-            var usuRecuperado = await RecuperarUsuario(usu);
-
-            if (usuRecuperado == null)
+            try
             {
-                try
+                var usuRecuperado = await RecuperarUsuario(usu);
+
+                if (usuRecuperado == null)
                 {
+
                     string sqlUser = $@" INSERT INTO users ( user_nome, user_email,user_accesskey)
                                             VALUES( '{usu.user_nome}', '{usu.user_email}', '{usu.user_accessKey}')";
 
@@ -42,18 +43,95 @@ namespace netbullAPI.Security.Persistencia
 
                     return usu;
                 }
-                catch (Exception ex)
+
+                else
                 {
-                    Notificar(ex.Message);
+                    Notificar("Usuário já cadastrado.");
+                    usu.user_id = 0;
                     return usu;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Notificar("Usuário já cadastrado.");
-                usu.user_id = 0;
+                Notificar(ex.Message);
                 return usu;
             }
+        }
+
+        internal async Task<User> VerificarUsuarioSenha(User usu)
+        {
+            try
+            {
+                var usuConsulta = await RecuperarUsuario(usu);
+                if (usuConsulta != null)
+                {
+                    if (usuConsulta.user_accessKey == usu.user_accessKey)
+                    {
+                        return usuConsulta;
+                    }
+                    else
+                    {
+                        usu.user_id = 0;
+                        Notificar("Senha incorreta");
+                        return usu;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Não foi possível verificar senha do usuário.");
+                return usu;
+            }
+        }
+
+        internal async Task<bool> alterarSenha(User usu)
+        {
+            var retorno = false;
+            try
+            {
+                var usuario = (await getAllUsers()).Where(u => u.user_nome == usu.user_nome).FirstOrDefault();
+
+                if (usuario != null)
+                {
+                    if (usuario.user_email.Equals(usu.user_email))
+                    {
+                        string sqlUser = $@" UPDATE users SET user_accesskey = '{usu.user_accessKey}' WHERE user_id = '{usuario.user_id}'";
+
+                        var connection = getConnection();
+
+                        using (connection)
+                        {
+                            connection.Open();
+
+                            using (var transaction = connection.BeginTransaction())
+                            {
+                                connection.Execute(sqlUser, transaction);
+                                transaction.Commit();
+                            }
+                        }
+                        retorno = true;
+                    }
+                    else
+                    {
+                        Notificar("Endereço de e-mail não pertence a esse usuário.");
+                        retorno = false;
+                    }
+                }
+                else
+                {
+                    Notificar("Usuário informado não foi encontrado.");
+                    retorno = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Notificar("Nao foi possível alterar a senha do usuário.");
+            }
+            return retorno;
         }
 
         internal async Task<bool> DeleteUser(int id)
@@ -63,7 +141,7 @@ namespace netbullAPI.Security.Persistencia
             {
                 var listaUsu = await getAllUsers();
 
-                if( listaUsu.Exists(l=> l.user_id == id))
+                if (listaUsu.Exists(l => l.user_id == id))
                 {
                     string sqlUser = $@" DELETE FROM users WHERE user_id = '{id}'";
 
@@ -86,12 +164,11 @@ namespace netbullAPI.Security.Persistencia
                 {
                     Notificar("Usuário informado não foi encontrado.");
                     retorno = false;
-                }          
+                }
             }
             catch (Exception ex)
             {
-                Notificar(ex.Message);
-                retorno = false;
+                Notificar("Não foi possível deletar usuario.");
             }
             return retorno;
         }
@@ -116,11 +193,16 @@ namespace netbullAPI.Security.Persistencia
                     }
                 }
 
+                if (users == null)
+                {
+                    Notificar("Usuários não encontrados.");
+                }
+
                 return users;
             }
             catch (Exception ex)
             {
-                Notificar(ex.Message);
+                Notificar("Não foi possível encontrar usuarios.");
                 return users;
             }
         }
@@ -146,11 +228,16 @@ namespace netbullAPI.Security.Persistencia
                     }
                 }
 
+                if (user == null)
+                {
+                    Notificar("Usuário não encontrado.");
+                }
+
                 return user;
             }
             catch (Exception ex)
             {
-                Notificar(ex.Message);
+                Notificar("Não foi possível recuperar usuario.");
                 return usu;
             }
 
