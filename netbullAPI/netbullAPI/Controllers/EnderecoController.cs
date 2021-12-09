@@ -21,6 +21,7 @@ namespace netbullAPI.Controllers
         /// Busca lista de endereços do cliente informado.
         /// </summary>
         /// <param name="idPessoa">Indica qual cliente está sendo consultado.</param>
+
         [Authorize]
         [HttpGet("{idPessoa}")]
         public async Task<IActionResult> /*IEnumerable<Endereco>*/ Get([FromServices] NE_Endereco neEndereco, int idPessoa)
