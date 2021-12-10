@@ -8,36 +8,30 @@ using System.Threading.Tasks;
 using Xunit;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace netbullAPI_Testes
+namespace netbullAPI_Testes.DAO
 {
     [TestClass]
-    public class User_Controller_Testes
+    public class User_DAO_Testes
     {
         private readonly INotificador _notificador;
-        private UserDAO _userDao;
-
-        protected NE_User _neUser;
-        protected IConfiguration _configuration;
-
-        public User_Controller_Testes(INotificador notificador, IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        public User_DAO_Testes(INotificador notificador, IConfiguration configuration)
         {
             _notificador = notificador;
-            _configuration = configuration;
-            _userDao = new UserDAO(notificador,_configuration);
-            _neUser = new NE_User(_userDao);
+            _configuration = configuration; 
         }
 
         [TestMethod]
         [TestCategory("Controller")]
         public async Task getAllUsers()
         {
-            ContaController _controller = new ContaController(_notificador);
+            UserDAO _dao = new UserDAO(_notificador, _configuration);
 
             // Act
-            var okResult = _controller.getAllUsers(_neUser);
+            //var okResult = _dao.();
             // Assert
 
-            Assert.AreNotEqual(0, okResult.Count);
+            //Assert.AreNotEqual(0, okResult.Count);
         }
     }
 }
