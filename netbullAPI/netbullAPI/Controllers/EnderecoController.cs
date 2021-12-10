@@ -38,6 +38,7 @@ namespace netbullAPI.Controllers
         /// Inclusão de novo endereço do cliente.
         /// </summary>
         /// <param name="endereco"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         // POST api/<EnderecoController>
@@ -71,6 +72,7 @@ namespace netbullAPI.Controllers
         /// Atualização de um endereço do cliente.
         /// </summary>
         /// <param name="endereco"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPut]
         // PUT api/<EnderecoController>
@@ -104,6 +106,7 @@ namespace netbullAPI.Controllers
         /// </summary>
         /// <param name="idEndereco"></param>
         /// <param name="endereco"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("{idEndereco}")]
         // PATCH api/<EnderecoController>
@@ -136,6 +139,7 @@ namespace netbullAPI.Controllers
         /// Remove um endereço do cliente.
         /// </summary>
         /// <param name="idEndereco"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpDelete("{idEndereco}")]
         // DELETE api/<EnderecoController>
