@@ -26,4 +26,8 @@
     <ProjectReference Include="..\netbullAPI\netbullAPI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NE\" />
+  </ItemGroup>
+
 </Project>

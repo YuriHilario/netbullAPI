@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using netbullAPI.Interfaces;
 using netbullAPI.Security.Models;
+using netbullAPI.Security.ViewModels;
 using netbullAPI.Util;
 
 namespace netbullAPI.Security.Persistencia
@@ -173,9 +174,9 @@ namespace netbullAPI.Security.Persistencia
             return retorno;
         }
 
-        internal async Task<List<User>> getAllUsers()
+        internal async Task<List<RetornarUserViewModel>> getAllUsers()
         {
-            List<User> users = null;
+            List<RetornarUserViewModel> users = null;
             try
             {
                 string sqlUser = $@" SELECT user_id, user_nome, user_email FROM users ";
@@ -188,7 +189,7 @@ namespace netbullAPI.Security.Persistencia
 
                     using (var transaction = connection.BeginTransaction())
                     {
-                        users = connection.Query<User>(sqlUser, transaction).ToList();
+                        users = connection.Query<RetornarUserViewModel>(sqlUser, transaction).ToList();
                         transaction.Commit();
                     }
                 }

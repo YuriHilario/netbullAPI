@@ -1,6 +1,7 @@
 ﻿using netbullAPI.Interfaces;
 using netbullAPI.Security.Models;
 using netbullAPI.Security.Persistencia;
+using netbullAPI.Security.ViewModels;
 using netbullAPI.Util;
 using System.Data;
 
@@ -15,7 +16,7 @@ namespace netbullAPI.Security.Negocio
             _userDao = userDao;
         }
 
-        public async Task <List<User>> getAllUsers()
+        public async Task <List<RetornarUserViewModel>> getAllUsers()
         {
             return await _userDao.getAllUsers();
         }
