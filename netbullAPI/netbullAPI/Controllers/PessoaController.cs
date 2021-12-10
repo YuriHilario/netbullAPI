@@ -33,7 +33,5 @@ namespace netbullAPI.Controllers
         {
             return NE_Aluno.BuscaPessoaPorId(id);
         }
-    };
-
-     
+    };     
 }
