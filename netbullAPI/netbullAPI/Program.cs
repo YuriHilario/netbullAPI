@@ -81,6 +81,8 @@ builder.Services.AddTransient<UserDAO>();
 builder.Services.AddTransient<DAO_Endereco>();
 builder.Services.AddTransient<DAOTelefone>();
 builder.Services.AddTransient<TokenService>(); // Por método
+builder.Services.AddScoped<NE_Pessoa>();
+builder.Services.AddScoped<DAO_Pessoa>();
 
 var app = builder.Build();
 
