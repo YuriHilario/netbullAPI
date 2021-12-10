@@ -1,10 +1,7 @@
-
-using DAO;
 using netbullAPI.Entidade;
 using netbullAPI.Persistencia;
-using netbullAPI.Repository;
 
-namespace Negocio
+namespace netbullAPI.Negocio
 {
     public class NE_Endereco
     {

@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using netbullAPI.Interfaces;
-using netbullAPI.Negocio;
 using netbullAPI.Security.Models;
+using netbullAPI.Util;
 
 namespace netbullAPI.Security.Persistencia
 {

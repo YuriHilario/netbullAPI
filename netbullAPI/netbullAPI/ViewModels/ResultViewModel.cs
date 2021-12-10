@@ -1,4 +1,4 @@
-﻿namespace ApiComEntity.ViewModels
+﻿namespace netbullAPI.ViewModels
 {
     public class ResultViewModel<T>
     {
