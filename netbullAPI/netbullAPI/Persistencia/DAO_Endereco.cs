@@ -1,13 +1,9 @@
-
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
-using netbullAPI.Negocio;
-using netbullAPI.Persistencia;
-using netbullAPI.Repository;
+using netbullAPI.Util;
 
-namespace DAO
+namespace netbullAPI.Persistencia
 {
     public class DAO_Endereco : DaoBase
     {

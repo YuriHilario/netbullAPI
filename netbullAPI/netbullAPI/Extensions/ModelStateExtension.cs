@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace ApiComEntity.Extensions
+namespace netbullAPI.Extensions
 {
     public static class ModelStateExtension
     {

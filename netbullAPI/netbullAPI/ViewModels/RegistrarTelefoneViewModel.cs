@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace netbullAPI.Entidade
+namespace netbullAPI.ViewModels
 {
     public class RegistrarTelefoneViewModel
     {

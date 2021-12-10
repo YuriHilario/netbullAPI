@@ -2,7 +2,7 @@
 using netbullAPI.Util;
 using Npgsql;
 
-namespace netbullAPI.Negocio
+namespace netbullAPI.Util
 {
     public class NEBase
     {

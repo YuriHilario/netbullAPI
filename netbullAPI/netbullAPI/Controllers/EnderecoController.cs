@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Negocio;
 using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
-using netbullAPI.Persistencia;
+using netbullAPI.Negocio;
 using netbullAPI.Util;
 using System.Net;
 
