@@ -15,7 +15,6 @@ namespace netbullAPI.Controllers
     {
         public EnderecoController(INotificador notificador) : base(notificador)
         {
-            neEndereco = new NE_Endereco(EnderecoContexto);
         }
 
         /// <summary>
@@ -37,8 +36,8 @@ namespace netbullAPI.Controllers
 
         /// <summary>
         /// Inclusão de novo endereço do cliente.
+        /// </summary>
         /// <param name="endereco"></param>
-        /// <returns></returns>
         [Authorize]
         [HttpPost]
         // POST api/<EnderecoController>
@@ -70,8 +69,8 @@ namespace netbullAPI.Controllers
 
         /// <summary>
         /// Atualização de um endereço do cliente.
+        /// </summary>
         /// <param name="endereco"></param>
-        /// <returns></returns>
         [Authorize]
         [HttpPut]
         // PUT api/<EnderecoController>
@@ -102,9 +101,9 @@ namespace netbullAPI.Controllers
 
         /// <summary>
         /// Atualização de um endereço do cliente (PATCH).
+        /// </summary>
         /// <param name="idEndereco"></param>
         /// <param name="endereco"></param>
-        /// <returns></returns>
         [Authorize]
         [HttpPatch("{idEndereco}")]
         // PATCH api/<EnderecoController>
@@ -135,8 +134,8 @@ namespace netbullAPI.Controllers
 
         /// <summary>
         /// Remove um endereço do cliente.
+        /// </summary>
         /// <param name="idEndereco"></param>
-        /// <returns></returns>
         [Authorize]
         [HttpDelete("{idEndereco}")]
         // DELETE api/<EnderecoController>
@@ -146,7 +145,7 @@ namespace netbullAPI.Controllers
         {
             if (idEndereco == 0)
                     return NotFound(new { mensagem = "O idEndereço não foi informado." , sucesso = false});
-            
+
                 var resp = await neEndereco.ApagaEndereco(idEndereco);
                 if (resp)
                     return Ok(

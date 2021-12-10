@@ -104,9 +104,9 @@ namespace DAO
 
                 using (_netbullDBContext)
                 {
-                    enderecoExistente.endereco_logradouro = endereco.endereco_logradouro == null || endereco.endereco_logradouro == "string" ? enderecoExistente.endereco_logradouro : endereco.endereco_logradouro;
+                    enderecoExistente.endereco_logradouro = endereco.endereco_logradouro == "" || endereco.endereco_logradouro == "string" ? enderecoExistente.endereco_logradouro : endereco.endereco_logradouro;
                     enderecoExistente.endereco_numero = (endereco.endereco_numero == 0 ? enderecoExistente.endereco_numero : endereco.endereco_numero);
-                    enderecoExistente.endereco_complemento = (endereco.endereco_complemento == null || endereco.endereco_complemento == "string" ? enderecoExistente.endereco_complemento : endereco.endereco_complemento);
+                    enderecoExistente.endereco_complemento = (endereco.endereco_complemento == "" || endereco.endereco_complemento == "string" ? enderecoExistente.endereco_complemento : endereco.endereco_complemento);
                     await _netbullDBContext.SaveChangesAsync();
                     return true;
                 }
