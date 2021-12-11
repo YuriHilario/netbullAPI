@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
 using netbullAPI.Util;
+using netbullAPI.ViewModels;
 
 namespace netbullAPI.Persistencia
 {
@@ -18,15 +19,15 @@ namespace netbullAPI.Persistencia
             return await Task.FromResult(await _netbullDBContext.Enderecos.Where(x => x.endereco_idpessoa == idPessoa).ToListAsync());
         }
 
-        public async Task<bool> CadastrarNovoEndereco(Endereco novoEndereco)
+        public async Task<bool> CadastrarNovoEndereco(RegistrarEnderecoViewModel novoEnderecoViewModel)
         {
             try
             {
                 int encontrouEndereco = (from end in _netbullDBContext.Enderecos
-                                         where end.endereco_idpessoa == novoEndereco.endereco_idpessoa
-                                         && end.endereco_logradouro == novoEndereco.endereco_logradouro
-                                         && end.endereco_numero == novoEndereco.endereco_numero
-                                         && end.endereco_complemento == novoEndereco.endereco_complemento
+                                         where end.endereco_idpessoa == novoEnderecoViewModel.endereco_idpessoa
+                                         && end.endereco_logradouro == novoEnderecoViewModel.endereco_logradouro
+                                         && end.endereco_numero == novoEnderecoViewModel.endereco_numero
+                                         && end.endereco_complemento == novoEnderecoViewModel.endereco_complemento
                                          select end).Count();
 
                 if (encontrouEndereco != 0)
@@ -36,8 +37,15 @@ namespace netbullAPI.Persistencia
                 }
                 using (_netbullDBContext)
                 {
+                    Endereco novoEndereco = new Endereco()
+                    {
+                        endereco_logradouro = novoEnderecoViewModel.endereco_logradouro,
+                        endereco_numero = novoEnderecoViewModel.endereco_numero,
+                        endereco_complemento = novoEnderecoViewModel.endereco_complemento,
+                        endereco_idpessoa = novoEnderecoViewModel.endereco_idpessoa
+                    };
                     _netbullDBContext.Enderecos.Add(novoEndereco);
-                    await _netbullDBContext.SaveChangesAsync(); 
+                    await _netbullDBContext.SaveChangesAsync();
                     return true;
                 }
             }
@@ -47,24 +55,13 @@ namespace netbullAPI.Persistencia
             }
         }
 
-        public async Task<bool> AtualizaEndereco(Endereco attEndereco)
+        public async Task<bool> AtualizaEndereco(AlterarEnderecoViewModel attEndereco, int idEndereco)
         {
             try
             {
-                //tem uma shadow index fk na entidade Pessoa que impede de fazer consulta nela
-                //if(attEndereco.endereco_idpessoa == 0)
-                //{
-                //    var pessoa = _netbullDBContext.Pessoas.FirstOrDefault();
-                //    if (pessoa == null)
-                //    {
-                //        Notificar("Cliente informado inexistente.");
-                //        return attEndereco;
-                //    }
-                //} 
-
                 //var enderecoExistente = _netbullDBContext.Enderecos.Where(x => x.endereco_id == attEndereco.endereco_id).FirstOrDefault();
                 var enderecoExistente = (from e in _netbullDBContext.Enderecos
-                                         where e.endereco_id == attEndereco.endereco_id
+                                         where e.endereco_id == idEndereco
                                          select e).FirstOrDefault();
                 if (enderecoExistente != null)
                 {
@@ -85,7 +82,7 @@ namespace netbullAPI.Persistencia
             }
         }
 
-        public async Task<bool> AtualizaEnderecoPatch(int idEndereco, Endereco endereco)
+        public async Task<bool> AtualizaEnderecoPatch(int idEndereco, AlterarEnderecoViewModel endereco)
         {
             try
             {
@@ -111,60 +108,6 @@ namespace netbullAPI.Persistencia
             catch (Exception ex)
             {
                 throw new NotImplementedException();
-            }
-        }
-
-        public async Task<bool> AtualizaNumero(int idEndereco, Endereco endereco)
-        {
-            try
-            {
-                var enderecoExistente = (from e in _netbullDBContext.Enderecos
-                                         where e.endereco_id == idEndereco
-                                         select e).FirstOrDefault();
-                if (enderecoExistente == null)
-                {
-                    Notificar("Endereço informado não existe.");
-                    return false;
-                }
-
-                using (_netbullDBContext)
-                {
-                    enderecoExistente.endereco_numero = endereco.endereco_numero;
-                    await _netbullDBContext.SaveChangesAsync();
-                    return true;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async Task<bool> AtualizaComplemento(int idEndereco, Endereco endereco)
-        {
-            try
-            {
-                var enderecoExistente = (from e in _netbullDBContext.Enderecos
-                                         where e.endereco_id == idEndereco
-                                         select e).FirstOrDefault();
-                if (enderecoExistente == null)
-                {
-                    Notificar("Endereço informado não existe.");
-                    return false;
-                }
-
-                using (_netbullDBContext)
-                {
-                    enderecoExistente.endereco_complemento = endereco.endereco_complemento;
-                    await _netbullDBContext.SaveChangesAsync();
-                    return true;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
         }
 

@@ -1,5 +1,6 @@
 using netbullAPI.Entidade;
 using netbullAPI.Persistencia;
+using netbullAPI.ViewModels;
 
 namespace netbullAPI.Negocio
 {
@@ -16,18 +17,18 @@ namespace netbullAPI.Negocio
             return await _daoEndereco.BuscaEnderecosPessoa(idPessoa);
         }
 
-        public async Task<bool> CadastraNovoEndereco(Endereco endereco)
+        public async Task<bool> CadastraNovoEndereco(RegistrarEnderecoViewModel endereco)
         {
             return await _daoEndereco.CadastrarNovoEndereco(endereco);
-        }     
-        public async Task<bool> AtualizaEndereco(Endereco endereco)
+        }
+        public async Task<bool> AtualizaEndereco(AlterarEnderecoViewModel endereco, int idEndereco)
         {
-           return await _daoEndereco.AtualizaEndereco(endereco);
+            return await _daoEndereco.AtualizaEndereco(endereco, idEndereco);
         }
 
-        public async Task<bool> AtualizaEnderecoPatch(int idEndereco, Endereco logradouro)
+        public async Task<bool> AtualizaEnderecoPatch(int idEndereco, AlterarEnderecoViewModel logradouro)
         {
-            return await _daoEndereco.AtualizaEnderecoPatch(idEndereco, logradouro); 
+            return await _daoEndereco.AtualizaEnderecoPatch(idEndereco, logradouro);
         }
 
         public async Task<bool> ApagaEndereco(int idEndereco)
