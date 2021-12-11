@@ -24,7 +24,7 @@ namespace netbullAPI_Testes
     {
         [Fact]
         [TestCategory("Controller")]
-        public async Task getAllUsers()
+        public async Task TestarLoginInvalidoAsync()
         {
             var application = new WebApplicationFactory<Program>()
                .WithWebHostBuilder(builder => { });
@@ -50,12 +50,12 @@ namespace netbullAPI_Testes
                 var response = await _Client.SendAsync(request).ConfigureAwait(false);
                 var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                //if (response.StatusCode != HttpStatusCode.OK)
-                //{
-                //    Assert.Fail();
-                //}
+                if (response.StatusCode != HttpStatusCode.NotFound)
+                {
+                    Assert.Fail();
+                }
                 //LoginUserViewModel usuario = JsonConvert.DeserializeObject<LoginUserViewModel>(resultContent);
-                Assert.AreEqual(response.StatusCode != HttpStatusCode.OK, response.StatusCode);
+                Assert.AreEqual("", responseBody); // TEM RETORNAR TOKEN
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace netbullAPI_Testes
 
         [Fact]
         [TestCategory("Controller")]
-        public async Task getAllUsersAsync()
+        public async Task TesteGetAllUserValidoAsync()
         {
             var application = new WebApplicationFactory<Program>()
                 .WithWebHostBuilder(builder =>{});
