@@ -11,7 +11,5 @@ namespace netbullAPI.Entidade
         public int pessoa_documento { get; set; }
         public string pessoa_nome { get; set; }
         public EnumTipoPessoa pessoa_tipopessoa { get; set; }
-
-        public Endereco? endereco { get; set; }
     }
 }
