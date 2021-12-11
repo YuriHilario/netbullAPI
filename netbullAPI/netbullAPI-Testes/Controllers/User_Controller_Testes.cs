@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using netbullAPI.Security.ViewModels;
 using netbullAPI_Testes.Models;
+using netbullAPI_Testes.Uitl;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -28,35 +29,23 @@ namespace netbullAPI_Testes
 
                 var _Client = application.CreateClient();
 
+                RequestLoginTeste requestLoginTeste = new RequestLoginTeste();
+
                 LoginUserViewModel usu = new LoginUserViewModel()
                 {
                     user_nome = "cassiano",
                     user_accessKey = "123456"
                 };
 
-                var jsonCorpo = JsonConvert.SerializeObject(usu);
+                var RetornoLogin = await requestLoginTeste.RetornaUsuLoginAsync(usu);
 
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://localhost:7035/api/Conta/login"),
-                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
-                };
-
-                //_Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token");
-
-                var response = await _Client.SendAsync(request).ConfigureAwait(false);
-                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-                var retornoLogin = JsonConvert.DeserializeObject<RetornoLogin>(responseBody);
-
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (RetornoLogin.status != HttpStatusCode.OK)
                 {
                     Assert.Fail();
                 }
-                var teste = !string.IsNullOrEmpty(retornoLogin.Token);
+                var teste = !string.IsNullOrEmpty(RetornoLogin.Token);
 
-                Assert.AreEqual(teste, true); 
+                Assert.AreEqual(teste, true);
             }
             catch (Exception ex)
             {
@@ -71,37 +60,25 @@ namespace netbullAPI_Testes
             try
             {
                 var application = new WebApplicationFactory<Program>()
-              .WithWebHostBuilder(builder => { });
+                .WithWebHostBuilder(builder => { });
 
                 var _Client = application.CreateClient();
 
+                RequestLoginTeste requestLoginTeste = new RequestLoginTeste();
+
                 LoginUserViewModel usu = new LoginUserViewModel()
                 {
-                    user_nome = "Cacaca",
+                    user_nome = "cassiano",
                     user_accessKey = "123456"
                 };
 
-                var jsonCorpo = JsonConvert.SerializeObject(usu);
+                var RetornoLogin = await requestLoginTeste.RetornaUsuLoginAsync(usu);
 
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://localhost:7035/api/Conta/login"),
-                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
-                };
-
-                //_Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token");
-
-                var response = await _Client.SendAsync(request).ConfigureAwait(false);
-                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-                var retornoLogin = JsonConvert.DeserializeObject<RetornoLogin>(responseBody);
-
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (RetornoLogin.status != HttpStatusCode.OK)
                 {
                     Assert.Fail();
                 }
-                var teste = string.IsNullOrEmpty(retornoLogin.Token);
+                var teste = string.IsNullOrEmpty(RetornoLogin.Token);
 
                 Assert.AreEqual(teste, true);
             }
