@@ -70,7 +70,6 @@ namespace netbullAPI_Testes
             var application = new WebApplicationFactory<Program>()
                 .WithWebHostBuilder(builder =>{});
 
-
             var _Client = application.CreateClient();
 
             var result = _Client.GetAsync("/Conta").GetAwaiter().GetResult();
