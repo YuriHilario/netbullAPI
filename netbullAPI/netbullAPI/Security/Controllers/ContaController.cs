@@ -13,7 +13,7 @@ using System.Net;
 namespace netbullAPI.Security.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ContaController : BaseController
     {
         public ContaController(INotificador notificador) : base(notificador) { }
@@ -24,12 +24,12 @@ namespace netbullAPI.Security.Controllers
        /// <param name="neUser"></param>
        /// <returns></returns>
         [Authorize]
-        [HttpGet("")]
-        public async Task<IActionResult> getAllUsers([FromServices] NE_User neUser)
+        [HttpGet]
+        public async Task<IActionResult> getAllUsersAsync([FromServices] NE_User neUser)
         {
             try
             {
-                var listaUsu = await neUser.getAllUsers();
+                var listaUsu = await neUser.getAllUsersAsync();
                 if (listaUsu == null)
                 {
                     return NotFound(
@@ -58,8 +58,8 @@ namespace netbullAPI.Security.Controllers
         /// <param name="viewModel"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("v1/registrar")]
-        public async Task<IActionResult> Register([FromServices] NE_User neUser, 
+        [HttpPost("registrar")]
+        public async Task<IActionResult> RegisterAsync([FromServices] NE_User neUser, 
                                       [FromBody] RegistrarUserViewModel viewModel)
         {
             if (!ModelState.IsValid)
@@ -75,7 +75,7 @@ namespace netbullAPI.Security.Controllers
                     user_accessKey = viewModel.user_accessKey
                 };
 
-                usu = await neUser.CadastroDeUser(usu);
+                usu = await neUser.CadastroDeUserAsync(usu);
                 if (usu.user_id == 0)
                 {
                     return UnprocessableEntity(
@@ -106,8 +106,8 @@ namespace netbullAPI.Security.Controllers
         /// <param name="viewModel"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("v1/login")]
-        public async Task<IActionResult> Login([FromServices] TokenService _tokenService,
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync([FromServices] TokenService _tokenService,
                                   [FromServices] NE_User neUsuario,
                                   [FromBody] LoginUserViewModel viewModel)
         {
@@ -124,7 +124,7 @@ namespace netbullAPI.Security.Controllers
                     user_accessKey = viewModel.user_accessKey
                 };
 
-                var usuConsulta = await neUsuario.VerificarUsuarioSenha(usu);
+                var usuConsulta = await neUsuario.VerificarUsuarioSenhaAsync(usu);
 
                 if (usuConsulta != null)
                 {
@@ -172,12 +172,12 @@ namespace netbullAPI.Security.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpDelete("v1/delete/{id}")]
-        public async Task<IActionResult> DeleteUser([FromServices] NE_User neUser, int id)
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteUserAsync([FromServices] NE_User neUser, int id)
         {
             try
             {
-                var sucess = await neUser.DeleteUser(id);
+                var sucess = await neUser.DeleteUserAsync(id);
 
                 if (!sucess)
                 {
@@ -207,8 +207,8 @@ namespace netbullAPI.Security.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPatch("v1/alterarSenha")]
-        public async Task<IActionResult> AlterarSenha([FromServices] NE_User neUser, [FromBody] AlterarUserViewModel viewModel)
+        [HttpPatch("alterarSenha")]
+        public async Task<IActionResult> AlterarSenhaAsync([FromServices] NE_User neUser, [FromBody] AlterarUserViewModel viewModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new ResultViewModel<User>(ModelState.RecuperarErros()));
@@ -224,7 +224,7 @@ namespace netbullAPI.Security.Controllers
                 };
 
                 
-                var sucess = await neUser.alterarSenha(usu);
+                var sucess = await neUser.alterarSenhaAsync(usu);
 
                 if (!sucess)
                 {

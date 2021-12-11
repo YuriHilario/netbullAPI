@@ -1,6 +1,7 @@
 ﻿using netbullAPI.Interfaces;
 using netbullAPI.Security.Models;
 using netbullAPI.Security.Persistencia;
+using netbullAPI.Security.ViewModels;
 using netbullAPI.Util;
 using System.Data;
 
@@ -15,44 +16,44 @@ namespace netbullAPI.Security.Negocio
             _userDao = userDao;
         }
 
-        public async Task <List<User>> getAllUsers()
+        public async Task <List<RetornarUserViewModel>> getAllUsersAsync()
         {
-            return await _userDao.getAllUsers();
+            return await _userDao.getAllUsersAsync();
         }
 
-        internal async Task<User> CadastroDeUser(User usu)
+        internal async Task<User> CadastroDeUserAsync(User usu)
         {
             usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
 
-            usu = await _userDao.CadastroDeUser(usu);
+            usu = await _userDao.CadastroDeUserAsync(usu);
 
             return usu;
         }
 
-        public async Task<User> RecuperarUsuario(User usu)
+        public async Task<User> RecuperarUsuarioAsync(User usu)
         {
-            usu =  await _userDao.RecuperarUsuario(usu);
+            usu =  await _userDao.RecuperarUsuarioAsync(usu);
             return usu;
         }
 
-        public async Task<User> VerificarUsuarioSenha(User usu)
+        public async Task<User> VerificarUsuarioSenhaAsync(User usu)
         {
             usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
 
-            var verificado = await _userDao.VerificarUsuarioSenha(usu);
+            var verificado = await _userDao.VerificarUsuarioSenhaAsync(usu);
             
             return verificado;
         }
 
-        internal async Task<bool> DeleteUser(int id)
+        internal async Task<bool> DeleteUserAsync(int id)
         {
-            return await _userDao.DeleteUser(id);
+            return await _userDao.DeleteUserAsync(id);
         }
 
-        internal async Task<bool> alterarSenha(User usu)
+        internal async Task<bool> alterarSenhaAsync(User usu)
         {
             usu.user_accessKey = Criptografia.HashValue(usu.user_accessKey);
-            return await _userDao.alterarSenha(usu);
+            return await _userDao.alterarSenhaAsync(usu);
         }
     }
 }
