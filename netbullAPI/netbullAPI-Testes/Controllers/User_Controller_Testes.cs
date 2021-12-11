@@ -149,6 +149,7 @@ namespace netbullAPI_Testes
         public async Task TestarRegisterValidoAsync()
         {
 
+
         }
 
         [Fact] // implementar
