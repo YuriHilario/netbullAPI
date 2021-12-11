@@ -3,9 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using netbullAPI.Entidade;
 using netbullAPI.Security.ViewModels;
 using netbullAPI_Testes.Models;
+using netbullAPI_Testes.Uitl;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -19,6 +21,8 @@ namespace netbullAPI_Testes
     [TestClass]
     public class Telefone_Controller_Testes
     {
+        public LoginUserViewModel login = new LoginUserViewModel() { user_nome = "cassiano", user_accessKey = "123456" };
+
         /// <summary>
         /// Teste integração de busca de telefones para um cliente inválido
         /// id_pessoa_invalido = 0
@@ -35,23 +39,7 @@ namespace netbullAPI_Testes
 
                 var httpClient = application.CreateClient();
 
-                LoginUserViewModel usu = new LoginUserViewModel()
-                {
-                    user_nome = "cassiano",
-                    user_accessKey = "123456"
-                };
-
-                var jsonCorpo = JsonConvert.SerializeObject(usu);
-                //Região de login para pegar o token
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://localhost:7035/api/Conta/login"),
-                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
-                };
-                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var retornoLogin = JsonConvert.DeserializeObject<RetornoLogin>(responseBody);
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
                 // Requisição para pegar os telefones
                 var requestTelefone = new HttpRequestMessage
@@ -59,17 +47,16 @@ namespace netbullAPI_Testes
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"https://localhost:7035/api/Telefone/{0}"),
                 };
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", retornoLogin.Token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responseTelefone = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBodytelefone = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
+                var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
 
-                if (response.StatusCode != HttpStatusCode.NotFound)
+                if (retornoTelefone.status != HttpStatusCode.NotFound)
                     Assert.Fail();
                 
-
-                Assert.AreNotEqual(0, retornoTelefone.Erros.Count); 
+                Assert.AreNotEqual(0, retornoTelefone.Erros?.Count); 
             }
             catch (Exception ex)
             {
@@ -93,23 +80,7 @@ namespace netbullAPI_Testes
 
                 var httpClient = application.CreateClient();
 
-                LoginUserViewModel usu = new LoginUserViewModel()
-                {
-                    user_nome = "cassiano",
-                    user_accessKey = "123456"
-                };
-
-                var jsonCorpo = JsonConvert.SerializeObject(usu);
-                //Região de login para pegar o token
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://localhost:7035/api/Conta/login"),
-                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
-                };
-                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var retornoLogin = JsonConvert.DeserializeObject<RetornoLogin>(responseBody);
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
                 // Requisição para pegar os telefones
                 var requestTelefone = new HttpRequestMessage
@@ -117,16 +88,16 @@ namespace netbullAPI_Testes
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"https://localhost:7035/api/Telefone/{1}"),
                 };
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", retornoLogin.Token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responseTelefone = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBodytelefone = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
+                var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var retornoTelefone = JsonConvert.DeserializeObject<RetornoGetTelefone>(responseBodytelefone);
 
-                if (response.StatusCode == HttpStatusCode.NotFound)
+                if (retornoTelefone.status == HttpStatusCode.NotFound)
                     Assert.Fail();
 
-                Assert.AreNotEqual(0, retornoTelefone);
+                Assert.AreNotEqual(0, retornoTelefone.telefones.ToList().Count);
             }
             catch (Exception ex)
             {
@@ -135,18 +106,15 @@ namespace netbullAPI_Testes
         }
 
         /// <summary>
-        /// Teste intregração de post de novos telefones
+        /// Teste integração de post de novo telefone inválido
         /// telefone_invalido = 0
         /// telefone_invalido = 12345
         /// id_pessoa_invalido = 0
         /// </summary>
         /// <returns></returns>
-        [TestMethod]
+        [Fact]
         [TestCategory("Controller")]
-        [DataRow(0,1)]
-        [DataRow(12345, 1)]
-        [DataRow(123456789, 0)]
-        public async Task TestarPostInvalidoAsync(int num_telefone, int pessoaId)
+        public async Task TestarPostInvalidoAsync()
         {
             try
             {
@@ -155,30 +123,14 @@ namespace netbullAPI_Testes
 
                 var httpClient = application.CreateClient();
 
-                LoginUserViewModel usu = new LoginUserViewModel()
-                {
-                    user_nome = "cassiano",
-                    user_accessKey = "123456"
-                };
-
-                var jsonCorpo = JsonConvert.SerializeObject(usu);
-                //Região de login para pegar o token
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://localhost:7035/api/Conta/login"),
-                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
-                };
-                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var retornoLogin = JsonConvert.DeserializeObject<RetornoLogin>(responseBody);
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
                 // Requisição para pegar os telefones
-
-                var jsonTelefone = JsonConvert.SerializeObject(new Telefone() {
-                                                                 telefone_idPessoa = pessoaId,
-                                                                 telefone_numero = num_telefone,
-                                                               });
+                var jsonTelefone = JsonConvert.SerializeObject(new 
+                {
+                    telefone_idPessoa = 1,
+                    telefone_numero = 12345,
+                });
 
                 var requestTelefone = new HttpRequestMessage
                 {
@@ -186,16 +138,159 @@ namespace netbullAPI_Testes
                     RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
                     Content = new StringContent(jsonTelefone, Encoding.UTF8, "application/json"),
                 };
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", retornoLogin.Token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responseTelefone = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBodytelefone = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
+                var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
 
-                if (response.StatusCode != HttpStatusCode.NotFound && response.StatusCode != HttpStatusCode.BadRequest)
+                if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
                     Assert.Fail();
 
                 Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Teste integração de post de novo telefone válido
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [TestCategory("Controller")]
+        public async Task TestarPostValidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                // Requisição para pegar os telefones
+                var jsonTelefone = JsonConvert.SerializeObject(new
+                {
+                    telefone_idPessoa = 1,
+                    telefone_numero = 123456789,
+                });
+
+                var requestTelefone = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
+                    Content = new StringContent(jsonTelefone, Encoding.UTF8, "application/json"),
+                };
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
+                var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var retornoTelefone = JsonConvert.DeserializeObject<Telefone>(responseBodytelefone);
+
+                if (responseTelefone.StatusCode != HttpStatusCode.NotFound && responseTelefone.StatusCode != HttpStatusCode.BadRequest)
+                    Assert.Fail();
+
+                Assert.AreNotEqual(null, retornoTelefone);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Teste integração de puit de novo telefone inválido
+        /// id_telefone válido
+        /// num_telefone válido
+        /// pesso_id vinculada inválida
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [TestCategory("Controller")]
+        public async Task TestarPutInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                // Requisição para pegar os telefones
+                //Numero válido e atribuicao com pessoa invalido
+                var jsonTelefone = JsonConvert.SerializeObject(new Telefone()
+                {
+                    telefone_id = 1,
+                    telefone_idPessoa = 2,
+                    telefone_numero = 111111111,
+                });
+
+                var requestTelefone = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Put,
+                    RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
+                    Content = new StringContent(jsonTelefone, Encoding.UTF8, "application/json"),
+                };
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
+                var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
+
+                if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
+                    Assert.Fail();
+
+                Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+
+        [Fact]
+        [TestCategory("Controller")]
+        public async Task TestarPutValidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                // Requisição para pegar os telefones
+                var jsonTelefone = JsonConvert.SerializeObject(new Telefone()
+                {
+                    telefone_id = 1,
+                    telefone_idPessoa = 1,
+                    telefone_numero = 111111111,
+                });
+
+                var requestTelefone = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Put,
+                    RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
+                    Content = new StringContent(jsonTelefone, Encoding.UTF8, "application/json"),
+                };
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
+                var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var retornoTelefone = JsonConvert.DeserializeObject<Telefone>(responseBodytelefone);
+
+                if (responseTelefone.StatusCode != HttpStatusCode.NotFound && responseTelefone.StatusCode != HttpStatusCode.BadRequest)
+                    Assert.Fail();
+
+                Assert.AreNotEqual(null, retornoTelefone);
             }
             catch (Exception ex)
             {
@@ -219,23 +314,7 @@ namespace netbullAPI_Testes
 
                 var httpClient = application.CreateClient();
 
-                LoginUserViewModel usu = new LoginUserViewModel()
-                {
-                    user_nome = "cassiano",
-                    user_accessKey = "123456"
-                };
-
-                var jsonCorpo = JsonConvert.SerializeObject(usu);
-                //Região de login para pegar o token
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://localhost:7035/api/Conta/login"),
-                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
-                };
-                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var retornoLogin = JsonConvert.DeserializeObject<RetornoLogin>(responseBody);
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
                 // Requisição para pegar os telefones
                 var requestTelefone = new HttpRequestMessage
@@ -243,13 +322,13 @@ namespace netbullAPI_Testes
                     Method = HttpMethod.Delete,
                     RequestUri = new Uri($"https://localhost:7035/api/Telefone/{0}"),
                 };
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", retornoLogin.Token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responseTelefone = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBodytelefone = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
+                var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
 
-                if (response.StatusCode != HttpStatusCode.NotFound)
+                if (retornoTelefone.status != HttpStatusCode.NotFound)
                     Assert.Fail();
 
 
@@ -277,41 +356,41 @@ namespace netbullAPI_Testes
 
                 var httpClient = application.CreateClient();
 
-                LoginUserViewModel usu = new LoginUserViewModel()
-                {
-                    user_nome = "cassiano",
-                    user_accessKey = "123456"
-                };
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                var jsonCorpo = JsonConvert.SerializeObject(usu);
-                //Região de login para pegar o token
-                var request = new HttpRequestMessage
+                //Inclusao de telefone
+                var jsonTelefoneInsercao = JsonConvert.SerializeObject(new
+                {
+                    telefone_idPessoa = 1,
+                    telefone_numero = 123456789,
+                });
+
+                var requestTelefoneInsercao = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://localhost:7035/api/Conta/login"),
-                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
+                    Content = new StringContent(jsonTelefoneInsercao, Encoding.UTF8, "application/json"),
                 };
-                var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var retornoLogin = JsonConvert.DeserializeObject<RetornoLogin>(responseBody);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+                var responseTelefoneInsercao = await httpClient.SendAsync(requestTelefoneInsercao).ConfigureAwait(false);
+                var responseBodytelefoneInsercao = await responseTelefoneInsercao.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var retornoTelefoneInsercao = JsonConvert.DeserializeObject<Telefone>(responseBodytelefoneInsercao);
 
-                // Requisição para pegar os telefones
+                // Delecao do telefone 
                 var requestTelefone = new HttpRequestMessage
                 {
                     Method = HttpMethod.Delete,
-                    RequestUri = new Uri($"https://localhost:7035/api/Telefone/{0}"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Telefone/{retornoTelefoneInsercao.telefone_id}"),
                 };
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", retornoLogin.Token);
 
-                var responseTelefone = await httpClient.SendAsync(request).ConfigureAwait(false);
-                var responseBodytelefone = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
+                var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
+                var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var retornoTelefone = JsonConvert.DeserializeObject<bool>(responseBodytelefone);
 
-                if (response.StatusCode != HttpStatusCode.NotFound)
+                if (responseTelefone.StatusCode != HttpStatusCode.NotFound)
                     Assert.Fail();
 
-
-                Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
+                Assert.AreNotEqual(true, retornoTelefone);
             }
             catch (Exception ex)
             {
