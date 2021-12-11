@@ -1,12 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using netbullAPI.Interfaces;
-using netbullAPI.Security.Controllers;
-using netbullAPI.Security.Models;
-using netbullAPI.Security.Negocio;
-using netbullAPI.Security.Persistencia;
 using netbullAPI.Security.ViewModels;
+using netbullAPI_Testes.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,42 +19,95 @@ namespace netbullAPI_Testes
     {
         [Fact]
         [TestCategory("Controller")]
-        public async Task TestarLoginInvalidoAsync()
+        public async Task TestarLoginValidoAsync()
         {
-            var application = new WebApplicationFactory<Program>()
-               .WithWebHostBuilder(builder => { });
-
-            var _Client = application.CreateClient();
-
-            LoginUserViewModel usu = new LoginUserViewModel()
-            {
-                user_nome = "caca",
-                user_accessKey = "123456"
-            };
-
-            var jsonCorpo = JsonConvert.SerializeObject(usu);
             try
             {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var _Client = application.CreateClient();
+
+                LoginUserViewModel usu = new LoginUserViewModel()
+                {
+                    user_nome = "cassiano",
+                    user_accessKey = "123456"
+                };
+
+                var jsonCorpo = JsonConvert.SerializeObject(usu);
+
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
-                    RequestUri = new Uri("https://localhost:7286/api/Aluno"),
+                    RequestUri = new Uri("https://localhost:7035/api/Conta/login"),
                     Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
                 };
+
+                //_Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token");
 
                 var response = await _Client.SendAsync(request).ConfigureAwait(false);
                 var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                if (response.StatusCode != HttpStatusCode.NotFound)
+                var retornoLogin = JsonConvert.DeserializeObject<RetornoLogin>(responseBody);
+
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
                     Assert.Fail();
                 }
-                //LoginUserViewModel usuario = JsonConvert.DeserializeObject<LoginUserViewModel>(resultContent);
-                Assert.AreEqual("", responseBody); // TEM RETORNAR TOKEN
+                var teste = !string.IsNullOrEmpty(retornoLogin.Token);
+
+                Assert.AreEqual(teste, true); 
             }
             catch (Exception ex)
             {
+                string menssage = ex.Message;
+            }
+        }
 
+        [Fact]
+        [TestCategory("Controller")]
+        public async Task TestarLoginInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+              .WithWebHostBuilder(builder => { });
+
+                var _Client = application.CreateClient();
+
+                LoginUserViewModel usu = new LoginUserViewModel()
+                {
+                    user_nome = "Cacaca",
+                    user_accessKey = "123456"
+                };
+
+                var jsonCorpo = JsonConvert.SerializeObject(usu);
+
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri("https://localhost:7035/api/Conta/login"),
+                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
+                };
+
+                //_Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "Your Oauth token");
+
+                var response = await _Client.SendAsync(request).ConfigureAwait(false);
+                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                var retornoLogin = JsonConvert.DeserializeObject<RetornoLogin>(responseBody);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    Assert.Fail();
+                }
+                var teste = string.IsNullOrEmpty(retornoLogin.Token);
+
+                Assert.AreEqual(teste, true);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
             }
         }
 
@@ -67,21 +115,56 @@ namespace netbullAPI_Testes
         [TestCategory("Controller")]
         public async Task TesteGetAllUserValidoAsync()
         {
-            var application = new WebApplicationFactory<Program>()
-                .WithWebHostBuilder(builder =>{});
-
-            var _Client = application.CreateClient();
-
-            var result = _Client.GetAsync("/Conta").GetAwaiter().GetResult();
-            var resultContent = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-            if (result.StatusCode != HttpStatusCode.OK)
+            try
             {
-                Assert.Fail();
-            }
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
 
-            List<RetornarUserViewModel> lista = JsonConvert.DeserializeObject<List<RetornarUserViewModel>>(resultContent);
-            Assert.AreNotEqual(0, lista.Count);
+                var _Client = application.CreateClient();
+
+                var result = _Client.GetAsync("api/Conta").GetAwaiter().GetResult();
+                var resultContent = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                if (result.StatusCode != HttpStatusCode.OK)
+                {
+                    Assert.Fail();
+                }
+
+                List<RetornarUserViewModel> lista = JsonConvert.DeserializeObject<List<RetornarUserViewModel>>(resultContent);
+                Assert.AreNotEqual(0, lista.Count);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+
+        [Fact]
+        [TestCategory("Controller")]
+        public async Task TesteGetAllUserInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder => { });
+
+                var _Client = application.CreateClient();
+
+                var result = _Client.GetAsync("api/Conta").GetAwaiter().GetResult();
+                var resultContent = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                if (result.StatusCode != HttpStatusCode.BadRequest)
+                {
+                    Assert.Fail();
+                }
+
+                List<RetornarUserViewModel> lista = JsonConvert.DeserializeObject<List<RetornarUserViewModel>>(resultContent);
+                Assert.AreEqual(0, lista.Count);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
         }
     }
 }

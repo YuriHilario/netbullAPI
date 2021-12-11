@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="NE\**" />
+    <EmbeddedResource Remove="NE\**" />
+    <None Remove="NE\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
@@ -25,10 +31,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\netbullAPI\netbullAPI.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="NE\" />
   </ItemGroup>
 
 </Project>

@@ -14,11 +14,11 @@ namespace netbullAPI.Security.Persistencia
             _configuration = configuration;
         }
 
-        public async Task<User> CadastroDeUser(User usu)
+        public async Task<User> CadastroDeUserAsync(User usu)
         {
             try
             {
-                var usuRecuperado = await RecuperarUsuario(usu);
+                var usuRecuperado = await RecuperarUsuarioAsync(usu);
 
                 if (usuRecuperado == null)
                 {
@@ -40,7 +40,7 @@ namespace netbullAPI.Security.Persistencia
                         }
                     }
 
-                    usu = await RecuperarUsuario(usu);
+                    usu = await RecuperarUsuarioAsync(usu);
 
                     return usu;
                 }
@@ -58,11 +58,11 @@ namespace netbullAPI.Security.Persistencia
             }
         }
 
-        public async Task<User> VerificarUsuarioSenha(User usu)
+        public async Task<User> VerificarUsuarioSenhaAsync(User usu)
         {
             try
             {
-                var usuConsulta = await RecuperarUsuario(usu);
+                var usuConsulta = await RecuperarUsuarioAsync(usu);
                 if (usuConsulta != null)
                 {
                     if (usuConsulta.user_accessKey == usu.user_accessKey)
@@ -88,12 +88,12 @@ namespace netbullAPI.Security.Persistencia
             }
         }
 
-        public async Task<bool> alterarSenha(User usu)
+        public async Task<bool> alterarSenhaAsync(User usu)
         {
             var retorno = false;
             try
             {
-                var usuario = (await getAllUsers()).Where(u => u.user_nome == usu.user_nome).FirstOrDefault();
+                var usuario = (await getAllUsersAsync()).Where(u => u.user_nome == usu.user_nome).FirstOrDefault();
 
                 if (usuario != null)
                 {
@@ -134,12 +134,12 @@ namespace netbullAPI.Security.Persistencia
             return retorno;
         }
 
-        public async Task<bool> DeleteUser(int id)
+        public async Task<bool> DeleteUserAsync(int id)
         {
             var retorno = false;
             try
             {
-                var listaUsu = await getAllUsers();
+                var listaUsu = await getAllUsersAsync();
 
                 if (listaUsu.Exists(l => l.user_id == id))
                 {
@@ -173,7 +173,7 @@ namespace netbullAPI.Security.Persistencia
             return retorno;
         }
 
-        public async Task<List<RetornarUserViewModel>> getAllUsers()
+        public async Task<List<RetornarUserViewModel>> getAllUsersAsync()
         {
             List<RetornarUserViewModel> users = null;
             try
@@ -207,7 +207,7 @@ namespace netbullAPI.Security.Persistencia
             }
         }
 
-        public async Task<User> RecuperarUsuario(User usu)
+        public async Task<User> RecuperarUsuarioAsync(User usu)
         {
             try
             {
