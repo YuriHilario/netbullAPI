@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Entidade;
+using netbullAPI.Extensions;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Util;
+using netbullAPI.ViewModels;
 using System.Net;
 
 namespace netbullAPI.Controllers
@@ -109,14 +111,25 @@ namespace netbullAPI.Controllers
         /// </summary>
         /// <param name="nePessoa"></param>
         /// <param name="pessoa"></param>
+        /// <param name="viewModel"></param> 
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Post([FromServices] NE_Pessoa nePessoa, Pessoa pessoa)
+        public async Task<IActionResult> Post([FromServices] NE_Pessoa nePessoa,
+                                              [FromBody] CadastrarPessoaViewModel viewModel)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<Pessoa>(ModelState.RecuperarErros()));
             try
             {
-                if (pessoa != null)
+                Pessoa pessoa = new Pessoa()
                 {
+                    pessoa_id = 0,
+                    pessoa_documento = viewModel.pessoa_documento,
+                    pessoa_nome = viewModel.pessoa_nome,
+                    pessoa_tipopessoa = viewModel.pessoa_tipopessoa
+                };
+                if (pessoa != null)
+                {                    
                     var addPessoa = await nePessoa.InserirPessoa(pessoa);
                     if (addPessoa)
                     {

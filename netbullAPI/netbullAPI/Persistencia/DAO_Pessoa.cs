@@ -17,7 +17,15 @@ namespace netbullAPI.Persistencia
             try
             {
                 var pessoas =  _PessoaContexto.Pessoas.AsEnumerable();
-                return pessoas;
+                if (pessoas == null)
+                {
+                    Notificar("Não existem cadastros");
+                    return pessoas;
+                }
+                else
+                {
+                    return pessoas;
+                }               
             }
             catch (Exception e)
             {
@@ -31,11 +39,19 @@ namespace netbullAPI.Persistencia
             try
             {
                 var pessoa = _PessoaContexto.Pessoas.Where(p => p.pessoa_id == id).FirstOrDefault();
-                return pessoa;
+                if (pessoa == null)
+                {
+                    Notificar("Id incorreto ou pessoa inexistente");
+                    return pessoa;
+                }
+                else
+                {
+                    return pessoa;
+                }                
             }
             catch (Exception e)
             {
-                Notificar(e.Message);
+                Notificar("Erro Interno");
                 throw;
             }
 
@@ -45,14 +61,23 @@ namespace netbullAPI.Persistencia
         {
             try
             {
-                _PessoaContexto.Pessoas.Add(pessoa);
-                _PessoaContexto.SaveChanges();
-                return true;
+                var addPessoa = _PessoaContexto.Pessoas.Any(p => p.pessoa_id == pessoa.pessoa_id);
+                if (addPessoa == true)
+                {
+                    Notificar("Id já atribuido ou pessoa já está cadastrada");
+                    return false;
+                }
+                else
+                {
+                    _PessoaContexto.Pessoas.Add(pessoa);
+                    _PessoaContexto.SaveChanges();
+                    return true;
+                }                
             }
             catch (Exception e)
             {
-                Notificar(e.Message);
-                throw;
+                Notificar("Erro Interno");
+                return false;
             }
 
         }
@@ -61,15 +86,24 @@ namespace netbullAPI.Persistencia
             try
             {
                 var pessoaSelecionada = _PessoaContexto.Pessoas.Where(p => p.pessoa_id == pessoa.pessoa_id).FirstOrDefault();
-                pessoaSelecionada.pessoa_nome = pessoa.pessoa_nome;
-                pessoaSelecionada.pessoa_tipopessoa = pessoa.pessoa_tipopessoa;
-                pessoaSelecionada.pessoa_documento = pessoa.pessoa_documento;
-                _PessoaContexto.SaveChanges();
-                return pessoaSelecionada;
+                if (pessoaSelecionada == null)
+                {
+                    Notificar("Pessoa não encontrada");
+                    return pessoaSelecionada;
+                }
+                else
+                {
+                    pessoaSelecionada.pessoa_nome = pessoa.pessoa_nome;
+                    pessoaSelecionada.pessoa_tipopessoa = pessoa.pessoa_tipopessoa;
+                    pessoaSelecionada.pessoa_documento = pessoa.pessoa_documento;
+                    _PessoaContexto.SaveChanges();
+                    return pessoaSelecionada;
+                }
+                
             }
             catch (Exception e)
             {
-                Notificar(e.Message);
+                Notificar("Erro Interno");
                 throw;
             }
 
@@ -81,14 +115,20 @@ namespace netbullAPI.Persistencia
             {
                 var pessoaSelecionada = _PessoaContexto.Pessoas.Where(p => p.pessoa_id == id).FirstOrDefault();
                 if (pessoaSelecionada == null)
-                    throw new Exception("Pessoa informada inexistente");
-                _PessoaContexto.Pessoas.Remove(pessoaSelecionada);
-                _PessoaContexto.SaveChanges();
-                return true;
+                {
+                    Notificar("Pessoa informada inexistente");
+                    return false;
+                }
+                else
+                {
+                    _PessoaContexto.Pessoas.Remove(pessoaSelecionada);
+                    _PessoaContexto.SaveChanges();
+                    return true;
+                }
             }
             catch (Exception e)
             {
-                Notificar(e.Message);
+                Notificar("Erro Interno");
                 throw;
             }
 
