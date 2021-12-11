@@ -4,6 +4,7 @@ using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Util;
+using netbullAPI.ViewModels;
 using System.Net;
 
 namespace netbullAPI.Controllers
@@ -36,46 +37,13 @@ namespace netbullAPI.Controllers
         /// <summary>
         /// Inclusão de novo endereço do cliente.
         /// </summary>
+        /// <param name="neEndereco"></param>
         /// <param name="endereco"></param>
         /// <returns></returns>
         [Authorize]
         [HttpPost]
         // POST api/<EnderecoController>
-        public async Task<IActionResult> CadastrarNovoEndereco([FromServices] NE_Endereco neEndereco, [FromBody] Endereco endereco)
-        {
-            try
-            {
-            if (endereco == null)
-                {
-                    Notificar("Endereço vazio.");
-                    return NotFound(HttpStatusCode.NoContent);
-                }
-
-                return Ok(await neEndereco.CadastraNovoEndereco(endereco) 
-                    ? new { mensagem = "Inserido com sucesso.", sucesso = true } 
-                : new { mensagem = "Problema ao inserir.", sucesso = false });
-        }
-           catch(Exception ex)
-            {
-               return BadRequest(
-               new
-               {
-                   mensagem = ex.Message,
-                   sucesso = false
-               });
-            }
-
-        }
-
-        /// <summary>
-        /// Atualização de um endereço do cliente.
-        /// </summary>
-        /// <param name="endereco"></param>
-        /// <returns></returns>
-        [Authorize]
-        [HttpPut]
-        // PUT api/<EnderecoController>
-        public async Task<IActionResult> AtualizaEndereco([FromServices] NE_Endereco neEndereco, Endereco endereco)
+        public async Task<IActionResult> CadastrarNovoEndereco([FromServices] NE_Endereco neEndereco, [FromBody] RegistrarEnderecoViewModel endereco)
         {
             try
             {
@@ -85,8 +53,44 @@ namespace netbullAPI.Controllers
                     return NotFound(HttpStatusCode.NoContent);
                 }
 
-                return Ok(await neEndereco.AtualizaEndereco(endereco) 
-                    ? new { mensagem = "Atualizado com sucesso.", sucesso = true}
+                return Ok(await neEndereco.CadastraNovoEndereco(endereco)
+                    ? new { mensagem = "Inserido com sucesso.", sucesso = true }
+                : new { mensagem = "Problema ao inserir.", sucesso = false });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                new
+                {
+                    mensagem = ex.Message,
+                    sucesso = false
+                });
+            }
+
+        }
+
+        /// <summary>
+        /// Atualização de um endereço do cliente.
+        /// </summary>
+        /// <param name="neEndereco"></param>
+        /// <param name="endereco"></param>
+        /// <param name="idEndereco"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut("{idEndereco}")]
+        // PUT api/<EnderecoController>
+        public async Task<IActionResult> AtualizaEndereco([FromServices] NE_Endereco neEndereco, AlterarEnderecoViewModel endereco, int idEndereco)
+        {
+            try
+            {
+                if (endereco == null)
+                {
+                    Notificar("Endereço vazio.");
+                    return NotFound(HttpStatusCode.NoContent);
+                }
+
+                return Ok(await neEndereco.AtualizaEndereco(endereco, idEndereco)
+                    ? new { mensagem = "Atualizado com sucesso.", sucesso = true }
                 : new { mensagem = "Problema ao atualizar.", sucesso = false });
             }
             catch (Exception ex)
@@ -109,18 +113,18 @@ namespace netbullAPI.Controllers
         [Authorize]
         [HttpPatch("{idEndereco}")]
         // PATCH api/<EnderecoController>
-        public async Task<IActionResult> AtualizaEnderecoPatch([FromServices] NE_Endereco neEndereco, int idEndereco, [FromBody] Endereco endereco)
+        public async Task<IActionResult> AtualizaEnderecoPatch([FromServices] NE_Endereco neEndereco, int idEndereco, [FromBody] AlterarEnderecoViewModel endereco)
         {
             try
             {
                 if (idEndereco == 0)
-        {
+                {
                     Notificar("Id do Endereço ou o logradouro está vazio.");
                     return NotFound(HttpStatusCode.NoContent);
                 }
 
-                return Ok(await neEndereco.AtualizaEnderecoPatch(idEndereco, endereco) 
-                    ? new { mensagem = "Atualizado com sucesso.", sucesso = true}
+                return Ok(await neEndereco.AtualizaEnderecoPatch(idEndereco, endereco)
+                    ? new { mensagem = "Atualizado com sucesso.", sucesso = true }
                     : new { mensagem = "Problema ao atualizar.", sucesso = false });
             }
             catch (Exception ex)
@@ -145,9 +149,9 @@ namespace netbullAPI.Controllers
         public async Task<IActionResult> ApagaEndereco([FromServices] NE_Endereco neEndereco, int idEndereco)
         {
             try
-        {
-            if (idEndereco == 0)
-                    return NotFound(new { mensagem = "O idEndereço não foi informado." , sucesso = false});
+            {
+                if (idEndereco == 0)
+                    return NotFound(new { mensagem = "O idEndereço não foi informado.", sucesso = false });
 
                 var resp = await neEndereco.ApagaEndereco(idEndereco);
                 if (resp)
@@ -173,7 +177,7 @@ namespace netbullAPI.Controllers
                         mensagem = e.Message,
                         sucesso = false
                     });
-            }    
+            }
         }
     };
 
