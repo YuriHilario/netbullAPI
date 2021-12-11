@@ -6,21 +6,39 @@ namespace netbullAPI.Negocio
 {
     public class NE_Pessoa
     {
-        private PessoaRepository PE_Aluno;
+        private DAO_Pessoa _daoPessoa;
 
-        public NE_Pessoa(netbullDBContext PessoaContexto)
+        public NE_Pessoa(DAO_Pessoa daoPessoa)
         {
-            PE_Aluno = new PessoaRepository(PessoaContexto);
+            _daoPessoa = daoPessoa;
         }
 
-        public IEnumerable<Pessoa> BuscaPessoas()
+        public async Task<IEnumerable<Pessoa>> BuscaPessoas()
         {
-            return PE_Aluno.BuscaPessoas();
+            var pessoas = await _daoPessoa.BuscaPessoas();
+            return pessoas;
         }
 
-        public Pessoa BuscaPessoaPorId(int id)
+        public async Task<Pessoa> BuscaPessoaPorId(int id)
         {
-            return PE_Aluno.BuscaPessoaPorId(id);
+           var pessoa = await _daoPessoa.BuscaPessoaPorId(id);
+            return pessoa;
+        }
+        
+        public async Task<bool> DeletarPessoa(int id)
+        {
+            var delPessoa = await _daoPessoa.DeletarPessoa(id);
+            return delPessoa;
+        }
+        public async Task<bool> InserirPessoa(Pessoa pessoa)
+        {
+            var respostaInsercao = await _daoPessoa.InserirPessoa(pessoa);
+            return respostaInsercao;
+        }
+        public async Task<Pessoa> AtualizarPessoa(Pessoa pessoa)
+        {
+            var attPessoa = await _daoPessoa.UpdatePessoa(pessoa);
+            return attPessoa;
         }
     }
 }
