@@ -16,10 +16,10 @@ using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 namespace netbullAPI_Testes
 {
     [TestClass]
-    public class User_Controller_Testes
+    public class User_Controller_Testes // TESTES DE INTEGRAÇÃO
     {
         [Fact]
-        [TestCategory("Controller")]
+        [TestCategory("Controller-Valido")]
         public async Task TestarLoginValidoAsync()
         {
             try
@@ -89,7 +89,7 @@ namespace netbullAPI_Testes
         }
 
         [Fact]
-        [TestCategory("Controller")]
+        [TestCategory("Controller-Valido")]
         public async Task TesteGetAllUserValidoAsync()
         {
             try
@@ -142,6 +142,48 @@ namespace netbullAPI_Testes
             {
                 string menssage = ex.Message;
             }
+        }
+
+        [Fact] // implementar
+        [TestCategory("Controller-Valido")]
+        public async Task TestarRegisterValidoAsync()
+        {
+
+        }
+
+        [Fact] // implementar
+        [TestCategory("Controller")]
+        public async Task TestarRegisterInvalidoAsync()
+        {
+
+        }
+
+        [Fact] // implementar
+        [TestCategory("Controller-Valido")]
+        public async Task TestarDeleteUserValidoAsync()
+        {
+
+        }
+
+        [Fact] // implementar
+        [TestCategory("Controller")]
+        public async Task TestarDeleteUserInvalidoAsync()
+        {
+
+        }
+
+        [Fact] // implementar
+        [TestCategory("Controller-Valido")]
+        public async Task TestarAlterarSenhaValidoAsync()
+        {
+
+        }
+
+        [Fact] // implementar
+        [TestCategory("Controller")]
+        public async Task TestarAlterarSenhaInvalidoAsync()
+        {
+
         }
     }
 }
