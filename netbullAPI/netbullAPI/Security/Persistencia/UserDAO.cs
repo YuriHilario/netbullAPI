@@ -14,7 +14,7 @@ namespace netbullAPI.Security.Persistencia
             _configuration = configuration;
         }
 
-        internal async Task<User> CadastroDeUser(User usu)
+        public async Task<User> CadastroDeUser(User usu)
         {
             try
             {
@@ -44,7 +44,6 @@ namespace netbullAPI.Security.Persistencia
 
                     return usu;
                 }
-
                 else
                 {
                     Notificar("Usuário já cadastrado.");
@@ -59,7 +58,7 @@ namespace netbullAPI.Security.Persistencia
             }
         }
 
-        internal async Task<User> VerificarUsuarioSenha(User usu)
+        public async Task<User> VerificarUsuarioSenha(User usu)
         {
             try
             {
@@ -89,7 +88,7 @@ namespace netbullAPI.Security.Persistencia
             }
         }
 
-        internal async Task<bool> alterarSenha(User usu)
+        public async Task<bool> alterarSenha(User usu)
         {
             var retorno = false;
             try
@@ -135,7 +134,7 @@ namespace netbullAPI.Security.Persistencia
             return retorno;
         }
 
-        internal async Task<bool> DeleteUser(int id)
+        public async Task<bool> DeleteUser(int id)
         {
             var retorno = false;
             try
@@ -174,7 +173,7 @@ namespace netbullAPI.Security.Persistencia
             return retorno;
         }
 
-        internal async Task<List<RetornarUserViewModel>> getAllUsers()
+        public async Task<List<RetornarUserViewModel>> getAllUsers()
         {
             List<RetornarUserViewModel> users = null;
             try
@@ -208,7 +207,7 @@ namespace netbullAPI.Security.Persistencia
             }
         }
 
-        internal async Task<User> RecuperarUsuario(User usu)
+        public async Task<User> RecuperarUsuario(User usu)
         {
             try
             {
