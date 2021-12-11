@@ -1,9 +1,18 @@
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using netbullAPI.Interfaces;
 using netbullAPI.Security.Controllers;
+using netbullAPI.Security.Models;
 using netbullAPI.Security.Negocio;
 using netbullAPI.Security.Persistencia;
+using netbullAPI.Security.ViewModels;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
@@ -13,31 +22,67 @@ namespace netbullAPI_Testes
     [TestClass]
     public class User_Controller_Testes
     {
-        private readonly INotificador _notificador;
-        private UserDAO _userDao;
-
-        protected NE_User _neUser;
-        protected IConfiguration _configuration;
-
-        public User_Controller_Testes(INotificador notificador, IConfiguration configuration)
-        {
-            _notificador = notificador;
-            _configuration = configuration;
-            _userDao = new UserDAO(notificador,_configuration);
-            _neUser = new NE_User(_userDao);
-        }
-
-        [TestMethod]
+        [Fact]
         [TestCategory("Controller")]
         public async Task getAllUsers()
         {
-            ContaController _controller = new ContaController(_notificador);
+            var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
 
-            // Act
-            var okResult = _controller.getAllUsers(_neUser);
-            // Assert
+            var _Client = application.CreateClient();
 
-            //Assert.AreNotEqual(0, okResult.Count);
+            LoginUserViewModel usu = new LoginUserViewModel()
+            {
+                user_nome = "caca",
+                user_accessKey = "123456"
+            };
+
+            var jsonCorpo = JsonConvert.SerializeObject(usu);
+            try
+            {
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri("https://localhost:7286/api/Aluno"),
+                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
+                };
+
+                var response = await _Client.SendAsync(request).ConfigureAwait(false);
+                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                //if (response.StatusCode != HttpStatusCode.OK)
+                //{
+                //    Assert.Fail();
+                //}
+                //LoginUserViewModel usuario = JsonConvert.DeserializeObject<LoginUserViewModel>(resultContent);
+                Assert.AreEqual(response.StatusCode != HttpStatusCode.OK, response.StatusCode);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        [Fact]
+        [TestCategory("Controller")]
+        public async Task getAllUsersAsync()
+        {
+            var application = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder =>{});
+
+
+            var _Client = application.CreateClient();
+
+            var result = _Client.GetAsync("/Conta").GetAwaiter().GetResult();
+            var resultContent = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                Assert.Fail();
+            }
+
+            List<RetornarUserViewModel> lista = JsonConvert.DeserializeObject<List<RetornarUserViewModel>>(resultContent);
+            Assert.AreNotEqual(0, lista.Count);
         }
     }
 }
