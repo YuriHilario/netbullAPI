@@ -30,7 +30,7 @@ namespace netbullAPI.Persistencia
             }
         }
 
-        internal bool DeletaPedido(int id)
+        public bool DeletaPedido(int id)
         {
             var pedido_existente = netbullDBContext.Pedidos.Where(pedido => pedido.pedido_id == id).FirstOrDefault();
             if (pedido_existente == null)
@@ -43,7 +43,7 @@ namespace netbullAPI.Persistencia
             return true;
         }
 
-        internal bool AlteraStatusPedido(Pedido pedido)
+        public bool AlteraStatusPedido(Pedido pedido, EnumStatusPedido status)
         {
             var pessoa = netbullDBContext.Pessoas.Where(x => x.pessoa_id == pedido.pedido_idPessoa).FirstOrDefault();
             if (pessoa == null)
@@ -66,7 +66,7 @@ namespace netbullAPI.Persistencia
                 }
                 else
                 {
-                    pedido_existente.pedido_status = pedido.pedido_status;
+                    pedido_existente.pedido_status = status;
                     netbullDBContext.Update(pedido_existente);
                     netbullDBContext.SaveChanges();
                     return true;
@@ -74,9 +74,9 @@ namespace netbullAPI.Persistencia
             }
         }
 
-        internal Pedido AdicionaPedido(Pedido pedido)
+        public Pedido AdicionaPedido(Pedido pedido)
         {
-            var pessoa = netbullDBContext.Pessoas.Where(pessoa => pessoa.pessoa_id == pedido.pedido_idPessoa).FirstOrDefault();
+            var pessoa = netbullDBContext.Pessoas.Where(p => p.pessoa_id == pedido.pedido_idPessoa).FirstOrDefault();
             if(pessoa == null)
             {
                 Notificar("Cliente informado inexistente");
@@ -91,7 +91,7 @@ namespace netbullAPI.Persistencia
                     pedido_status = EnumStatusPedido.pedido_reservado,
                     itens = pedido.itens,
                     pedido_valor = pedido.itens.Sum(item => item.item_valor),
-                    pedido_time = DateTime.Now
+                    pedido_time = DateTime.UtcNow
                 };
                 netbullDBContext.Add(novo_pedido);
                 netbullDBContext.SaveChanges();

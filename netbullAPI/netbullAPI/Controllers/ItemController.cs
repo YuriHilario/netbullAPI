@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
@@ -8,27 +7,23 @@ using System.Net;
 
 namespace netbullAPI.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PedidoController : BaseController
+    public class ItemController : BaseController
     {
-        public PedidoController(INotificador notificador) : base(notificador) { }
-
+        public ItemController(INotificador notificador) : base(notificador) { }
 
         /// <summary>
-        /// Busca lista de Pedidos dirigidas a um cliente informado
+        /// Busca Item
         /// </summary>
-        /// <param name="ne_pedido"></param>
+        /// <param name="ne_item"></param>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public IActionResult GetPorId([FromServices] NE_Pedido ne_pedido, int id)
+        public async Task<IActionResult> GetPorID([FromServices] NE_Item ne_item, int id)
         {
             try
             {
-                var pedidos = ne_pedido.BuscaPedidosCliente(id);
-                if (pedidos == null)
+                var itens = ne_item.BuscaItemPedido(id);
+                if (itens == null)
                     return NotFound(new
                     {
                         status = HttpStatusCode.NotFound,
@@ -36,7 +31,7 @@ namespace netbullAPI.Controllers
                     });
                 else return Ok(new
                 {
-                    pedidos = ne_pedido.BuscaPedidosCliente(id),
+                    itens = ne_item.BuscaItemPedido(id),
                     status = HttpStatusCode.OK,
                     Error = Notificacoes()
                 });
@@ -52,23 +47,23 @@ namespace netbullAPI.Controllers
         }
 
         /// <summary>
-        /// Inclusão de um novo pedido para um cliente
+        /// Criação de um Item
         /// </summary>
-        /// <param name="ne_pedido"></param>
-        /// <param name="pedido"></param>
+        /// <param name="ne_item"></param>
+        /// <param name="item"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult post([FromServices] NE_Pedido ne_pedido, [FromBody] Pedido pedido)
+        public async Task<IActionResult> post([FromServices] NE_Item ne_item, [FromBody] Item item)
         {
             try
             {
-                var new_pedido = ne_pedido.AdicionaPedido(pedido);
-                if (new_pedido == null)
-                    return Created($"/{new_pedido.pedido_id}", new_pedido);
+                var new_item = ne_item.AdicionaItem(item);
+                if (new_item == null)
+                    return Created($"/{new_item.item_id}", new_item);
                 else
                     return NotFound(new
                     {
-                        Status = HttpStatusCode.BadRequest,
+                        status = HttpStatusCode.BadRequest,
                         Error = Notificacoes()
                     });
             }
@@ -83,21 +78,21 @@ namespace netbullAPI.Controllers
         }
 
         /// <summary>
-        /// Atualiza o status de um pedido
+        /// Altera quantidade Item
         /// </summary>
-        /// <param name="ne_pedido"></param>
-        /// <param name="pedido"></param>
-        /// <param name="status"></param>
+        /// <param name="ne_item"></param>
+        /// <param name="item"></param>
+        /// <param name="quantidade"></param>
         /// <returns></returns>
         [HttpPatch]
-        public IActionResult Patch([FromServices] NE_Pedido ne_pedido, [FromBody] Pedido pedido, EnumStatusPedido status)
+        public async Task<IActionResult> Patch([FromServices] NE_Item ne_item, [FromBody] Item item,  int quantidade)
         {
             try
             {
-                if (ne_pedido.AlteraStatusPedido(pedido, status))
+                if (ne_item.AlteraQuantidadeProduto(item, quantidade))
                     return Ok(new
                     {
-                        pedido = pedido,
+                        item = item,
                         status = HttpStatusCode.OK,
                         Error = Notificacoes()
                     });
@@ -109,6 +104,39 @@ namespace netbullAPI.Controllers
                     });
             }
             catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    status = HttpStatusCode.BadRequest,
+                    Error = Notificacoes()
+                });
+            }
+        }
+
+        /// <summary>
+        /// Deleta Item
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromServices] NE_Item ne_item, int id)
+        {
+            try
+            {
+                if (ne_item.DeletaItem(id))
+                    return Ok(new
+                    {
+                        status = HttpStatusCode.OK,
+                        Error = Notificacoes()
+                    });
+                else
+                    return NotFound(new
+                    {
+                        status = HttpStatusCode.BadRequest,
+                        Error = Notificacoes()
+                    });
+            }
+            catch(Exception e)
             {
                 return BadRequest(new
                 {
