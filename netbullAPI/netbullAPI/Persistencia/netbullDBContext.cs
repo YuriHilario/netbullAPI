@@ -16,5 +16,6 @@ namespace netbullAPI.Persistencia
         public DbSet<Produto> Produtos { get; set; }
 
         public DbSet<Pedido> Pedidos { get; set; }
+        public DbSet<Item> Itens { get; set; }
     }
 }

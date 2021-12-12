@@ -18,9 +18,9 @@ namespace netbullAPI.Negocio
         {
             return daoPedido.AdicionaPedido(pedido);
         }
-        public bool AlteraStatusPedido(Pedido pedido)
+        public bool AlteraStatusPedido(Pedido pedido, EnumStatusPedido status)
         {
-            return daoPedido.AlteraStatusPedido(pedido);
+            return daoPedido.AlteraStatusPedido(pedido, status);
         }
 
         public bool DeletaPedido(int id)
