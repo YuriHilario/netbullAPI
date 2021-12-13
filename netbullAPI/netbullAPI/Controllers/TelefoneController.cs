@@ -116,7 +116,7 @@ namespace netbullAPI.Controllers
                     return NotFound(
                             new
                             {
-                                status = HttpStatusCode.BadRequest,
+                                status = HttpStatusCode.NotFound,
                                 Error = Notificacoes()
                             });
 
@@ -149,7 +149,7 @@ namespace netbullAPI.Controllers
                         new
                         {
                             status = HttpStatusCode.OK,
-                            Error = Notificacoes(),
+                            sucesso = true,
                         });
                 else
                     return NotFound(
