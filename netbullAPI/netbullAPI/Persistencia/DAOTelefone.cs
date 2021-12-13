@@ -51,17 +51,25 @@ namespace netbullAPI.Persistencia
                     return null;
                 }
 
-                var novoTelefone = new Telefone()
+                if (ValidaTelefone(registrarTelefoneViewModel.telefone_numero))
                 {
-                    //Criado id dessa forma pois não tem autoincremento implementado
-                    telefone_id = _netbullDBContext.Telefones.Max(m => m.telefone_id) + 1,
-                    telefone_idPessoa = registrarTelefoneViewModel.telefone_idPessoa,
-                    telefone_numero = registrarTelefoneViewModel.telefone_numero
-                };
+                    var novoTelefone = new Telefone()
+                    {
+                        //Criado id dessa forma pois não tem autoincremento implementado
+                        telefone_id = _netbullDBContext.Telefones.Max(m => m.telefone_id) + 1,
+                        telefone_idPessoa = registrarTelefoneViewModel.telefone_idPessoa,
+                        telefone_numero = registrarTelefoneViewModel.telefone_numero
+                    };
 
-                _netbullDBContext.Add(novoTelefone);
-                _netbullDBContext.SaveChanges();
-                return novoTelefone;
+                    _netbullDBContext.Add(novoTelefone);
+                    _netbullDBContext.SaveChanges();
+                    return novoTelefone;
+                }
+                else
+                {
+                    Notificar("Formatação inválida");
+                    return null;
+                } 
             }
             catch (Exception e)
             {

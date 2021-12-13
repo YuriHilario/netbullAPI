@@ -21,7 +21,7 @@ namespace netbullAPI_Testes
     [TestClass]
     public class Telefone_Controller_Testes
     {
-        public LoginUserViewModel login = new LoginUserViewModel() { user_nome = "cassiano", user_accessKey = "123456" };
+        public LoginUserViewModel login = new LoginUserViewModel() { user_nome = "bruna", user_accessKey = "123456" };
 
         /// <summary>
         /// Teste integração de busca de telefones para um cliente inválido
@@ -53,10 +53,10 @@ namespace netbullAPI_Testes
                 var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
 
-                if (retornoTelefone.status != HttpStatusCode.NotFound)
+                if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
                     Assert.Fail();
-                
-                Assert.AreNotEqual(0, retornoTelefone.Erros?.Count); 
+
+                Assert.AreNotEqual(0, retornoTelefone.error?.Count); 
             }
             catch (Exception ex)
             {
@@ -94,7 +94,7 @@ namespace netbullAPI_Testes
                 var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var retornoTelefone = JsonConvert.DeserializeObject<RetornoGetTelefone>(responseBodytelefone);
 
-                if (retornoTelefone.status == HttpStatusCode.NotFound)
+                if (retornoTelefone.status == HttpStatusCode.NotFound && retornoTelefone.status == HttpStatusCode.BadRequest)
                     Assert.Fail();
 
                 Assert.AreNotEqual(0, retornoTelefone.telefones.ToList().Count);
@@ -147,7 +147,7 @@ namespace netbullAPI_Testes
                 if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
                     Assert.Fail();
 
-                Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
+                Assert.AreNotEqual(0, retornoTelefone.error.Count);
             }
             catch (Exception ex)
             {
@@ -191,7 +191,9 @@ namespace netbullAPI_Testes
                 var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var retornoTelefone = JsonConvert.DeserializeObject<Telefone>(responseBodytelefone);
 
-                if (responseTelefone.StatusCode != HttpStatusCode.NotFound && responseTelefone.StatusCode != HttpStatusCode.BadRequest)
+                if (responseTelefone.StatusCode == HttpStatusCode.NotFound || responseTelefone.StatusCode == HttpStatusCode.BadRequest)
+                    Assert.Fail();
+                else if (responseTelefone.StatusCode != HttpStatusCode.Created)
                     Assert.Fail();
 
                 Assert.AreNotEqual(null, retornoTelefone);
@@ -246,7 +248,7 @@ namespace netbullAPI_Testes
                 if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
                     Assert.Fail();
 
-                Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
+                Assert.AreNotEqual(0, retornoTelefone.error?.Count);
             }
             catch (Exception ex)
             {
@@ -287,7 +289,9 @@ namespace netbullAPI_Testes
                 var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var retornoTelefone = JsonConvert.DeserializeObject<Telefone>(responseBodytelefone);
 
-                if (responseTelefone.StatusCode != HttpStatusCode.NotFound && responseTelefone.StatusCode != HttpStatusCode.BadRequest)
+                if (responseTelefone.StatusCode == HttpStatusCode.NotFound || responseTelefone.StatusCode== HttpStatusCode.BadRequest)
+                    Assert.Fail();
+                else if(responseTelefone.StatusCode != HttpStatusCode.OK)
                     Assert.Fail();
 
                 Assert.AreNotEqual(null, retornoTelefone);
@@ -328,11 +332,10 @@ namespace netbullAPI_Testes
                 var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
 
-                if (retornoTelefone.status != HttpStatusCode.NotFound)
+                if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
                     Assert.Fail();
 
-
-                Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
+                Assert.AreNotEqual(0, retornoTelefone.error.Count);
             }
             catch (Exception ex)
             {
@@ -385,12 +388,14 @@ namespace netbullAPI_Testes
 
                 var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
                 var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var retornoTelefone = JsonConvert.DeserializeObject<bool>(responseBodytelefone);
+                var retornoTelefone = JsonConvert.DeserializeObject<RetornoDeleteTelefone>(responseBodytelefone);
 
-                if (responseTelefone.StatusCode != HttpStatusCode.NotFound)
+                if (responseTelefone.StatusCode == HttpStatusCode.NotFound || responseTelefone.StatusCode == HttpStatusCode.BadRequest)
+                    Assert.Fail();
+                else if (responseTelefone.StatusCode != HttpStatusCode.OK)
                     Assert.Fail();
 
-                Assert.AreNotEqual(true, retornoTelefone);
+                Assert.AreEqual(true, retornoTelefone.sucesso);
             }
             catch (Exception ex)
             {
