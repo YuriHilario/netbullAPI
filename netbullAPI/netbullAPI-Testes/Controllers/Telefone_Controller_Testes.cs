@@ -29,7 +29,7 @@ namespace netbullAPI_Testes
         /// </summary>
         /// <returns></returns>
         [Fact]
-        [TestCategory("Controller")]
+        [Trait("Controller", "Inválido")]
         public async Task TestarTelefoneByClienteInvalidoAsync()
         {
             try
@@ -70,7 +70,7 @@ namespace netbullAPI_Testes
         /// </summary>
         /// <returns></returns>
         [Fact]
-        [TestCategory("Controller")]
+        [Trait("Controller", "Válido")]
         public async Task TestarTelefoneByClienteValidoAsync()
         {
             try
@@ -113,7 +113,7 @@ namespace netbullAPI_Testes
         /// </summary>
         /// <returns></returns>
         [Fact]
-        [TestCategory("Controller")]
+        [Trait("Controller", "Inválido")]
         public async Task TestarPostInvalidoAsync()
         {
             try
@@ -160,7 +160,7 @@ namespace netbullAPI_Testes
         /// </summary>
         /// <returns></returns>
         [Fact]
-        [TestCategory("Controller")]
+        [Trait("Controller", "Válido")]
         public async Task TestarPostValidoAsync()
         {
             try
@@ -205,14 +205,14 @@ namespace netbullAPI_Testes
         }
 
         /// <summary>
-        /// Teste integração de puit de novo telefone inválido
+        /// Teste integração de put de novo telefone inválido
         /// id_telefone válido
         /// num_telefone válido
         /// pesso_id vinculada inválida
         /// </summary>
         /// <returns></returns>
         [Fact]
-        [TestCategory("Controller")]
+        [Trait("Controller", "Inválido")]
         public async Task TestarPutInvalidoAsync()
         {
             try
@@ -256,8 +256,12 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração de put de novo telefone válido
+        /// </summary>
+        /// <returns></returns>
         [Fact]
-        [TestCategory("Controller")]
+        [Trait("Controller", "Válido")]
         public async Task TestarPutValidoAsync()
         {
             try
@@ -308,7 +312,7 @@ namespace netbullAPI_Testes
         /// </summary>
         /// <returns></returns>
         [Fact]
-        [TestCategory("Controller")]
+        [Trait("Controller", "Inválido")]
         public async Task TestarDeleteInvalidoAsync()
         {
             try
@@ -349,7 +353,7 @@ namespace netbullAPI_Testes
         /// </summary>
         /// <returns></returns>
         [Fact]
-        [TestCategory("Controller")]
+        [Trait("Controller", "Válido")]
         public async Task TestarDeleteValidoAsync()
         {
             try
