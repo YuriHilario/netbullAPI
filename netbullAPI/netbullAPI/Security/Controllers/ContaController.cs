@@ -222,8 +222,7 @@ namespace netbullAPI.Security.Controllers
                     user_email = viewModel.user_email,
                     user_accessKey = viewModel.user_accessKey
                 };
-
-                
+        
                 var sucess = await neUser.alterarSenhaAsync(usu);
 
                 if (!sucess)
