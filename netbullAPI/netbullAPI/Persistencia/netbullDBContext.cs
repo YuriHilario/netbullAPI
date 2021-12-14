@@ -13,7 +13,7 @@ namespace netbullAPI.Persistencia
         public DbSet<Pessoa> Pessoas { get; set; }
         public DbSet<Telefone> Telefones { get; set; }
         public DbSet<Endereco> Enderecos { get; set; }
-        public DbSet<Item> Itens { get; set; }
+        public DbSet<Produto> Produtos { get; set; }
 
     }
 }
