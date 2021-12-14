@@ -11,6 +11,6 @@ namespace netbullAPI_Testes.Models
     public class RetornoNotFound
     {
         public HttpStatusCode status { get; set; }
-        public List<Notificacao> Erros { get; set; }
+        public List<Notificacao> error { get; set; }
     }
 }

@@ -56,7 +56,7 @@ namespace netbullAPI_Testes
                 if (retornoTelefone.status != HttpStatusCode.NotFound)
                     Assert.Fail();
                 
-                Assert.AreNotEqual(0, retornoTelefone.Erros?.Count); 
+                Assert.AreNotEqual(0, retornoTelefone.error.Count); 
             }
             catch (Exception ex)
             {
@@ -147,7 +147,7 @@ namespace netbullAPI_Testes
                 if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
                     Assert.Fail();
 
-                Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
+                Assert.AreNotEqual(0, retornoTelefone.error.Count);
             }
             catch (Exception ex)
             {
@@ -246,7 +246,7 @@ namespace netbullAPI_Testes
                 if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
                     Assert.Fail();
 
-                Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
+                Assert.AreNotEqual(0, retornoTelefone.error.Count);
             }
             catch (Exception ex)
             {
@@ -332,7 +332,7 @@ namespace netbullAPI_Testes
                     Assert.Fail();
 
 
-                Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
+                Assert.AreNotEqual(0, retornoTelefone.error.Count);
             }
             catch (Exception ex)
             {
