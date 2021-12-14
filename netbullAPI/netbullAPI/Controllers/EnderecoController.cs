@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Entidade;
+using netbullAPI.Extensions;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Util;
@@ -24,14 +25,26 @@ namespace netbullAPI.Controllers
 
         [Authorize]
         [HttpGet("{idPessoa}")]
-        public async Task<IActionResult> /*IEnumerable<Endereco>*/ Get([FromServices] NE_Endereco neEndereco, int idPessoa)
+        public async Task<IActionResult> Get([FromServices] NE_Endereco neEndereco, int idPessoa)
         {
             IEnumerable<Endereco> listaEnderecos = await neEndereco.BuscaEnderecosPessoa(idPessoa);
 
             if (!listaEnderecos.Any())
-                return NotFound(HttpStatusCode.NotFound);
+            {
+                Notificar("Endereço não encontrado.");
+                return NotFound(
+                    new
+                    {
+                        status = HttpStatusCode.NotFound,
+                        Error = Notificacoes()
+                    }); ;
+            }
 
-            return Created("Lista obtida", listaEnderecos);
+            return Ok(new
+            {
+                status = HttpStatusCode.OK,
+                Lista = listaEnderecos
+            });
         }
 
         /// <summary>
@@ -53,7 +66,7 @@ namespace netbullAPI.Controllers
                     return NotFound(HttpStatusCode.NoContent);
                 }
 
-                return Ok(await neEndereco.CadastraNovoEndereco(endereco)
+                return Created($"/{endereco}",await neEndereco.CadastraNovoEndereco(endereco)
                     ? new { mensagem = "Inserido com sucesso.", sucesso = true }
                 : new { mensagem = "Problema ao inserir.", sucesso = false });
             }

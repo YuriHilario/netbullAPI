@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using netbullAPI.Entidade;
+using netbullAPI.Persistencia;
 using netbullAPI.Security.ViewModels;
+using netbullAPI.ViewModels;
 using netbullAPI_Testes.Models;
 using netbullAPI_Testes.Uitl;
 using Newtonsoft.Json;
@@ -24,13 +28,13 @@ namespace netbullAPI_Testes
         public LoginUserViewModel login = new LoginUserViewModel() { user_nome = "ale", user_accessKey = "123456" };
 
         /// <summary>
-        /// Teste integração de busca de endereços para um cliente inválido
-        /// id_pessoa_invalido = 1
+        /// Teste integração de busca de endereços para um cliente válido
+        /// responseEndereco.StatusCode == HttpStatusCode.OK
         /// </summary>
         /// <returns></returns>
         [Fact]
-        [TestCategory("Controller")]
-        public async Task TestarEnderecoByClienteInvalidoAsync()
+        [Trait("Controller", "Válido")]
+        public async Task TestarEnderecoGetPorIdPessoaValidoAsync()
         {
             try
             {
@@ -41,7 +45,45 @@ namespace netbullAPI_Testes
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                // Requisição para pegar os telefones
+                var requestEndereco = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri($"https://localhost:7035/api/Endereco/{1}"),
+                };
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseEndereco = await httpClient.SendAsync(requestEndereco).ConfigureAwait(false);
+                var responseBodytelefone = await responseEndereco.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (responseEndereco.StatusCode != HttpStatusCode.OK)
+                    Assert.Fail();
+
+                Assert.AreEqual(HttpStatusCode.OK, responseEndereco.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Teste integração de busca de endereços para um cliente Inválido
+        /// responseEndereco.StatusCode == HttpStatusCode.NotFound
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Inválido")]
+        public async Task TestarEnderecoGetPorIdPessoaInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
                 var requestEndereco = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
@@ -50,13 +92,12 @@ namespace netbullAPI_Testes
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
                 var responseEndereco = await httpClient.SendAsync(requestEndereco).ConfigureAwait(false);
-                var responseBodyendereco = await responseEndereco.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var retornoEndereco = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodyendereco);
+                var responseBodytelefone = await responseEndereco.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                if (retornoEndereco.status != HttpStatusCode.NotFound)
+                if (responseEndereco.StatusCode != HttpStatusCode.NotFound)
                     Assert.Fail();
 
-                Assert.AreNotEqual(0, retornoEndereco.Erros?.Count);
+                Assert.AreEqual(HttpStatusCode.NotFound, responseEndereco.StatusCode);
             }
             catch (Exception ex)
             {
@@ -64,338 +105,131 @@ namespace netbullAPI_Testes
             }
         }
 
-        ///// <summary>
-        ///// Teste integração de busca de telefones para um cliente válido
-        ///// id_pessoa_valido = 1
-        ///// </summary>
-        ///// <returns></returns>
-        //[Fact]
-        //[TestCategory("Controller")]
-        //public async Task TestarTelefoneByClienteValidoAsync()
-        //{
-        //    try
-        //    {
-        //        var application = new WebApplicationFactory<Program>()
-        //       .WithWebHostBuilder(builder => { });
+        /// <summary>
+        /// Teste integração de cadastro de endereço válido
+        /// responseEndereco.StatusCode == HttpStatusCode.Created
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Válido")]
+        public async Task TestarCadastrarNovoEnderecoValidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder => { });
 
-        //        var httpClient = application.CreateClient();
+                var httpClient = application.CreateClient();
 
-        //        var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+                var config = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json")
+                    .Build();
+                var connectionString = config.GetConnectionString("NetBullConnection");
 
-        //        // Requisição para pegar os telefones
-        //        var requestTelefone = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Get,
-        //            RequestUri = new Uri($"https://localhost:7035/api/Telefone/{1}"),
-        //        };
-        //        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+                RegistrarEnderecoViewModel endereco = new RegistrarEnderecoViewModel()
+                {
+                    endereco_logradouro = "LOGRADOUTO_TESTE",
+                    endereco_numero = 111,
+                    endereco_complemento = "CACA",
+                    endereco_idpessoa = 1
+                };
 
-        //        var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
-        //        var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
-        //        var retornoTelefone = JsonConvert.DeserializeObject<RetornoGetTelefone>(responseBodytelefone);
+                var jsonCorpo = JsonConvert.SerializeObject(endereco);
 
-        //        if (retornoTelefone.status == HttpStatusCode.NotFound)
-        //            Assert.Fail();
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-        //        Assert.AreNotEqual(0, retornoTelefone.telefones.ToList().Count);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string menssage = ex.Message;
-        //    }
-        //}
+                var requestEndereco = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri($"https://localhost:7035/api/Endereco"),
+                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
+                };
 
-        ///// <summary>
-        ///// Teste integração de post de novo telefone inválido
-        ///// telefone_invalido = 0
-        ///// telefone_invalido = 12345
-        ///// id_pessoa_invalido = 0
-        ///// </summary>
-        ///// <returns></returns>
-        //[Fact]
-        //[TestCategory("Controller")]
-        //public async Task TestarPostInvalidoAsync()
-        //{
-        //    try
-        //    {
-        //        var application = new WebApplicationFactory<Program>()
-        //       .WithWebHostBuilder(builder => { });
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-        //        var httpClient = application.CreateClient();
+                var responseEndereco = await httpClient.SendAsync(requestEndereco).ConfigureAwait(false);
+                var responseBodytelefone = await responseEndereco.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-        //        var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+                // DELETANDO TESTE CRIADO
+                var usuCreated = JsonConvert.DeserializeObject<Endereco>(responseBodytelefone);
 
-        //        // Requisição para pegar os telefones
-        //        var jsonTelefone = JsonConvert.SerializeObject(new
-        //        {
-        //            telefone_idPessoa = 1,
-        //            telefone_numero = 12345,
-        //        });
+                var contextOptions = new DbContextOptionsBuilder<netbullDBContext>()
+                                .UseNpgsql(connectionString)
+                                .Options;
 
-        //        var requestTelefone = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Post,
-        //            RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
-        //            Content = new StringContent(jsonTelefone, Encoding.UTF8, "application/json"),
-        //        };
-        //        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+                using var context = new netbullDBContext(contextOptions);
 
-        //        var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
-        //        var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
-        //        var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
+                var enderecoCriado = context.Enderecos.Where(end => end.endereco_logradouro == endereco.endereco_logradouro &&
+                                                                              end.endereco_numero == endereco.endereco_numero &&
+                                                                              end.endereco_complemento == endereco.endereco_complemento &&
+                                                                              end.endereco_idpessoa == endereco.endereco_idpessoa).FirstOrDefault();
 
-        //        if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
-        //            Assert.Fail();
+                usuCreated.endereco_id = enderecoCriado.endereco_id;
 
-        //        Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string menssage = ex.Message;
-        //    }
-        //}
+                var result = httpClient.DeleteAsync($"api/Endereco/{usuCreated.endereco_id}").GetAwaiter().GetResult();
 
-        ///// <summary>
-        ///// Teste integração de post de novo telefone válido
-        ///// </summary>
-        ///// <returns></returns>
-        //[Fact]
-        //[TestCategory("Controller")]
-        //public async Task TestarPostValidoAsync()
-        //{
-        //    try
-        //    {
-        //        var application = new WebApplicationFactory<Program>()
-        //       .WithWebHostBuilder(builder => { });
+                if (responseEndereco.StatusCode != HttpStatusCode.Created)
+                    Assert.Fail();
 
-        //        var httpClient = application.CreateClient();
-
-        //        var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-
-        //        // Requisição para pegar os telefones
-        //        var jsonTelefone = JsonConvert.SerializeObject(new
-        //        {
-        //            telefone_idPessoa = 1,
-        //            telefone_numero = 123456789,
-        //        });
-
-        //        var requestTelefone = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Post,
-        //            RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
-        //            Content = new StringContent(jsonTelefone, Encoding.UTF8, "application/json"),
-        //        };
-        //        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-
-        //        var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
-        //        var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
-        //        var retornoTelefone = JsonConvert.DeserializeObject<Telefone>(responseBodytelefone);
-
-        //        if (responseTelefone.StatusCode != HttpStatusCode.NotFound && responseTelefone.StatusCode != HttpStatusCode.BadRequest)
-        //            Assert.Fail();
-
-        //        Assert.AreNotEqual(null, retornoTelefone);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string menssage = ex.Message;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Teste integração de puit de novo telefone inválido
-        ///// id_telefone válido
-        ///// num_telefone válido
-        ///// pesso_id vinculada inválida
-        ///// </summary>
-        ///// <returns></returns>
-        //[Fact]
-        //[TestCategory("Controller")]
-        //public async Task TestarPutInvalidoAsync()
-        //{
-        //    try
-        //    {
-        //        var application = new WebApplicationFactory<Program>()
-        //       .WithWebHostBuilder(builder => { });
-
-        //        var httpClient = application.CreateClient();
-
-        //        var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-
-        //        // Requisição para pegar os telefones
-        //        //Numero válido e atribuicao com pessoa invalido
-        //        var jsonTelefone = JsonConvert.SerializeObject(new Telefone()
-        //        {
-        //            telefone_id = 1,
-        //            telefone_idPessoa = 2,
-        //            telefone_numero = 111111111,
-        //        });
-
-        //        var requestTelefone = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Put,
-        //            RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
-        //            Content = new StringContent(jsonTelefone, Encoding.UTF8, "application/json"),
-        //        };
-        //        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-
-        //        var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
-        //        var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
-        //        var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
-
-        //        if (retornoTelefone.status != HttpStatusCode.NotFound && retornoTelefone.status != HttpStatusCode.BadRequest)
-        //            Assert.Fail();
-
-        //        Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string menssage = ex.Message;
-        //    }
-        //}
-
-        //[Fact]
-        //[TestCategory("Controller")]
-        //public async Task TestarPutValidoAsync()
-        //{
-        //    try
-        //    {
-        //        var application = new WebApplicationFactory<Program>()
-        //       .WithWebHostBuilder(builder => { });
-
-        //        var httpClient = application.CreateClient();
-
-        //        var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-
-        //        // Requisição para pegar os telefones
-        //        var jsonTelefone = JsonConvert.SerializeObject(new Telefone()
-        //        {
-        //            telefone_id = 1,
-        //            telefone_idPessoa = 1,
-        //            telefone_numero = 111111111,
-        //        });
-
-        //        var requestTelefone = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Put,
-        //            RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
-        //            Content = new StringContent(jsonTelefone, Encoding.UTF8, "application/json"),
-        //        };
-        //        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-
-        //        var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
-        //        var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
-        //        var retornoTelefone = JsonConvert.DeserializeObject<Telefone>(responseBodytelefone);
-
-        //        if (responseTelefone.StatusCode != HttpStatusCode.NotFound && responseTelefone.StatusCode != HttpStatusCode.BadRequest)
-        //            Assert.Fail();
-
-        //        Assert.AreNotEqual(null, retornoTelefone);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string menssage = ex.Message;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Teste de integração deleção de telefone inválido
-        ///// id_telefone_invalido
-        ///// </summary>
-        ///// <returns></returns>
-        //[Fact]
-        //[TestCategory("Controller")]
-        //public async Task TestarDeleteInvalidoAsync()
-        //{
-        //    try
-        //    {
-        //        var application = new WebApplicationFactory<Program>()
-        //       .WithWebHostBuilder(builder => { });
-
-        //        var httpClient = application.CreateClient();
-
-        //        var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-
-        //        // Requisição para pegar os telefones
-        //        var requestTelefone = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Delete,
-        //            RequestUri = new Uri($"https://localhost:7035/api/Telefone/{0}"),
-        //        };
-        //        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-
-        //        var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
-        //        var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
-        //        var retornoTelefone = JsonConvert.DeserializeObject<RetornoNotFound>(responseBodytelefone);
-
-        //        if (retornoTelefone.status != HttpStatusCode.NotFound)
-        //            Assert.Fail();
+                Assert.AreEqual(HttpStatusCode.Created, responseEndereco.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
 
 
-        //        Assert.AreNotEqual(0, retornoTelefone.Erros.Count);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string menssage = ex.Message;
-        //    }
-        //}
+        /// <summary>
+        /// Teste integração de cadastro de endereço Inválido
+        /// responseEndereco.StatusCode == HttpStatusCode.BadRequest
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Inválido")]
+        public async Task TestarCadastrarNovoEnderecoInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder => { });
 
-        ///// <summary>
-        ///// Teste de integração deleção de telefone válido
-        ///// id_telefone_valido
-        ///// </summary>
-        ///// <returns></returns>
-        //[Fact]
-        //[TestCategory("Controller")]
-        //public async Task TestarDeleteValidoAsync()
-        //{
-        //    try
-        //    {
-        //        var application = new WebApplicationFactory<Program>()
-        //       .WithWebHostBuilder(builder => { });
+                var httpClient = application.CreateClient();
 
-        //        var httpClient = application.CreateClient();
+                RegistrarEnderecoViewModel endereco = new RegistrarEnderecoViewModel()
+                {
+                    endereco_logradouro = "",
+                    endereco_numero = 0,
+                    endereco_complemento = "",
+                    endereco_idpessoa = 0
+                };
 
-        //        var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+                var jsonCorpo = JsonConvert.SerializeObject(endereco);
 
-        //        //Inclusao de telefone
-        //        var jsonTelefoneInsercao = JsonConvert.SerializeObject(new
-        //        {
-        //            telefone_idPessoa = 1,
-        //            telefone_numero = 123456789,
-        //        });
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-        //        var requestTelefoneInsercao = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Post,
-        //            RequestUri = new Uri($"https://localhost:7035/api/Telefone/"),
-        //            Content = new StringContent(jsonTelefoneInsercao, Encoding.UTF8, "application/json"),
-        //        };
-        //        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-        //        var responseTelefoneInsercao = await httpClient.SendAsync(requestTelefoneInsercao).ConfigureAwait(false);
-        //        var responseBodytelefoneInsercao = await responseTelefoneInsercao.Content.ReadAsStringAsync().ConfigureAwait(false);
-        //        var retornoTelefoneInsercao = JsonConvert.DeserializeObject<Telefone>(responseBodytelefoneInsercao);
+                var requestEndereco = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri($"https://localhost:7035/api/Endereco"),
+                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
+                };
 
-        //        // Delecao do telefone 
-        //        var requestTelefone = new HttpRequestMessage
-        //        {
-        //            Method = HttpMethod.Delete,
-        //            RequestUri = new Uri($"https://localhost:7035/api/Telefone/{retornoTelefoneInsercao.telefone_id}"),
-        //        };
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-        //        var responseTelefone = await httpClient.SendAsync(requestTelefone).ConfigureAwait(false);
-        //        var responseBodytelefone = await responseTelefone.Content.ReadAsStringAsync().ConfigureAwait(false);
-        //        var retornoTelefone = JsonConvert.DeserializeObject<bool>(responseBodytelefone);
+                var responseEndereco = await httpClient.SendAsync(requestEndereco).ConfigureAwait(false);
+                var responseBodytelefone = await responseEndereco.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-        //        if (responseTelefone.StatusCode != HttpStatusCode.NotFound)
-        //            Assert.Fail();
+                if (responseEndereco.StatusCode != HttpStatusCode.BadRequest)
+                    Assert.Fail();
 
-        //        Assert.AreNotEqual(true, retornoTelefone);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string menssage = ex.Message;
-        //    }
-        //}
+                Assert.AreEqual(HttpStatusCode.BadRequest, responseEndereco.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+
     }
 }
