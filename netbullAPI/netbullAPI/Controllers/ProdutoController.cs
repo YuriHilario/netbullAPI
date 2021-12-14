@@ -5,6 +5,7 @@ using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
 using netbullAPI.Util;
+using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,31 +20,67 @@ namespace netbullAPI.Controllers
         {
         }
 
-        // GET api/<TelefoneController>/5
-        [HttpGet("{id}")]
-        public IActionResult GetPorId([FromServices] NE_Produto ne_Produto, int id)
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync([FromServices] NE_Produto ne_Produto)
         {
             try
             {
-                return Ok(ne_Produto.BuscaProdutoPorId(id));
+                var produtos = await ne_Produto.GetAllAsync();
+                if (produtos == null)
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+                else
+                {
+                    return Ok(produtos);
+                }
             }
             catch (Exception e)
             {
-                return BadRequest(
-                    new
-                    {
-                        mensagem = e.Message,
-                        sucesso = false
-                    });
+                Notificar("Falha ao buscar produto.");
+                return StatusCode(500, Notificacoes());
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPorIdAsync([FromServices] NE_Produto ne_Produto, int id)
+        {
+            try
+            {
+                var produto = await ne_Produto.GetPorIdAsync(id);
+                if (produto != null)
+                {
+                    return Ok(produto);
+                }
+                else
+                {
+                    return NotFound(
+                       new
+                       {
+                           status = HttpStatusCode.NotFound,
+                           Error = Notificacoes()
+                       });
+                }
+
+            }
+            catch (Exception e)
+            {
+                Notificar("Falha ao buscar produto.");
+                return StatusCode(500, Notificacoes());
             }
         }
 
         [HttpPost]
-        public IActionResult Post([FromServices] NE_Produto ne_Produto, [FromBody] Produto produto)
+        public async Task<IActionResult> PostAsync([FromServices] NE_Produto ne_Produto, [FromBody] Produto produto)
         {
             try
             {
-                return Ok(ne_Produto.AdicionaProduto());
+                return Ok(ne_Produto.AdicionaProduto(produto));
             }
             catch (Exception e)
             {
@@ -57,7 +94,7 @@ namespace netbullAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult Put([FromServices] NE_Produto ne_Produto, [FromBody] Produto produto)
+        public async Task<IActionResult> PutAsync([FromServices] NE_Produto ne_Produto, [FromBody] Produto produto)
         {
             try
             {
@@ -77,11 +114,11 @@ namespace netbullAPI.Controllers
 
 
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromServices] NE_Produto ne_Produto, int id)
+        public async Task<IActionResult> DeleteAsync([FromServices] NE_Produto ne_Produto, int id)
         {
             try
             {
-                var resp = ne_Produto.DeletaProduto(id);
+                var resp = await ne_Produto.DeletaProduto(id);
                 if (resp)
                     return Ok(
                         new
