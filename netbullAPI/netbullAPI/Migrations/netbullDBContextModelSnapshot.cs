@@ -105,6 +105,17 @@ namespace netbullAPI.Migrations
 
                     b.Navigation("pessoa");
                 });
+
+            modelBuilder.Entity("netbullAPI.Entidade.Telefone", b =>
+                {
+                    b.HasOne("netbullAPI.Entidade.Pessoa", "Pessoa")
+                        .WithMany()
+                        .HasForeignKey("telefone_idPessoa")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pessoa");
+                });
 #pragma warning restore 612, 618
         }
     }
