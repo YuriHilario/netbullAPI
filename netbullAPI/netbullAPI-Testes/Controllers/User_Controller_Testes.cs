@@ -21,6 +21,11 @@ namespace netbullAPI_Testes
     [TestClass]
     public class User_Controller_Testes // TESTES DE INTEGRAÇÃO
     {
+        /// <summary>
+        /// Teste integração para realização de login para teste válido
+        /// Token = not null
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Válido")]
         public async Task TestarLoginValidoAsync()
@@ -56,6 +61,11 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração para realização de login para teste Inválido
+        /// Token = null
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Inválido")]
         public async Task TestarLoginInvalidoAsync()
@@ -91,6 +101,11 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração buscar todos os usuários para teste válido
+        /// lista.Count != 0
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Válido")]
         public async Task TesteGetAllUserValidoAsync()
@@ -129,6 +144,11 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração para registrar usuário para teste válido
+        /// response.StatusCode == HttpStatusCode.Created
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Válido")]
         public async Task TestarRegisterValidoAsync()
@@ -187,6 +207,11 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração para registrar usuário para teste Inválido
+        /// response.BadRequest == HttpStatusCode.BadRequest
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Inválido")]
         public async Task TestarRegisterInvalidoAsync()
@@ -229,6 +254,11 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração para deletar usuário para teste válido
+        /// result.StatusCode == HttpStatusCode.OK
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Válido")]
         public async Task TestarDeleteUserValidoAsync()
@@ -313,6 +343,11 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração para deletar usuário para teste Inválido
+        /// result.StatusCode == HttpStatusCode.NotFound
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Inválido")]
         public async Task TestarDeleteUserInvalidoAsync()
@@ -350,6 +385,11 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração para deletar usuário para teste Inválido
+        /// response.StatusCode == HttpStatusCode.OK
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Válido")]
         public async Task TestarAlterarSenhaValidoAsync()
@@ -393,6 +433,11 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração para deletar usuário para teste Inválido
+        /// response.StatusCode == HttpStatusCode.NotFound
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Inválido")]
         public async Task TestarAlterarSenhaInvalidoAsync()
