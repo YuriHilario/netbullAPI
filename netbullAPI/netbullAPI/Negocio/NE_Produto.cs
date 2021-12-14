@@ -8,55 +8,58 @@ namespace netbullAPI.Negocio
     {
         private DAOProduto _daoProduto;
 
-        public NE_Produto(netbullDBContext PessoaContexto, DAOProduto daoProduto)
+        public NE_Produto(DAOProduto daoProduto)
         {
             _daoProduto = daoProduto;
         }
 
-        public IEnumerable<Produto> BuscaProduto()
+        public async Task<List<Produto>> GetAllAsync()
         {
-            return _daoProduto.BuscaProduto();
+            return await _daoProduto.GetAllAsync();
         }
 
-        public Produto BuscaProdutoPorId(int id)
+        public async Task<Produto> GetPorIdAsync(int id)
         {
-            return _daoProduto.BuscaProdutoPorId(id);
+            return await _daoProduto.GetPorIdAsync(id);
         }
-    }
-    public Produto AdicionaProduto(Produto produto)
-    {
-        try
-        {
-            return _daoProduto.AdicionaProduto(produto);
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
-    }
 
-    public Produto AtualizaProduto(Produto produto)
-    {
-        try
+        public async Task<Produto> AdicionaProduto(Produto produto)
         {
-            return _daoProduto.AtualizaProduto(produto);
+            try
+            {
+                return await _daoProduto.AdicionaProduto(produto);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
-        catch (Exception e)
+
+        public async Task<Produto> AtualizaProduto(Produto produto)
         {
-            throw e;
+            try
+            {
+                return await _daoProduto.AtualizaProduto(produto);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+
+        public async Task<bool> DeletaProduto(int id)
+        {
+            try
+            {
+                return await _daoProduto.DeletaProduto(id);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
         }
     }
-
-    public bool DeletaProduto(int id)
-    {
-        try
-        {
-            return _daoProduto.DeletaProduto(id);
-        }
-        catch (Exception e)
-        {
-
-            throw e;
-        }
-    }
+   
 }

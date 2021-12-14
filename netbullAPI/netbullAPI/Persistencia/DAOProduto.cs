@@ -3,6 +3,7 @@ using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
+using netbullAPI.Util;
 
 namespace netbullAPI.Repository
 {
@@ -15,40 +16,55 @@ namespace netbullAPI.Repository
             _netbullDBContext = netbullDBContext;
         }
 
-        public IEnumerable<DAOProduto> BuscaProduto()
+        public async Task<List<Produto>> GetAllAsync()
         {
+            List<Produto> context = null;
             try
-            {
-              return _netbullDBContext.Produtos.Where(x => x.produto_id != null);
+            {                
+                context = _netbullDBContext.Produtos.Where(x => x.produto_id != null).ToList();
+                if (context == null)
+                {
+                    Notificar("Produtos não encontrados");
+                }
+
+                return context;
+
             }
             catch (Exception e)
             {
-                throw e;
+                Notificar("Não foi possível encontrar produtos.");
+                return context;
             }
         }
 
-        public Produto BuscaProdutoPorId(int id)
+        internal Task<Produto> AdicionaProduto(Produto produto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Produto> GetPorIdAsync(int id)
         {
             try
             {
                 var produtoExistente = _netbullDBContext.Produtos.Where(x => x.produto_id == id).FirstOrDefault();
-                if (produtoExistente != null)
-                    return produtoExistente;
+                if (produtoExistente == null)
+                {
+                    Notificar("Produto não existente");
+                }
+                return produtoExistente;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            
         }
-        public Produto AtualizaProduto(Produto produto)
+
+        public async Task<Produto> AtualizaProduto(Produto produto)
         {
             try
             {
                 var produtoExistente = _netbullDBContext.Produtos.Where(x => x.produto_id == produto.produto_id).FirstOrDefault();
                         
-                
-                
                     _netbullDBContext.Update(produtoExistente);
                     _netbullDBContext.SaveChanges();
                 
@@ -60,7 +76,7 @@ namespace netbullAPI.Repository
             }
         }
 
-        public bool DeletaProduto(int id)
+        public async Task<bool> DeletaProduto(int id)
         {
             try
             {
@@ -78,7 +94,4 @@ namespace netbullAPI.Repository
             }
         }
     }
-
-
-
 }

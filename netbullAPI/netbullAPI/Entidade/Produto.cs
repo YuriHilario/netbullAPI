@@ -13,6 +13,6 @@ namespace netbullAPI.Entidade
         public string produto_nome { get; set; }   
         public double produto_valor { get; set; }
         [ForeignKey("Item")]
-        public EnumTipoItem Item { get; set; }  
+        public Item Item { get; set; }  
     }
 }
