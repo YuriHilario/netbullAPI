@@ -2,7 +2,7 @@
 
 namespace netbullAPI.Security.ViewModels
 {
-    public class AlterarUserViewModel
+    public class AlterarUserSenhaViewModel
     {
         [Required(ErrorMessage = "O nome do usuário é obrigatório.")]
         [StringLength(60, ErrorMessage = "Nome de usuário deve ter no máximo 60 caracteres.")]

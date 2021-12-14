@@ -208,7 +208,7 @@ namespace netbullAPI.Security.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPatch("alterarSenha")]
-        public async Task<IActionResult> AlterarSenhaAsync([FromServices] NE_User neUser, [FromBody] AlterarUserViewModel viewModel)
+        public async Task<IActionResult> AlterarSenhaAsync([FromServices] NE_User neUser, [FromBody] AlterarUserSenhaViewModel viewModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new ResultViewModel<User>(ModelState.RecuperarErros()));
