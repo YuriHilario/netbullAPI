@@ -121,17 +121,12 @@ namespace netbullAPI_Testes
 
                 var httpClient = application.CreateClient();
 
-                var config = new ConfigurationBuilder()
-                    .AddJsonFile("appsettings.json")
-                    .Build();
-                var connectionString = config.GetConnectionString("NetBullConnection");
-
                 RegistrarEnderecoViewModel endereco = new RegistrarEnderecoViewModel()
                 {
                     endereco_logradouro = "LOGRADOUTO_TESTE",
                     endereco_numero = 111,
                     endereco_complemento = "CACA",
-                    endereco_idpessoa = 1
+                    endereco_idpessoa = 2
                 };
 
                 var jsonCorpo = JsonConvert.SerializeObject(endereco);
@@ -151,6 +146,11 @@ namespace netbullAPI_Testes
                 var responseBodytelefone = await responseEndereco.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 // DELETANDO TESTE CRIADO
+                var config = new ConfigurationBuilder()
+                   .AddJsonFile("appsettings.json")
+                   .Build();
+                var connectionString = config.GetConnectionString("NetBullConnection");
+
                 var usuCreated = JsonConvert.DeserializeObject<Endereco>(responseBodytelefone);
 
                 var contextOptions = new DbContextOptionsBuilder<netbullDBContext>()
@@ -178,7 +178,6 @@ namespace netbullAPI_Testes
                 string menssage = ex.Message;
             }
         }
-
 
         /// <summary>
         /// Teste integração de cadastro de endereço Inválido
@@ -231,5 +230,104 @@ namespace netbullAPI_Testes
             }
         }
 
+        /// <summary>
+        /// Teste integração de atualiazção PUT de endereço Válido
+        /// responseEndereco.StatusCode == HttpStatusCode.OK
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Válido")]
+        public async Task TestaroAtualizaEnderecoValidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                AlterarEnderecoViewModel enderecoAtualizar = new AlterarEnderecoViewModel()
+                {
+                    endereco_logradouro = "testandoAlt",
+                    endereco_numero = 929,
+                    endereco_complemento = "testeAlterar",
+                };
+
+                var jsonCorpo = JsonConvert.SerializeObject(enderecoAtualizar);
+
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                var requestEndereco = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Put,
+                    RequestUri = new Uri($"https://localhost:7035/api/Endereco/{27}"),
+                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
+                };
+
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseEndereco = await httpClient.SendAsync(requestEndereco).ConfigureAwait(false);
+                var responseBodytelefone = await responseEndereco.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (responseEndereco.StatusCode != HttpStatusCode.OK)
+                    Assert.Fail();
+
+                Assert.AreEqual(HttpStatusCode.OK, responseEndereco.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Teste integração de atualiazção PUT de endereço Inválido
+        /// responseEndereco.StatusCode == HttpStatusCode.OK
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Inválido")]
+        public async Task TestaroAtualizaEnderecoInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                AlterarEnderecoViewModel enderecoAtualizar = new AlterarEnderecoViewModel()
+                {
+                    endereco_logradouro = "testandoAlt",
+                    endereco_numero = 929,
+                    endereco_complemento = "testeAlterar",
+                };
+
+                var jsonCorpo = JsonConvert.SerializeObject(enderecoAtualizar);
+
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                var requestEndereco = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Put,
+                    RequestUri = new Uri($"https://localhost:7035/api/Endereco/{1}"),
+                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
+                };
+
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseEndereco = await httpClient.SendAsync(requestEndereco).ConfigureAwait(false);
+                var responseBodytelefone = await responseEndereco.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (responseEndereco.StatusCode != HttpStatusCode.NotFound)
+                    Assert.Fail();
+
+                Assert.AreEqual(HttpStatusCode.NotFound, responseEndereco.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
     }
 }
