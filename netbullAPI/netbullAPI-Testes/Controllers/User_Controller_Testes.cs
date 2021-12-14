@@ -129,44 +129,6 @@ namespace netbullAPI_Testes
             }
         }
 
-        //[Fact(Skip = "Teste ainda não disponível")] // VER COM ROBERTO
-        //[Trait("Controller", "Inválido")]
-        //public async Task TesteGetAllUserInvalidoAsync()
-        //{
-        //    try
-        //    {
-        //        var application = new WebApplicationFactory<Program>()
-        //        .WithWebHostBuilder(builder => { });
-
-        //        var _Client = application.CreateClient();
-
-        //        LoginUserViewModel login = new LoginUserViewModel()
-        //        {
-        //            user_nome = "cassiano",
-        //            user_accessKey = "123456"
-        //        };
-
-        //        var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-
-        //        _Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-
-        //        var result = _Client.GetAsync("api/Conta").GetAwaiter().GetResult();
-        //        var resultContent = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-        //        if (result.StatusCode != HttpStatusCode.NotFound)
-        //        {
-        //            Assert.Fail();
-        //        }
-
-        //        List<RetornarUserViewModel> lista = JsonConvert.DeserializeObject<List<RetornarUserViewModel>>(resultContent);
-        //        Assert.AreEqual(0, lista.Count);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        string menssage = ex.Message;
-        //    }
-        //}
-
         [Fact]
         [Trait("Controller", "Válido")]
         public async Task TestarRegisterValidoAsync()
