@@ -183,7 +183,6 @@ namespace netbullAPI.Security.Persistencia
 
                 using (connection)
                 {
-
                     connection.Open();
 
                     using (var transaction = connection.BeginTransaction())

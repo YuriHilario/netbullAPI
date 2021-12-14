@@ -386,7 +386,7 @@ namespace netbullAPI_Testes
         }
 
         /// <summary>
-        /// Teste integração para deletar usuário para teste Inválido
+        /// Teste integração para alterar senhda do usuário para teste Inválido
         /// response.StatusCode == HttpStatusCode.OK
         /// </summary>
         /// <returns></returns>
@@ -434,7 +434,7 @@ namespace netbullAPI_Testes
         }
 
         /// <summary>
-        /// Teste integração para deletar usuário para teste Inválido
+        /// Teste integração para alterar senhda do usuário para teste Inválido
         /// response.StatusCode == HttpStatusCode.NotFound
         /// </summary>
         /// <returns></returns>
