@@ -41,7 +41,7 @@ namespace netbullAPI.Controllers
                     Error = Notificacoes()
                 });
                 }
-                
+
             }
             catch (Exception e)
             {
@@ -66,23 +66,10 @@ namespace netbullAPI.Controllers
         {
             try
             {
-                if (id != 0)
+                 var pessoa = await nePessoa.BuscaPessoaPorId(id);
+                if (pessoa != null)
                 {
-                    var pessoa = await nePessoa.BuscaPessoaPorId(id);
-                    if (pessoa != null)
-                    {
-                        return Ok(pessoa);
-                    }
-                    else
-                    {
-                        return NotFound(
-                        new
-                        {
-                            status = HttpStatusCode.NotFound,
-                            Error = Notificacoes()
-                        });
-                    }
-
+                    return Ok(pessoa);
                 }
                 else
                 {
@@ -93,6 +80,8 @@ namespace netbullAPI.Controllers
                         Error = Notificacoes()
                     });
                 }
+
+
             }
             catch
             {
@@ -103,7 +92,7 @@ namespace netbullAPI.Controllers
                     Error = Notificacoes()
                 });
             }
-            
+
         }
 
         /// <summary>
@@ -129,7 +118,7 @@ namespace netbullAPI.Controllers
                     pessoa_tipopessoa = viewModel.pessoa_tipopessoa
                 };
                 if (pessoa != null)
-                {                    
+                {
                     var addPessoa = await nePessoa.InserirPessoa(pessoa);
                     if (addPessoa)
                     {
@@ -165,7 +154,7 @@ namespace netbullAPI.Controllers
                     Error = Notificacoes()
                 });
             }
-            
+
         }
 
         /// <summary>
@@ -215,7 +204,7 @@ namespace netbullAPI.Controllers
                     Error = Notificacoes()
                 });
             }
-            
+
         }
 
         /// <summary>
@@ -229,31 +218,19 @@ namespace netbullAPI.Controllers
         {
             try
             {
-                if (id != 0)
+                var delPessoa = await nePessoa.DeletarPessoa(id);
+                if (delPessoa)
                 {
-                    var delPessoa = await nePessoa.DeletarPessoa(id);
-                    if (delPessoa)
-                    {
-                        return Ok("Pessoa Deletada com Sucesso!");
-                    }
-                    else
-                    {
-                        return NotFound(
-                    new
-                    {
-                        status = HttpStatusCode.NotFound,
-                        Error = Notificacoes()
-                    });
-                    }
+                    return Ok("Pessoa Deletada com Sucesso!");
                 }
                 else
                 {
                     return NotFound(
-                    new
-                    {
-                        status = HttpStatusCode.NotFound,
-                        Error = Notificacoes()
-                    });
+                new
+                {
+                    status = HttpStatusCode.NotFound,
+                    Error = Notificacoes()
+                });
                 }
             }
             catch
