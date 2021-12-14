@@ -20,7 +20,7 @@ namespace netbullAPI.Negocio
 
         public async Task<Pessoa> BuscaPessoaPorId(int id)
         {
-           var pessoa = await _daoPessoa.BuscaPessoaPorId(id);
+          var pessoa = await _daoPessoa.BuscaPessoaPorId(id);
             return pessoa;
         }
         
