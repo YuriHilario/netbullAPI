@@ -1,6 +1,7 @@
 ﻿using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
+using netbullAPI.Util;
 
 namespace netbullAPI.Persistencia
 {

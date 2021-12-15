@@ -79,8 +79,10 @@ builder.Services.AddScoped<NE_Endereco>();
 builder.Services.AddScoped<NE_Telefone>();
 builder.Services.AddScoped<NE_Produto>();
 builder.Services.AddScoped<NE_Pessoa>();
+builder.Services.AddScoped<NE_Item>();
 builder.Services.AddScoped<INotificador, Notificador>(); // Por Requisição
 builder.Services.AddTransient<UserDAO>();
+builder.Services.AddTransient<DAOItem>();
 builder.Services.AddTransient<DAO_Endereco>();
 builder.Services.AddTransient<DAOTelefone>();
 builder.Services.AddTransient<DAO_Pessoa>();
