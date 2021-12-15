@@ -8,7 +8,7 @@ namespace netbullAPI.Entidade
         [Key]
         [Required]
         public int pedido_id { get; set; }
-        public DateTime pedido_time { get; set; }
+        public string pedido_time { get; set; }
         [ForeignKey("Endereco")]
         public int pedido_idEndereco { get; set; }
         public decimal pedido_valor { get; set; }

@@ -18,25 +18,34 @@ namespace netbullAPI.Persistencia
             this.configuration = configuration;
         }
 
-        public object BuscaPedidosPessoa(int id)
+        public IEnumerable<RetornaPedidoViewModel> BuscaPedidosPessoa(int id)
         {
-            var pessoa = netbullDBContext.Pessoas.Where(pessoa => pessoa.pessoa_id == id).FirstOrDefault();
-            if (pessoa == null)
+            try
             {
-                Notificar("Cliente informado inexistente");
-                return null;
+                var pessoa = netbullDBContext.Pessoas.Where(pessoa => pessoa.pessoa_id == id).FirstOrDefault();
+                if (pessoa == null)
+                {
+                    Notificar("Cliente informado inexistente");
+                    return null;
+                }
+                else
+                {
+                    var historico_pedidos = from pedido in netbullDBContext.Pedidos
+                                            where pedido.pedido_idPessoa == id
+                                            select new RetornaPedidoViewModel()
+                                            {
+                                                pedido = pedido,
+                                                itens = netbullDBContext.Itens.Where(i => i.item_idPedido == pedido.pedido_id).ToList(),
+                                            };
+                    return historico_pedidos;
+                }
             }
-            else
+            catch (Exception e)
             {
-                var historico_pedidos = from pedido in netbullDBContext.Pedidos
-                                        where pedido.pedido_idPessoa == id
-                                        select new RetornaPedidoViewModel()
-                                        {
-                                            pedido = pedido,
-                                            itens = netbullDBContext.Itens.Where(i => i.iten_idPedido == pedido.pedido_id).ToList(),
-                                        };
-                return historico_pedidos;
+                Notificar(e.Message);
+                throw;
             }
+            
         }
 
         public int BuscaPedidosUser(string name)
@@ -122,7 +131,7 @@ namespace netbullAPI.Persistencia
                     pedido_idPessoa = pedido.pedido_idPessoa,
                     pedido_status = EnumStatusPedido.pedido_reservado,
                     pedido_valor = pedido.pedido_valor,
-                    pedido_time = DateTime.Now,
+                    pedido_time = DateTime.UtcNow.ToString("dd/MM/yyyy HH:mm"),
                     pedido_idEndereco = pedido.pedido_idEndereco,
                     pedido_idUsuario = pedido.pedido_idUsuario,
                 };

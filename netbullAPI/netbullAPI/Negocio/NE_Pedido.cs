@@ -1,5 +1,6 @@
 ﻿using netbullAPI.Entidade;
 using netbullAPI.Persistencia;
+using netbullAPI.ViewModels;
 
 namespace netbullAPI.Negocio
 {
@@ -10,7 +11,7 @@ namespace netbullAPI.Negocio
         {
             this.daoPedido = daoPedido;
         }
-        public object BuscaPedidosCliente(int id)
+        public IEnumerable<RetornaPedidoViewModel> BuscaPedidosCliente(int id)
         {
             return daoPedido.BuscaPedidosPessoa(id);
         }

@@ -63,7 +63,7 @@ namespace netbullAPI.Controllers
             {
                 var new_item = ne_item.AdicionaItem(item);
                 if (new_item == null)
-                    return Created($"/{new_item.iten_id}", new_item);
+                    return Created($"/{new_item.item_id}", new_item);
                 else
                     return NotFound(new
                     {

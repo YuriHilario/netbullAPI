@@ -7,12 +7,12 @@ namespace netbullAPI.Entidade
     {
         [Key]
         [Required]
-        public int iten_id { get; set; }
-        public decimal iten_valor { get; set; }
-        public int iten_qtdproduto { get; set; }
+        public int item_id { get; set; }
+        public decimal item_valor { get; set; }
+        public int item_qtdproduto { get; set; }
         [ForeignKey("Pedido")]
-        public int iten_idPedido { get; set; }
+        public int item_idPedido { get; set; }
         [ForeignKey("Produto")]
-        public int iten_idProduto { get; set; }
+        public int item_idProduto { get; set; }
     }
 }

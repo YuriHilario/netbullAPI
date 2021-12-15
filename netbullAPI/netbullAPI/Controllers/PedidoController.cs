@@ -51,10 +51,6 @@ namespace netbullAPI.Controllers
             }
         }
 
-
-
-
-
         /// <summary>
         /// Inclusão de um novo pedido para um cliente
         /// </summary>
@@ -62,7 +58,7 @@ namespace netbullAPI.Controllers
         /// <param name="pedido"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> post([FromServices] NE_Pedido ne_pedido, [FromBody] Pedido pedido)
+        public async Task<IActionResult> Post([FromServices] NE_Pedido ne_pedido, [FromBody] Pedido pedido)
         {
             try
             {
