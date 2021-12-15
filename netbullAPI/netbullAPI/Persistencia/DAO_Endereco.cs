@@ -14,12 +14,12 @@ namespace netbullAPI.Persistencia
             _netbullDBContext = netbullDBContext;
         }
 
-        public async Task<IEnumerable<Endereco>> BuscaEnderecosPessoa(int idPessoa)
+        public async Task<IEnumerable<Endereco>> BuscaEnderecosPessoaAsync(int idPessoa)
         {
             return await Task.FromResult(await _netbullDBContext.Enderecos.Where(x => x.endereco_idpessoa == idPessoa).ToListAsync());
         }
 
-        public async Task<bool> CadastrarNovoEndereco(RegistrarEnderecoViewModel novoEnderecoViewModel)
+        public async Task<bool> CadastrarNovoEnderecoAsync(RegistrarEnderecoViewModel novoEnderecoViewModel)
         {
             try
             {
@@ -29,6 +29,13 @@ namespace netbullAPI.Persistencia
                                          && end.endereco_numero == novoEnderecoViewModel.endereco_numero
                                          && end.endereco_complemento == novoEnderecoViewModel.endereco_complemento
                                          select end).Count();
+                var pessoaExiste = _netbullDBContext.Pessoas.Where(p => p.pessoa_id == novoEnderecoViewModel.endereco_idpessoa).FirstOrDefault();
+
+                if(pessoaExiste == null)
+                {
+                    Notificar("ID de pessoa não cadastrado.");
+                    return false;
+                }
 
                 if (encontrouEndereco != 0)
                 {
@@ -55,7 +62,7 @@ namespace netbullAPI.Persistencia
             }
         }
 
-        public async Task<bool> AtualizaEndereco(AlterarEnderecoViewModel attEndereco, int idEndereco)
+        public async Task<bool> AtualizaEnderecoAsync(AlterarEnderecoViewModel attEndereco, int idEndereco)
         {
             try
             {
@@ -74,6 +81,7 @@ namespace netbullAPI.Persistencia
                         return true;
                     }
                 }
+                Notificar("Endereço não encontrado");
                 return false;
             }
             catch (Exception ex)
@@ -82,7 +90,7 @@ namespace netbullAPI.Persistencia
             }
         }
 
-        public async Task<bool> AtualizaEnderecoPatch(int idEndereco, AlterarEnderecoViewModel endereco)
+        public async Task<bool> AtualizaEnderecoLogradouroPatchAsync(int idEndereco, string logradouro)
         {
             try
             {
@@ -97,9 +105,7 @@ namespace netbullAPI.Persistencia
 
                 using (_netbullDBContext)
                 {
-                    enderecoExistente.endereco_logradouro = endereco.endereco_logradouro == "" || endereco.endereco_logradouro == "string" ? enderecoExistente.endereco_logradouro : endereco.endereco_logradouro;
-                    enderecoExistente.endereco_numero = (endereco.endereco_numero == 0 ? enderecoExistente.endereco_numero : endereco.endereco_numero);
-                    enderecoExistente.endereco_complemento = (endereco.endereco_complemento == "" || endereco.endereco_complemento == "string" ? enderecoExistente.endereco_complemento : endereco.endereco_complemento);
+                    enderecoExistente.endereco_logradouro = logradouro;
                     await _netbullDBContext.SaveChangesAsync();
                     return true;
                 }
@@ -111,7 +117,7 @@ namespace netbullAPI.Persistencia
             }
         }
 
-        public async Task<bool> ApagaEndereco(int idEndereco)
+        public async Task<bool> ApagaEnderecoAsync(int idEndereco)
         {
             try
             {
