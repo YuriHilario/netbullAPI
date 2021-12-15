@@ -8,10 +8,11 @@ namespace netbullAPI.Entidade
         [Key]
         [Required]
         public int item_id { get; set; }
-        public float item_valor { get; set; }
-        public float item_quantproduto { get; set; }
-        [ForeignKey("Item")]
+        public decimal item_valor { get; set; }
+        public int item_qtdproduto { get; set; }
+        [ForeignKey("Pedido")]
         public int item_idPedido { get; set; }
-        public Produto produto { get; set; }
+        [ForeignKey("Produto")]
+        public int item_idProduto { get; set; }
     }
 }

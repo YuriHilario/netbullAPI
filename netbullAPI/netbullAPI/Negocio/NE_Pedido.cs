@@ -10,7 +10,7 @@ namespace netbullAPI.Negocio
         {
             this.daoPedido = daoPedido;
         }
-        public IEnumerable<Pedido> BuscaPedidosCliente(int id)
+        public IEnumerable<object> BuscaPedidosCliente(int id)
         {
             return daoPedido.BuscaPedidosPessoa(id);
         }

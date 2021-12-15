@@ -23,7 +23,7 @@ namespace netbullAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public IActionResult GetPorId([FromServices] NE_Pedido ne_pedido, int id)
+        public async Task<IActionResult> GetPorId([FromServices] NE_Pedido ne_pedido, int id)
         {
             try
             {
@@ -51,6 +51,10 @@ namespace netbullAPI.Controllers
             }
         }
 
+
+
+
+
         /// <summary>
         /// Inclusão de um novo pedido para um cliente
         /// </summary>
@@ -58,7 +62,7 @@ namespace netbullAPI.Controllers
         /// <param name="pedido"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult post([FromServices] NE_Pedido ne_pedido, [FromBody] Pedido pedido)
+        public async Task<IActionResult> post([FromServices] NE_Pedido ne_pedido, [FromBody] Pedido pedido)
         {
             try
             {
@@ -90,7 +94,7 @@ namespace netbullAPI.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPatch]
-        public IActionResult Patch([FromServices] NE_Pedido ne_pedido, [FromBody] Pedido pedido, EnumStatusPedido status)
+        public async Task<IActionResult> Patch([FromServices] NE_Pedido ne_pedido, [FromBody] Pedido pedido, EnumStatusPedido status)
         {
             try
             {

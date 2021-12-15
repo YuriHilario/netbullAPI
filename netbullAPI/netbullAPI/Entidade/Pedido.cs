@@ -12,7 +12,6 @@ namespace netbullAPI.Entidade
         [ForeignKey("Endereco")]
         public int pedido_idEndereco { get; set; }
         public float pedido_valor { get; set; }
-        public List<Item> itens { get; set; }
         [ForeignKey("Pessoa")]
         public int pedido_idPessoa { get; set; }
         [ForeignKey("User")]
