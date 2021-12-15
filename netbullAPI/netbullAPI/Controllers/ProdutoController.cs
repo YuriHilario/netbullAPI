@@ -103,21 +103,17 @@ namespace netbullAPI.Controllers
                 if (nvProduto != null)
                     return Created($"/{nvProduto.produto_id}", nvProduto);
                 else
-                    return NotFound(
+                    return BadRequest(
                             new
                             {
-                                status = HttpStatusCode.NotFound,
+                                status = HttpStatusCode.BadRequest,
                                 Error = Notificacoes()
                             });
             }
             catch (Exception e)
             {
-                return BadRequest(
-                new
-                {
-                    mensagem = e.Message,
-                    sucesso = false
-                });
+                Notificar("Falha ao inserir produto.");
+                return StatusCode(500, Notificacoes());
             }
         }
 
@@ -145,12 +141,8 @@ namespace netbullAPI.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(
-                new
-                {
-                    mensagem = e.Message,
-                    sucesso = false
-                });
+                Notificar("Falha ao alterar produto.");
+                return StatusCode(500, Notificacoes());
             }
         }
 
@@ -183,14 +175,10 @@ namespace netbullAPI.Controllers
                             });
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return BadRequest(
-                new
-                {
-                    mensagem = ex.Message,
-                    sucesso = false
-                });
+                Notificar("Falha ao alterar nome do produto.");
+                return StatusCode(500, Notificacoes());
             }
         }
 
@@ -224,14 +212,10 @@ namespace netbullAPI.Controllers
                             });
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return BadRequest(
-                new
-                {
-                    mensagem = ex.Message,
-                    sucesso = false
-                });
+                Notificar("Falha ao alterar valor do produto.");
+                return StatusCode(500, Notificacoes());
             }
         }
 
@@ -264,12 +248,8 @@ namespace netbullAPI.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(
-                    new
-                    {
-                        mensagem = e.Message,
-                        sucesso = false
-                    });
+                Notificar("Falha ao deletar produto.");
+                return StatusCode(500, Notificacoes());
             }
 
         }
