@@ -12,6 +12,6 @@ namespace netbullAPI.Entidade
         [Required]
         public string produto_nome { get; set; }
         [Required]
-        public double produto_valor { get; set; }
+        public decimal produto_valor { get; set; }
     }
 }

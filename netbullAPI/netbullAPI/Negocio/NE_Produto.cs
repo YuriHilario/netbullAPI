@@ -1,6 +1,7 @@
 ﻿using netbullAPI.Entidade;
 using netbullAPI.Persistencia;
 using netbullAPI.Repository;
+using netbullAPI.ViewModels;
 
 namespace netbullAPI.Negocio
 {
@@ -25,21 +26,26 @@ namespace netbullAPI.Negocio
 
         public async Task<Produto> AdicionaProduto(Produto produto)
         {
-            try
-            {
-                return await _daoProduto.AdicionaProduto(produto);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            return await _daoProduto.AdicionaProdutoAsync(produto);
         }
 
         public async Task<Produto> AtualizaProduto(Produto produto)
         {
             try
             {
-                return await _daoProduto.AtualizaProduto(produto);
+                return await _daoProduto.AtualizaProdutoAsync(produto);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        
+        public async Task<Produto> AtualizaProdutoPatch(CampoEditar campoEditar, Produto produto)
+        {
+            try
+            {
+                return await _daoProduto.AtualizaProdutoCampoAsync(campoEditar,produto);
             }
             catch (Exception e)
             {
@@ -47,12 +53,11 @@ namespace netbullAPI.Negocio
             }
         }
 
-
-        public async Task<bool> DeletaProduto(int id)
+        public bool DeletaProduto(int id)
         {
             try
             {
-                return await _daoProduto.DeletaProduto(id);
+                return _daoProduto.DeletaProduto(id);
             }
             catch (Exception e)
             {

@@ -37,11 +37,6 @@ namespace netbullAPI.Repository
             }
         }
 
-        internal Task<Produto> AdicionaProduto(Produto produto)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Produto> GetPorIdAsync(int id)
         {
             try
@@ -59,39 +54,138 @@ namespace netbullAPI.Repository
             }
         }
 
-        public async Task<Produto> AtualizaProduto(Produto produto)
+        public async Task<Produto> AdicionaProdutoAsync(Produto produto)
+        {
+            try
+            {
+                if (ValidaProduto(produto))
+                {
+                    var novoProduto = new Produto()
+                    {
+                        //Criado id dessa forma pois não tem autoincremento implementado
+                        produto_id = _netbullDBContext.Produtos.Max(m => m.produto_id) + 1,
+                        produto_nome = produto.produto_nome,
+                        produto_valor = produto.produto_valor
+                    };
+
+                    _netbullDBContext.Add(novoProduto);
+                    _netbullDBContext.SaveChanges();
+                    return novoProduto;
+                }
+                else
+                {
+                    Notificar("Formatação inválida");
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Notificar("Não foi possível incluir produto.");
+                return null;
+            }
+        }
+
+        private bool ValidaProduto(Produto produto)
+        {
+            if(string.IsNullOrEmpty(produto.produto_nome))
+                return false;
+            return true;
+        }
+
+        public async Task<Produto> AtualizaProdutoAsync(Produto produto)
         {
             try
             {
                 var produtoExistente = _netbullDBContext.Produtos.Where(x => x.produto_id == produto.produto_id).FirstOrDefault();
-                        
+                if(produtoExistente == null)
+                {
+                    Notificar("Produto não encontrado.");
+                    return null;
+                }
+                if (ValidaProduto(produto))
+                {
+                    produtoExistente.produto_nome = produto.produto_nome;
+                    produtoExistente.produto_valor = produto.produto_valor;
                     _netbullDBContext.Update(produtoExistente);
                     _netbullDBContext.SaveChanges();
-                
-                return produto;
+                    return produtoExistente;
+                }
+                else
+                {
+                    Notificar("Produto com campos faltantes.");
+                    return null;
+                }
             }
             catch (Exception e)
             {
-                throw e;
+                Notificar("Não foi possível atualizar produto.");
+                return null;
             }
         }
 
-        public async Task<bool> DeletaProduto(int id)
+        public async Task<Produto> AtualizaProdutoCampoAsync(CampoEditar campo,Produto produto)
+        {
+            try
+            {
+                var produtoExistente = _netbullDBContext.Produtos.Where(x => x.produto_id == produto.produto_id).FirstOrDefault();
+                if (produtoExistente == null)
+                {
+                    Notificar("Produto não encontrado.");
+                    return null;
+                }
+                
+                switch (campo)
+                {
+                    case CampoEditar.Nome:
+                        if (string.IsNullOrEmpty(produto.produto_nome))
+                        {
+                            Notificar("Produto com campos faltantes.");
+                            return null;
+                        }
+                        produtoExistente.produto_nome = produto.produto_nome;
+                        break;
+                    case CampoEditar.Valor:
+                        produtoExistente.produto_valor = produto.produto_valor;
+                        break;
+                }
+                _netbullDBContext.Update(produtoExistente);
+                _netbullDBContext.SaveChanges();
+                return produtoExistente;
+                
+            }
+            catch (Exception e)
+            {
+                Notificar("Não foi possível atualizar produto.");
+                return null;
+            }
+        }
+
+        public bool DeletaProduto(int id)
         {
             try
             {
                 var produtoExistente = _netbullDBContext.Produtos.Where(t => t.produto_id == id).FirstOrDefault();
                 if (produtoExistente == null)
-                    throw new Exception("Produto informado inexistente");
+                {
+                    Notificar("Produto informado inexistente");
+                    return false;
+                }
+
                 _netbullDBContext.Remove(produtoExistente);
                 _netbullDBContext.SaveChanges();
                 return true;
             }
             catch (Exception e)
             {
-
+                Notificar(e.Message);
                 throw e;
             }
         }
+    }
+
+    public enum CampoEditar
+    {
+        Nome,
+        Valor
     }
 }

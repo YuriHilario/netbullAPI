@@ -5,6 +5,7 @@ using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
 using netbullAPI.Util;
+using netbullAPI.ViewModels;
 using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -80,7 +81,16 @@ namespace netbullAPI.Controllers
         {
             try
             {
-                return Ok(ne_Produto.AdicionaProduto(produto));
+                var nvProduto = await ne_Produto.AdicionaProduto(produto);
+                if (nvProduto != null)
+                    return Created($"/{nvProduto.produto_id}", nvProduto);
+                else
+                    return NotFound(
+                            new
+                            {
+                                status = HttpStatusCode.NotFound,
+                                Error = Notificacoes()
+                            });
             }
             catch (Exception e)
             {
@@ -98,8 +108,16 @@ namespace netbullAPI.Controllers
         {
             try
             {
-                return Ok(ne_Produto.AtualizaProduto(produto));
-
+                var atualizaProduto = await ne_Produto.AtualizaProduto(produto);
+                if (atualizaProduto != null)
+                    return Ok(atualizaProduto);
+                else
+                    return NotFound(
+                            new
+                            {
+                                status = HttpStatusCode.NotFound,
+                                Error = Notificacoes()
+                            });
             }
             catch (Exception e)
             {
@@ -112,13 +130,81 @@ namespace netbullAPI.Controllers
             }
         }
 
+        [HttpPatch("Nome")]
+        public async Task<IActionResult> AtualizaProdutoNomePatch([FromServices] NE_Produto ne_Produto, [FromBody] AlterarProdutoNomeViewModel alterarProdutoNomeViewModel)
+        {
+            try
+            {
+                var produto = new Produto() { produto_id = alterarProdutoNomeViewModel.produto_id, produto_nome = alterarProdutoNomeViewModel.produto_nome };
+
+                var atualizaProduto = await ne_Produto.AtualizaProdutoPatch(Repository.CampoEditar.Nome, produto);
+
+                if (atualizaProduto != null)
+                {
+                    return Ok(atualizaProduto);
+                }
+                else
+                {
+                    return NotFound(
+                            new
+                            {
+                                status = HttpStatusCode.NotFound,
+                                Error = Notificacoes()
+                            });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                new
+                {
+                    mensagem = ex.Message,
+                    sucesso = false
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpPatch("Valor")]
+        public async Task<IActionResult> AtualizaProdutoValorPatch([FromServices] NE_Produto ne_Produto, [FromBody] AlterarProdutoValorViewModel alterarProdutoValorViewModel)
+        {
+            try
+            {
+                var produto = new Produto() { produto_id = alterarProdutoValorViewModel.produto_id, produto_valor = alterarProdutoValorViewModel.produto_valor };
+
+                var atualizaProduto = await ne_Produto.AtualizaProdutoPatch(Repository.CampoEditar.Valor, produto);
+
+                if (atualizaProduto != null)
+                {
+                    return Ok(atualizaProduto);
+                }
+                else
+                {
+                    return NotFound(
+                            new
+                            {
+                                status = HttpStatusCode.NotFound,
+                                Error = Notificacoes()
+                            });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                new
+                {
+                    mensagem = ex.Message,
+                    sucesso = false
+                });
+            }
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromServices] NE_Produto ne_Produto, int id)
         {
             try
             {
-                var resp = await ne_Produto.DeletaProduto(id);
+                var resp = ne_Produto.DeletaProduto(id);
                 if (resp)
                     return Ok(
                         new
