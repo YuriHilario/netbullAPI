@@ -21,6 +21,12 @@ namespace netbullAPI.Controllers
         {
         }
 
+
+        /// <summary>
+        /// Busca todos os produtos registrados
+        /// </summary>
+        /// <param name="ne_Produto"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromServices] NE_Produto ne_Produto)
         {
@@ -48,6 +54,12 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Busca um produto específico a partir do seu id
+        /// </summary>
+        /// <param name="ne_Produto"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPorIdAsync([FromServices] NE_Produto ne_Produto, int id)
         {
@@ -76,8 +88,14 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Insere um novo registro de produto
+        /// </summary>
+        /// <param name="ne_Produto"></param>
+        /// <param name="produto"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromServices] NE_Produto ne_Produto, [FromBody] Produto produto)
+        public async Task<IActionResult> PostAsync([FromServices] NE_Produto ne_Produto, [FromBody] RegistrarProdutoViewModel produto)
         {
             try
             {
@@ -103,6 +121,12 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualiza o nome de um registro de produto a partir do seu id
+        /// </summary>
+        /// <param name="ne_Produto"></param>
+        /// <param name="produto"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromServices] NE_Produto ne_Produto, [FromBody] Produto produto)
         {
@@ -130,6 +154,12 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualiza o campo de nome de um produto a partir do id
+        /// </summary>
+        /// <param name="ne_Produto"></param>
+        /// <param name="alterarProdutoNomeViewModel"></param>
+        /// <returns></returns>
         [HttpPatch("Nome")]
         public async Task<IActionResult> AtualizaProdutoNomePatch([FromServices] NE_Produto ne_Produto, [FromBody] AlterarProdutoNomeViewModel alterarProdutoNomeViewModel)
         {
@@ -164,6 +194,12 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualiza o valor de um registro de produto a partir de seu id
+        /// </summary>
+        /// <param name="ne_Produto"></param>
+        /// <param name="alterarProdutoValorViewModel"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("Valor")]
         public async Task<IActionResult> AtualizaProdutoValorPatch([FromServices] NE_Produto ne_Produto, [FromBody] AlterarProdutoValorViewModel alterarProdutoValorViewModel)
@@ -199,6 +235,12 @@ namespace netbullAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Deleta um registro de produto a partir do id
+        /// </summary>
+        /// <param name="ne_Produto"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromServices] NE_Produto ne_Produto, int id)
         {
