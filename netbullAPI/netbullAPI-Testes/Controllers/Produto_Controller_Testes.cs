@@ -267,6 +267,305 @@ namespace netbullAPI_Testes.Controllers
             }
             catch (Exception ex)
             {
+                string mensagem = ex.Message;
+            }
+        }
+        /// <summary>
+        /// Teste de integração para alterar nome de produto válido
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Válido")]
+        [TestCategory("Controller")]
+        public async Task TestarPatchProdutoNomeValido()
+        {
+            try 
+            {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                LoginUserViewModel login = new LoginUserViewModel()
+                {
+                    user_nome = "cassiano",
+                    user_accessKey = "123456"
+                };
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                var jsonProduto = JsonConvert.SerializeObject(new
+                {
+                    produto_id = 1,
+                    produto_nome = "camisa produto teste"
+                });
+
+                var requestProduto = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Patch,
+                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Nome/"),
+                    Content = new StringContent(jsonProduto, Encoding.UTF8, "application/json"),
+                };
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseProduto = await httpClient.SendAsync(requestProduto).ConfigureAwait(false);
+                var responseBodyProduto = await responseProduto.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (responseProduto.StatusCode != HttpStatusCode.OK)
+                    Assert.Fail();
+               
+                    Assert.AreNotEqual(null, responseProduto);
+               
+            }
+            catch (Exception ex)
+            {
+                string mensagem = ex.Message;
+            }
+        }
+        /// <summary>
+        /// Teste integração para alterar nome de produto inválido
+        /// result.StatusCode != HttpStatusCode.BadRequest
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Invalido")]
+        [TestCategory("Controller")]
+        public async Task TestarPatchProdutoNomeInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                LoginUserViewModel login = new LoginUserViewModel()
+                {
+                    user_nome = "cassiano",
+                    user_accessKey = "123456"
+                };
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                var jsonProduto = JsonConvert.SerializeObject(new
+                {
+                    produto_nome = "camisa produto teste"
+                });
+
+                var requestProduto = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Patch,
+                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Nome/{0}"),
+                    Content = new StringContent(jsonProduto, Encoding.UTF8, "application/json"),
+                };
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseProduto = await httpClient.SendAsync(requestProduto).ConfigureAwait(false);
+                var responseBodyProduto = await responseProduto.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (responseProduto.StatusCode != HttpStatusCode.NotFound)
+                Assert.Fail();
+                
+                Assert.AreEqual(HttpStatusCode.NotFound, responseProduto.StatusCode);
+                
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+        /// <summary>
+        /// Teste Integração para alterar Valor de Produto Válido
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Invalido")]
+        [TestCategory("Controller")]
+        public async Task TestarPatchProdutoValorValido()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                LoginUserViewModel login = new LoginUserViewModel()
+                {
+                    user_nome = "cassiano",
+                    user_accessKey = "123456"
+                };
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                var jsonProduto = JsonConvert.SerializeObject(new
+                {
+                    produto_valor = 10
+                });
+
+                var requestProduto = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Patch,
+                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Valor/{1}"),
+                    Content = new StringContent(jsonProduto, Encoding.UTF8, "application/json"),
+                };
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseProduto = await httpClient.SendAsync(requestProduto).ConfigureAwait(false);
+
+                if (responseProduto.StatusCode != HttpStatusCode.OK)
+                    Assert.Fail();
+
+                Assert.AreEqual(HttpStatusCode.NotFound, responseProduto.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+        /// <summary>
+        /// Teste integração para alterar valor de produto inválido
+        /// result.StatusCode != HttpStatusCode.BadRequest
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Invalido")]
+        [TestCategory("Controller")]
+        public async Task TestarPatchProdutoValorInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+                .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                LoginUserViewModel login = new LoginUserViewModel()
+                {
+                    user_nome = "cassiano",
+                    user_accessKey = "123456"
+                };
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                var jsonProduto = JsonConvert.SerializeObject(new
+                {
+                    produto_valor = 10
+                });
+
+                var requestProduto = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Patch,
+                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Valor/{0}"),
+                    Content = new StringContent(jsonProduto, Encoding.UTF8, "application/json"),
+                };
+
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var responseProduto = await httpClient.SendAsync(requestProduto).ConfigureAwait(false);
+
+                if (responseProduto.StatusCode != HttpStatusCode.NotFound)
+                Assert.Fail();
+                
+                Assert.AreEqual(HttpStatusCode.NotFound, responseProduto.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                string menssage = ex.Message;
+            }
+        }
+        /// <summary>
+        /// Teste integração delete produto invalido
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Invalido")]
+        [TestCategory("Controller")]
+        public async Task TestarDeleteProdutoInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                LoginUserViewModel login = new LoginUserViewModel()
+                {
+                    user_nome = "cassiano",
+                    user_accessKey = "123456"
+                };
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+                                                
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+                var responseProdutoDelete = httpClient.DeleteAsync($"api/Produto/delete/{0}").GetAwaiter().GetResult();
+
+                if (responseProdutoDelete.StatusCode != HttpStatusCode.NotFound)
+                {
+                    Assert.Fail();
+                }
+                Assert.AreEqual(HttpStatusCode.NotFound, responseProdutoDelete.StatusCode);
+
+            }
+            catch (Exception ex)
+            {
+                string mensagem = ex.Message;
+            }
+        }
+        /// <summary>
+        /// Teste integração delete produto valido
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Válido")]
+        [TestCategory("Controller")]
+        public async Task TestarDeleteProdutoValidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                LoginUserViewModel login = new LoginUserViewModel()
+                {
+                    user_nome = "cassiano",
+                    user_accessKey = "123456"
+                };
+
+                RegistrarProdutoViewModel postProduto = new RegistrarProdutoViewModel()
+                {
+                    produto_nome = "camisa teste",
+                    produto_valor = 10
+                };
+
+                var jsonCorpo = JsonConvert.SerializeObject(postProduto);
+
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+
+                var requestProdutoPost = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri("https://localhost:7035/api/Produto"),
+                    Content = new StringContent(jsonCorpo, Encoding.UTF8, "application/json"),
+                };
+
+                var response = await httpClient.SendAsync(requestProdutoPost).ConfigureAwait(false);
+                var resultContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                var produto = JsonConvert.DeserializeObject<Produto>(resultContent);
+                var responseProdutoDelete = httpClient.DeleteAsync($"api/Produto/{produto.produto_id}").GetAwaiter().GetResult();
+
+                if (responseProdutoDelete.StatusCode != HttpStatusCode.OK)
+                {
+                    Assert.Fail();
+                }
+                else
+                {
+                    Assert.AreEqual(HttpStatusCode.OK, responseProdutoDelete.StatusCode);
+                }
+            }
+            catch (Exception ex)
+            {
                 string menssage = ex.Message;
             }
         }
