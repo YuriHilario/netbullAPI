@@ -36,7 +36,7 @@ namespace netbullAPI.Controllers
                     });
                 else return Ok(new
                 {
-                    pedidos = ne_pedido.BuscaPedidosCliente(id),
+                    pedidos = pedidos,
                     status = HttpStatusCode.OK,
                     Error = Notificacoes()
                 });

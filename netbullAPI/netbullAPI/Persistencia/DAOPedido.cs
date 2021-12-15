@@ -18,7 +18,7 @@ namespace netbullAPI.Persistencia
             this.configuration = configuration;
         }
 
-        public IEnumerable<object> BuscaPedidosPessoa(int id)
+        public object BuscaPedidosPessoa(int id)
         {
             var pessoa = netbullDBContext.Pessoas.Where(pessoa => pessoa.pessoa_id == id).FirstOrDefault();
             if (pessoa == null)
@@ -29,12 +29,11 @@ namespace netbullAPI.Persistencia
             else
             {
                 var historico_pedidos = from pedido in netbullDBContext.Pedidos
-                                        join itens in netbullDBContext.Itens on pedido.pedido_id equals itens.item_idPedido
                                         where pedido.pedido_idPessoa == id
-                                        select new
+                                        select new RetornaPedidoViewModel()
                                         {
                                             pedido = pedido,
-                                            itens = itens
+                                            itens = netbullDBContext.Itens.Where(i => i.iten_idPedido == pedido.pedido_id).ToList(),
                                         };
                 return historico_pedidos;
             }
@@ -123,8 +122,9 @@ namespace netbullAPI.Persistencia
                     pedido_idPessoa = pedido.pedido_idPessoa,
                     pedido_status = EnumStatusPedido.pedido_reservado,
                     pedido_valor = pedido.pedido_valor,
-                    pedido_time = DateTime.UtcNow
-                    
+                    pedido_time = DateTime.Now,
+                    pedido_idEndereco = pedido.pedido_idEndereco,
+                    pedido_idUsuario = pedido.pedido_idUsuario,
                 };
                 netbullDBContext.Add(novo_pedido);
                 netbullDBContext.SaveChanges();
