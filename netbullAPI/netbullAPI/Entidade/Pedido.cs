@@ -11,13 +11,11 @@ namespace netbullAPI.Entidade
         public DateTime pedido_time { get; set; }
         [ForeignKey("Endereco")]
         public int pedido_idEndereco { get; set; }
-        public float pedido_valor { get; set; }
+        public decimal pedido_valor { get; set; }
         [ForeignKey("Pessoa")]
         public int pedido_idPessoa { get; set; }
         [ForeignKey("User")]
         public int pedido_idUsuario { get; set; }
         public EnumStatusPedido pedido_status { get; set;}
-        //Pedido deve receber uma lista de itens
-        //Pessoa deve receber uma lista de pedidos
     }
 }

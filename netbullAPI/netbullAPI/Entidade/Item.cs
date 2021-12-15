@@ -14,5 +14,6 @@ namespace netbullAPI.Entidade
         public int item_idPedido { get; set; }
         [ForeignKey("Produto")]
         public int item_idProduto { get; set; }
+        virtual public Produto produto { get; set; }
     }
 }

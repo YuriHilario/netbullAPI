@@ -119,7 +119,7 @@ namespace netbullAPI.Persistencia
             {
                 Pedido novo_pedido = new Pedido()
                 {
-                    pedido_id = netbullDBContext.Pedidos.Max(m => m.pedido_id) + 1,
+                    pedido_id = 1,
                     pedido_idPessoa = pedido.pedido_idPessoa,
                     pedido_status = EnumStatusPedido.pedido_reservado,
                     pedido_valor = pedido.pedido_valor,
