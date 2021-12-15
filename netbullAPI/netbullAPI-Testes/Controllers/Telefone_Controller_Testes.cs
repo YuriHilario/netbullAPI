@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace netbullAPI_Testes
+namespace netbullAPI_Testes.Controllers
 {
     [TestClass]
     public class Telefone_Controller_Testes
@@ -86,7 +86,7 @@ namespace netbullAPI_Testes
                 var requestTelefone = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
-                    RequestUri = new Uri($"https://localhost:7035/api/Telefone/{1}"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Telefone/{2}"),
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
