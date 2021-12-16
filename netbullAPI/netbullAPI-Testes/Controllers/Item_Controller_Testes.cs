@@ -99,7 +99,7 @@ namespace netbullAPI_Testes.Controllers
             }
         }
         [Fact]
-        [Trait("Controller", "Válido")]
+        [Trait("Controller", "Válido")] //Falta debugar
         public async Task TestarPostItemValidoAsync()
         {
             try
@@ -142,7 +142,7 @@ namespace netbullAPI_Testes.Controllers
             }
         }
         [Fact]
-        [Trait("Controller", "Inválido")]
+        [Trait("Controller", "Inválido")] //Falta debugar
         public async Task TestarPostItemInvalidoAsync()
         {
             try
@@ -265,13 +265,13 @@ namespace netbullAPI_Testes.Controllers
                 var responsePessoa = await httpClient.SendAsync(requestPessoa).ConfigureAwait(false);
 
 
-                if (responsePessoa.StatusCode == HttpStatusCode.NotFound)
+                if (responsePessoa.StatusCode != HttpStatusCode.BadRequest)
                 {
                     Assert.Fail();
                 }
                 else
                 {
-                    Assert.AreEqual(HttpStatusCode.OK, responsePessoa.StatusCode);
+                    Assert.AreEqual(HttpStatusCode.BadRequest, responsePessoa.StatusCode);
                 }
             }
             catch (Exception ex)
