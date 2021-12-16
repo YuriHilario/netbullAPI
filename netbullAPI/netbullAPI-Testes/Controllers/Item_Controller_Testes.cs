@@ -99,7 +99,7 @@ namespace netbullAPI_Testes.Controllers
             }
         }
         [Fact]
-        [Trait("Controller", "Válido")] //Falta debugar
+        [Trait("Controller", "Válido")] 
         public async Task TestarPostItemValidoAsync()
         {
             try
@@ -142,7 +142,7 @@ namespace netbullAPI_Testes.Controllers
             }
         }
         [Fact]
-        [Trait("Controller", "Inválido")] //Falta debugar
+        [Trait("Controller", "Inválido")] 
         public async Task TestarPostItemInvalidoAsync()
         {
             try
@@ -197,7 +197,6 @@ namespace netbullAPI_Testes.Controllers
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-
                 var jsonItem = JsonConvert.SerializeObject(new
                 {
                     item_qtdproduto = 7,
@@ -230,12 +229,12 @@ namespace netbullAPI_Testes.Controllers
         }
         [Fact]
         [Trait("Controller", "Inválido")]
-        public async Task TestarPutItemInvalidoAsync()
+        public async Task TestarPatchItemInvalidoAsync()
         {
             try
             {
                 var application = new WebApplicationFactory<Program>()
-               .WithWebHostBuilder(builder => { });
+            .WithWebHostBuilder(builder => { });
 
                 var httpClient = application.CreateClient();
 
@@ -243,31 +242,27 @@ namespace netbullAPI_Testes.Controllers
 
                 var jsonItem = JsonConvert.SerializeObject(new
                 {
-                    item_id = 0,
-                    item_valor = 0,
-                    item_qtdproduto = 0,
-                    item_idPedido = 0,
-                    item_idProduto = 0,
+                    item_qtdproduto = 10,
                 });
 
-                var requestPessoa = new HttpRequestMessage
+                var requestItem = new HttpRequestMessage
                 {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri($"https://localhost:7035/api/Pessoa"),
+                    Method = HttpMethod.Patch,
+                    RequestUri = new Uri($"https://localhost:7035/api/Item/{0}"),
                     Content = new StringContent(jsonItem, Encoding.UTF8, "application/json"),
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responsePessoa = await httpClient.SendAsync(requestPessoa).ConfigureAwait(false);
+                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
 
 
-                if (responsePessoa.StatusCode != HttpStatusCode.BadRequest)
+                if (responseItem.StatusCode != HttpStatusCode.NotFound)
                 {
                     Assert.Fail();
                 }
                 else
                 {
-                    Assert.AreEqual(HttpStatusCode.BadRequest, responsePessoa.StatusCode);
+                    Assert.AreEqual(HttpStatusCode.NotFound, responseItem.StatusCode);
                 }
             }
             catch (Exception ex)

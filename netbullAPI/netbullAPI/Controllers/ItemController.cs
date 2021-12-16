@@ -4,6 +4,7 @@ using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Util;
+using netbullAPI.ViewModels;
 using System.Net;
 
 namespace netbullAPI.Controllers
@@ -89,21 +90,21 @@ namespace netbullAPI.Controllers
         /// <param name="quantidade"></param>
         /// <returns></returns>
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch([FromServices] NE_Item ne_item, int id, [FromBody] int quantidade)
+        public async Task<IActionResult> Patch([FromServices] NE_Item ne_item, int id, [FromBody] AlterarQtditemViewModel quantidade)
         {
             try
             {
-                var result = ne_item.AlteraQuantidadeProduto(id, quantidade);
+                var result = ne_item.AlteraQuantidadeProduto(id, quantidade.item_qtdproduto);
                 if (result)
                     return Ok(new
                     {
                         status = HttpStatusCode.OK,
-                        Error = Notificacoes()
+                        Message = "Quantidade alterada com sucesso."
                     });
                 else
                     return NotFound(new
                     {
-                        status = HttpStatusCode.BadRequest,
+                        status = HttpStatusCode.NotFound,
                         Error = Notificacoes()
                     });
             }
