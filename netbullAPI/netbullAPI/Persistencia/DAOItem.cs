@@ -46,13 +46,13 @@ namespace netbullAPI.Persistencia
             }
             try
             {
-                item.produto = netbullDBContext.Produtos.Where(p => p.produto_id == item.item_idProduto).FirstOrDefault();
+                var produto = netbullDBContext.Produtos.Where(p => p.produto_id == item.item_idProduto).FirstOrDefault();
                 Item novo_item = new Item()
                 {
                     item_id = netbullDBContext.Itens.Max(i => i.item_id) + 1,
                     item_idPedido = item.item_idPedido,
                     item_qtdproduto = item.item_qtdproduto,
-                    item_valor = item.produto.produto_valor * item.item_qtdproduto
+                    item_valor = produto.produto_valor * item.item_qtdproduto
                 };
                 netbullDBContext.Add(novo_item);
                 netbullDBContext.SaveChanges();
