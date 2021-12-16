@@ -12,28 +12,28 @@ namespace netbullAPI.Negocio
             _daoEndereco = daoEndereco;
         }
 
-        public async Task<IEnumerable<Endereco>> BuscaEnderecosPessoa(int idPessoa)
+        public async Task<IEnumerable<Endereco>> BuscaEnderecosPessoaAsync(int idPessoa)
         {
-            return await _daoEndereco.BuscaEnderecosPessoa(idPessoa);
+            return await _daoEndereco.BuscaEnderecosPessoaAsync(idPessoa);
         }
 
-        public async Task<bool> CadastraNovoEndereco(RegistrarEnderecoViewModel endereco)
+        public async Task<bool> CadastraNovoEnderecoAsync(RegistrarEnderecoViewModel endereco)
         {
-            return await _daoEndereco.CadastrarNovoEndereco(endereco);
+            return await _daoEndereco.CadastrarNovoEnderecoAsync(endereco);
         }
-        public async Task<bool> AtualizaEndereco(AlterarEnderecoViewModel endereco, int idEndereco)
+        public async Task<bool> AtualizaEnderecoAsync(AlterarEnderecoViewModel endereco, int idEndereco)
         {
-            return await _daoEndereco.AtualizaEndereco(endereco, idEndereco);
-        }
-
-        public async Task<bool> AtualizaEnderecoPatch(int idEndereco, AlterarEnderecoViewModel logradouro)
-        {
-            return await _daoEndereco.AtualizaEnderecoPatch(idEndereco, logradouro);
+            return await _daoEndereco.AtualizaEnderecoAsync(endereco, idEndereco);
         }
 
-        public async Task<bool> ApagaEndereco(int idEndereco)
+        public async Task<bool> AtualizaEnderecoLogradouroPatchAsync(int idEndereco, string logradouro)
         {
-            return await _daoEndereco.ApagaEndereco(idEndereco);
+            return await _daoEndereco.AtualizaEnderecoLogradouroPatchAsync(idEndereco, logradouro);
+        }
+
+        public async Task<bool> ApagaEnderecoAsync(int idEndereco)
+        {
+            return await _daoEndereco.ApagaEnderecoAsync(idEndereco);
         }
     }
 }

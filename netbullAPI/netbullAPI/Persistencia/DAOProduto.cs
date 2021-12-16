@@ -4,6 +4,7 @@ using netbullAPI.Interfaces;
 using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
 using netbullAPI.Util;
+using netbullAPI.ViewModels;
 
 namespace netbullAPI.Repository
 {
@@ -54,7 +55,7 @@ namespace netbullAPI.Repository
             }
         }
 
-        public async Task<Produto> AdicionaProdutoAsync(Produto produto)
+        public async Task<Produto> AdicionaProdutoAsync(RegistrarProdutoViewModel produto)
         {
             try
             {
@@ -85,7 +86,7 @@ namespace netbullAPI.Repository
             }
         }
 
-        private bool ValidaProduto(Produto produto)
+        private bool ValidaProduto(RegistrarProdutoViewModel produto)
         {
             if(string.IsNullOrEmpty(produto.produto_nome))
                 return false;
@@ -102,7 +103,7 @@ namespace netbullAPI.Repository
                     Notificar("Produto não encontrado.");
                     return null;
                 }
-                if (ValidaProduto(produto))
+                if (!string.IsNullOrEmpty(produto.produto_nome))
                 {
                     produtoExistente.produto_nome = produto.produto_nome;
                     produtoExistente.produto_valor = produto.produto_valor;

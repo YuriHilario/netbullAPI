@@ -24,7 +24,7 @@ namespace netbullAPI.Negocio
             return await _daoProduto.GetPorIdAsync(id);
         }
 
-        public async Task<Produto> AdicionaProduto(Produto produto)
+        public async Task<Produto> AdicionaProduto(RegistrarProdutoViewModel produto)
         {
             return await _daoProduto.AdicionaProdutoAsync(produto);
         }
