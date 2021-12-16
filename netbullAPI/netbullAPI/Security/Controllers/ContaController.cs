@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Extensions;
 using netbullAPI.Interfaces;
+using netbullAPI.Security.MidwareDB;
 using netbullAPI.Security.Models;
-using netbullAPI.Security.Negocio;
 using netbullAPI.Security.Service;
 using netbullAPI.Security.ViewModels;
 using netbullAPI.Util;

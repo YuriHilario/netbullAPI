@@ -1,7 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
-using netbullAPI.Negocio;
 using netbullAPI.Persistencia;
 using netbullAPI.Util;
 using netbullAPI.ViewModels;

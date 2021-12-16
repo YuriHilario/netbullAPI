@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using netbullAPI.Interfaces;
-using netbullAPI.Negocio;
+using netbullAPI.MidwareDB;
 using netbullAPI.Persistencia;
 using netbullAPI.Repository;
-using netbullAPI.Security.Negocio;
+using netbullAPI.Security.MidwareDB;
 using netbullAPI.Security.Persistencia;
 using netbullAPI.Security.Service;
 using netbullAPI.Util;
@@ -74,6 +74,8 @@ builder.Services.AddAuthentication(authOptions =>
     };
 });
 
+// INJEÇÃO DE DEPENDENCIAS
+
 builder.Services.AddScoped<NE_User>();
 builder.Services.AddScoped<NE_Endereco>();
 builder.Services.AddScoped<NE_Telefone>();
@@ -91,8 +93,6 @@ builder.Services.AddTransient<DAO_Pessoa>();
 builder.Services.AddTransient<DAOProduto>();
 builder.Services.AddTransient<TokenService>(); // Por método
 
-
-
 var app = builder.Build();
 
 app.UseCors(builder => builder
@@ -109,8 +109,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("MyPolicy");
-
-//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

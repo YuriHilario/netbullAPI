@@ -5,7 +5,7 @@ using netbullAPI.Security.ViewModels;
 using netbullAPI.Util;
 using System.Data;
 
-namespace netbullAPI.Security.Negocio
+namespace netbullAPI.Security.MidwareDB
 {
     public class NE_User
     {

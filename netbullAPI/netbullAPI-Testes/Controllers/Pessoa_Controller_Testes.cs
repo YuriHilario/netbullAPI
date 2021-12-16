@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using netbullAPI.Entidade;
 using netbullAPI.Security.ViewModels;
 using netbullAPI_Testes.Models;
 using netbullAPI_Testes.Uitl;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -37,15 +35,7 @@ namespace netbullAPI_Testes.Controllers
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-
-                //var requestPessoa = new HttpRequestMessage
-                //{
-                //    Method = HttpMethod.Get,
-                //    RequestUri = new Uri($"https://localhost:7035/api/Pessoa/%7B0%7D%22),
-                //};
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-
-                //var responsePessoa = await httpClient.SendAsync(requestPessoa).ConfigureAwait(false);
 
                 var result = httpClient.GetAsync($"api/Pessoa/{0}").GetAwaiter().GetResult();
                 var resultContent = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
