@@ -49,10 +49,11 @@ namespace netbullAPI.Persistencia
                 var produto = netbullDBContext.Produtos.Where(p => p.produto_id == item.item_idProduto).FirstOrDefault();
                 Item novo_item = new Item()
                 {
-                    item_id = netbullDBContext.Itens.Max(i => i.item_id) + 1,
+                    item_id = netbullDBContext.Itens.Max(m => m.item_id) + 1,
                     item_idPedido = item.item_idPedido,
                     item_qtdproduto = item.item_qtdproduto,
-                    item_valor = produto.produto_valor * item.item_qtdproduto
+                    item_idProduto = produto.produto_id,
+                    item_valor = item.CalculaValorItem(item.item_qtdproduto, produto.produto_valor)
                 };
                 netbullDBContext.Add(novo_item);
                 netbullDBContext.SaveChanges();
@@ -76,15 +77,9 @@ namespace netbullAPI.Persistencia
             netbullDBContext.SaveChanges();
             return true;
         }
-        public bool AlteraQuantidadeProduto(Item item, int quantidade)
+        public bool AlteraQuantidadeProduto(int id, int quantidade)
         {
-            var pedido = netbullDBContext.Pedidos.Where(x => x.pedido_id == item.item_idPedido).FirstOrDefault();
-            if(pedido == null)
-            {
-                Notificar("Pedido informado inexistente");
-                return false;
-            }
-            var item_existente = netbullDBContext.Itens.Where(i => i.item_id == item.item_id).FirstOrDefault();
+            var item_existente = netbullDBContext.Itens.Where(i => i.item_id == id).FirstOrDefault();
             if (item_existente == null)
             {
                 Notificar("Item informado inexistente");
@@ -92,7 +87,9 @@ namespace netbullAPI.Persistencia
             }
             else
             {
+                var produto = netbullDBContext.Produtos.Where(p => p.produto_id == item_existente.item_idProduto).FirstOrDefault();
                 item_existente.item_qtdproduto = quantidade;
+                item_existente.item_valor = item_existente.CalculaValorItem(quantidade, produto.produto_valor);
                 netbullDBContext.Update(item_existente);
                 netbullDBContext.SaveChanges();
                 return true;

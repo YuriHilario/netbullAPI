@@ -62,7 +62,7 @@ namespace netbullAPI.Controllers
             try
             {
                 var new_item = ne_item.AdicionaItem(item);
-                if (new_item == null)
+                if (new_item != null)
                     return Created($"/{new_item.item_id}", new_item);
                 else
                     return NotFound(new
@@ -89,11 +89,11 @@ namespace netbullAPI.Controllers
         /// <param name="quantidade"></param>
         /// <returns></returns>
         [HttpPatch]
-        public async Task<IActionResult> Patch([FromServices] NE_Item ne_item, [FromBody] Item item,  int quantidade)
+        public async Task<IActionResult> Patch([FromServices] NE_Item ne_item, [FromBody] Item item, int id,  int quantidade)
         {
             try
             {
-                if (ne_item.AlteraQuantidadeProduto(item, quantidade))
+                if (ne_item.AlteraQuantidadeProduto(id, quantidade))
                     return Ok(new
                     {
                         item = item,

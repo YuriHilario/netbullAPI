@@ -90,11 +90,12 @@ namespace netbullAPI.Controllers
         /// <param name="status"></param>
         /// <returns></returns>
         [HttpPatch]
-        public async Task<IActionResult> Patch([FromServices] NE_Pedido ne_pedido, [FromBody] Pedido pedido, EnumStatusPedido status)
+        public async Task<IActionResult> Patch([FromServices] NE_Pedido ne_pedido, int id, EnumStatusPedido status)
         {
             try
             {
-                if (ne_pedido.AlteraStatusPedido(pedido, status))
+                var pedido = ne_pedido.AlteraStatusPedido(id, status);
+                if (pedido != null)
                     return Ok(new
                     {
                         pedido = pedido,
