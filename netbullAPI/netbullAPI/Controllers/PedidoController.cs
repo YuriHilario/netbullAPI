@@ -98,7 +98,7 @@ namespace netbullAPI.Controllers
             try
             {
                 var new_pedido = ne_pedido.AdicionaPedido(pedido);
-                if (new_pedido == null)
+                if (new_pedido != null)
                     return Created($"/{new_pedido.pedido_id}", new_pedido);
                 else
                     return NotFound(new
@@ -124,7 +124,7 @@ namespace netbullAPI.Controllers
         /// <param name="pedido"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        [HttpPatch]
+        [HttpPatch()]
         public async Task<IActionResult> Patch([FromServices] NE_Pedido ne_pedido, int id, EnumStatusPedido status)
         {
             try

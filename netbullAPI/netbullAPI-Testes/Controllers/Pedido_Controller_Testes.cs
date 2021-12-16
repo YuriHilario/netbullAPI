@@ -22,9 +22,13 @@ namespace netbullAPI_Testes.Controllers
     {
         public LoginUserViewModel login = new LoginUserViewModel() { user_nome = "cassiano", user_accessKey = "123456" };
 
+        /// <summary>
+        /// Teste de integração de busca de pedidos pertencentes a um cliente válido
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Válido")]
-        public async Task TestarGetItemByIdValidoAsync()
+        public async Task TestarGetPedidoByIdClienteValidoAsync()
         {
             try
             {
@@ -35,34 +39,35 @@ namespace netbullAPI_Testes.Controllers
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                var requestItem = new HttpRequestMessage
+                var requestPedido= new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
-                    RequestUri = new Uri($"https://localhost:7035/api/Item/{1}"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Pedido/{2}"),
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
+                var responsePedido = await httpClient.SendAsync(requestPedido).ConfigureAwait(false);
 
 
-                if (responseItem.StatusCode != HttpStatusCode.OK)
-                {
+                if (responsePedido.StatusCode != HttpStatusCode.OK)
                     Assert.Fail();
-                }
                 else
-                {
-                    Assert.AreEqual(responseItem.StatusCode, HttpStatusCode.OK);
-                }
-
+                    Assert.AreEqual(responsePedido.StatusCode, HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
                 string menssage = ex.Message;
             }
         }
+
+        /// <summary>
+        /// Teste de integração de busca de pedido a partir de id cliente inválido
+        /// idCliente inválido
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Inválido")]
-        public async Task TestarGetItemByIdInvalidoAsync()
+        public async Task TestarGetPedidoByIdClienteInvalidoAsync()
         {
             try
             {
@@ -73,24 +78,20 @@ namespace netbullAPI_Testes.Controllers
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                var requestItem = new HttpRequestMessage
+                var requestPedido = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
                     RequestUri = new Uri($"https://localhost:7035/api/Item/{0}"), //Falta trocar request
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
+                var responsePedido = await httpClient.SendAsync(requestPedido).ConfigureAwait(false);
 
 
-                if (responseItem.StatusCode != HttpStatusCode.NotFound)
-                {
+                if (responsePedido.StatusCode != HttpStatusCode.NotFound)
                     Assert.Fail();
-                }
                 else
-                {
-                    Assert.AreEqual(responseItem.StatusCode, HttpStatusCode.NotFound);
-                }
+                    Assert.AreEqual(responsePedido.StatusCode, HttpStatusCode.NotFound);
 
             }
             catch (Exception ex)
@@ -98,9 +99,14 @@ namespace netbullAPI_Testes.Controllers
                 string menssage = ex.Message;
             }
         }
+
+        /// <summary>
+        /// Teste de integração de pedido válido
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Válido")]
-        public async Task TestarPostItemValidoAsync()
+        public async Task TestarPostPedidoValidoAsync()
         {
             try
             {
@@ -111,20 +117,22 @@ namespace netbullAPI_Testes.Controllers
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                var jsonItem = JsonConvert.SerializeObject(new
+                var jsonPedido = JsonConvert.SerializeObject(new Pedido
                 {
-                    item_id = 1,
-                    item_valor = 14,
-                    item_qtdproduto = 2,
-                    item_idPedido = 1,
-                    item_idProduto = 2,
+                    pedido_id = 1,
+                    pedido_idEndereco = 2,
+                    pedido_idPessoa = 2,
+                    pedido_idUsuario = 60,
+                    pedido_status = 0,
+                    pedido_time = DateTime.UtcNow.ToString("dd/MM/yyyy hh:mm"),
+                    pedido_valor = 1200
                 });
 
                 var requestItem = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
-                    RequestUri = new Uri($"https://localhost:7035/api/Item"),
-                    Content = new StringContent(jsonItem, Encoding.UTF8, "application/json"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Pedido"),
+                    Content = new StringContent(jsonPedido, Encoding.UTF8, "application/json"),
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
@@ -141,6 +149,13 @@ namespace netbullAPI_Testes.Controllers
                 string menssage = ex.Message;
             }
         }
+
+        /// <summary>
+        /// Teste de integração de inserção de pedido inválido
+        /// idPessoa inválido
+        /// idUsuario inválido
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Inválido")]
         public async Task TestarPostItemInvalidoAsync()
@@ -154,39 +169,45 @@ namespace netbullAPI_Testes.Controllers
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                var jsonItem = JsonConvert.SerializeObject(new
+                var jsonPedido = JsonConvert.SerializeObject(new Pedido
                 {
-                    item_id = 0,
-                    item_valor = 0,
-                    item_qtdproduto = 0,
-                    item_idPedido = 0,
-                    item_idProduto = 0,
+                    pedido_id = 1,
+                    pedido_idEndereco = 2,
+                    pedido_idPessoa = 0,
+                    pedido_idUsuario = 2,
+                    pedido_status = 0,
+                    pedido_time = DateTime.UtcNow.ToString("dd/MM/yyyy hh:mm"),
+                    pedido_valor = 1200
                 });
 
-                var requestItem = new HttpRequestMessage
+                var requestPedido = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
-                    RequestUri = new Uri($"https://localhost:7035/api/Item"),
-                    Content = new StringContent(jsonItem, Encoding.UTF8, "application/json"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Pedido"),
+                    Content = new StringContent(jsonPedido, Encoding.UTF8, "application/json"),
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
+                var responsePedido = await httpClient.SendAsync(requestPedido).ConfigureAwait(false);
 
-                if (responseItem.StatusCode != HttpStatusCode.NotFound)
-                {
+                if (responsePedido.StatusCode != HttpStatusCode.NotFound)
                     Assert.Fail();
-                }
-                Assert.AreEqual(HttpStatusCode.NotFound, responseItem.StatusCode);
+                
+                Assert.AreEqual(HttpStatusCode.NotFound, responsePedido.StatusCode);
             }
             catch (Exception ex)
             {
                 string menssage = ex.Message;
             }
         }
+        
+        /// <summary>
+        /// Teste de integração de atualização de status de pedido
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Válido")]
-        public async Task TestarPatchItemValidoAsync()
+        public async Task TestarPatchPedidoValidoAsync()
         {
             try
             {
@@ -197,39 +218,36 @@ namespace netbullAPI_Testes.Controllers
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                var jsonItem = JsonConvert.SerializeObject(new
-                {
-                    item_qtdproduto = 7,
-                });
-
-                var requestItem = new HttpRequestMessage
+                
+                var requestPedido = new HttpRequestMessage
                 {
                     Method = HttpMethod.Patch,
-                    RequestUri = new Uri($"https://localhost:7035/api/Item/{3}"),
-                    Content = new StringContent(jsonItem, Encoding.UTF8, "application/json"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Pedido/{2}/{2}")
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
+                var responsePedido = await httpClient.SendAsync(requestPedido).ConfigureAwait(false);
 
-
-                if (responseItem.StatusCode != HttpStatusCode.OK)
-                {
+                if (responsePedido.StatusCode != HttpStatusCode.OK)
                     Assert.Fail();
-                }
                 else
-                {
-                    Assert.AreEqual(HttpStatusCode.OK, responseItem.StatusCode);
-                }
+                    Assert.AreEqual(HttpStatusCode.OK, responsePedido.StatusCode);                
             }
             catch (Exception ex)
             {
                 string menssage = ex.Message;
             }
         }
+
+        /// <summary>
+        /// Teste de integração de atualização de status de pedido inválido
+        /// idPedido inválido
+        /// enum Pedido inválido
+        /// </summary>
+        /// <returns></returns>
         [Fact]
         [Trait("Controller", "Inválido")]
-        public async Task TestarPatchItemInvalidoAsync()
+        public async Task TestarPatchPedidoInvalidoAsync()
         {
             try
             {
@@ -240,130 +258,26 @@ namespace netbullAPI_Testes.Controllers
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                var jsonItem = JsonConvert.SerializeObject(new
-                {
-                    item_qtdproduto = 10,
-                });
-
-                var requestItem = new HttpRequestMessage
+                var requestPedido = new HttpRequestMessage
                 {
                     Method = HttpMethod.Patch,
-                    RequestUri = new Uri($"https://localhost:7035/api/Item/{0}"),
-                    Content = new StringContent(jsonItem, Encoding.UTF8, "application/json"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Pedido/{0}/{7}")
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
+                var responsePedido = await httpClient.SendAsync(requestPedido).ConfigureAwait(false);
 
-
-                if (responseItem.StatusCode != HttpStatusCode.NotFound)
-                {
-                    Assert.Fail();
-                }
-                else
-                {
-                    Assert.AreEqual(HttpStatusCode.NotFound, responseItem.StatusCode);
-                }
+                if (responsePedido.StatusCode != HttpStatusCode.NotFound)
+                    Assert.Fail();                
+                else                
+                    Assert.AreEqual(HttpStatusCode.NotFound, responsePedido.StatusCode);
+                
             }
             catch (Exception ex)
             {
                 string menssage = ex.Message;
             }
         }
-        [Fact]
-        [Trait("Controller", "Válido")]
-        public async Task TestarDeleteItemByIdValidoAsync()
-        {
-            try
-            {
-                var application = new WebApplicationFactory<Program>()
-               .WithWebHostBuilder(builder => { });
 
-                var httpClient = application.CreateClient();
-
-                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-
-                var jsonItemInsercao = JsonConvert.SerializeObject(new
-                {
-                    item_id = 1,
-                    item_idPedido = 1,
-                    item_qtdproduto = 3,
-                    item_idProduto = 2,
-                    item_valor = 2 * 3
-                });
-
-                var requestItemInsercao = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri($"https://localhost:7035/api/Item/"),
-                    Content = new StringContent(jsonItemInsercao, Encoding.UTF8, "application/json"),
-                };
-
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-                var responseItemInsercao = await httpClient.SendAsync(requestItemInsercao).ConfigureAwait(false);
-                var responseBodyitemInsercao = await responseItemInsercao.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var retornoItemInsercao = JsonConvert.DeserializeObject<Item>(responseBodyitemInsercao);
-
-                var requestItem = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Delete,
-                    RequestUri = new Uri($"https://localhost:7035/api/Item/{retornoItemInsercao.item_id}"),
-                };
-
-                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
-
-
-                if (responseItem.StatusCode != HttpStatusCode.OK)
-                {
-                    Assert.Fail();
-                }
-                else
-                {
-                    Assert.AreEqual(responseItem.StatusCode, HttpStatusCode.OK);
-                }
-            }
-            catch (Exception ex)
-            {
-                string menssage = ex.Message;
-            }
-        }
-        [Fact]
-        [Trait("Controller", "Inválido")]
-        public async Task TestarDeleteItemByIdInvalidoAsync()
-        {
-            try
-            {
-                var application = new WebApplicationFactory<Program>()
-               .WithWebHostBuilder(builder => { });
-
-                var httpClient = application.CreateClient();
-
-                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-
-                var requestItem = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Delete,
-                    RequestUri = new Uri($"https://localhost:7035/api/Item/{0}"), //Falta trocar request
-                };
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-
-                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
-
-
-                if (responseItem.StatusCode != HttpStatusCode.NotFound)
-                {
-                    Assert.Fail();
-                }
-                else
-                {
-                    Assert.AreEqual(responseItem.StatusCode, HttpStatusCode.NotFound);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                string menssage = ex.Message;
-            }
-        }
     }
 }
