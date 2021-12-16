@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace netbullAPI_Testes
+namespace netbullAPI_Testes.Controllers
 {
     [TestClass]
     public class Endereco_Controller_Testes

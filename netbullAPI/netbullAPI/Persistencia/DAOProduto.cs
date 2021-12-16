@@ -178,7 +178,7 @@ namespace netbullAPI.Repository
             }
             catch (Exception e)
             {
-                Notificar(e.Message);
+                Notificar("Não foi possível excluir o produto.");
                 throw e;
             }
         }
