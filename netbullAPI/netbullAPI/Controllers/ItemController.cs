@@ -88,15 +88,15 @@ namespace netbullAPI.Controllers
         /// <param name="item"></param>
         /// <param name="quantidade"></param>
         /// <returns></returns>
-        [HttpPatch]
-        public async Task<IActionResult> Patch([FromServices] NE_Item ne_item, [FromBody] Item item, int id,  int quantidade)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch([FromServices] NE_Item ne_item, int id, [FromBody] int quantidade)
         {
             try
             {
-                if (ne_item.AlteraQuantidadeProduto(id, quantidade))
+                var result = ne_item.AlteraQuantidadeProduto(id, quantidade);
+                if (result)
                     return Ok(new
                     {
-                        item = item,
                         status = HttpStatusCode.OK,
                         Error = Notificacoes()
                     });

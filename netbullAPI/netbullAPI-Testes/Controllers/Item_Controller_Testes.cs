@@ -34,7 +34,7 @@ namespace netbullAPI_Testes.Controllers
                 var httpClient = application.CreateClient();
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-                                
+
                 var requestItem = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
@@ -45,7 +45,7 @@ namespace netbullAPI_Testes.Controllers
                 var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
 
 
-                if (responseItem.StatusCode == HttpStatusCode.NotFound)
+                if (responseItem.StatusCode != HttpStatusCode.OK)
                 {
                     Assert.Fail();
                 }
@@ -72,7 +72,7 @@ namespace netbullAPI_Testes.Controllers
                 var httpClient = application.CreateClient();
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-                                
+
                 var requestItem = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
@@ -113,11 +113,11 @@ namespace netbullAPI_Testes.Controllers
 
                 var jsonItem = JsonConvert.SerializeObject(new
                 {
-                    item_id = 0,
-                    item_valor = 0,
-                    item_qtdproduto = 0,
-                    item_idPedido = 0,
-                    item_idProduto = 0,
+                    item_id = 1,
+                    item_valor = 14,
+                    item_qtdproduto = 2,
+                    item_idPedido = 1,
+                    item_idProduto = 2,
                 });
 
                 var requestItem = new HttpRequestMessage
@@ -130,11 +130,11 @@ namespace netbullAPI_Testes.Controllers
 
                 var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
 
-                if (responseItem.StatusCode != HttpStatusCode.OK)
+                if (responseItem.StatusCode != HttpStatusCode.Created)
                 {
                     Assert.Fail();
                 }
-                Assert.AreEqual(HttpStatusCode.OK, responseItem.StatusCode);
+                Assert.AreEqual(HttpStatusCode.Created, responseItem.StatusCode);
             }
             catch (Exception ex)
             {
@@ -163,7 +163,7 @@ namespace netbullAPI_Testes.Controllers
                     item_idProduto = 0,
                 });
 
-                var requestPessoa = new HttpRequestMessage
+                var requestItem = new HttpRequestMessage
                 {
                     Method = HttpMethod.Post,
                     RequestUri = new Uri($"https://localhost:7035/api/Item"),
@@ -171,13 +171,13 @@ namespace netbullAPI_Testes.Controllers
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responsePessoa = await httpClient.SendAsync(requestPessoa).ConfigureAwait(false);
+                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
 
-                if (responsePessoa.StatusCode != HttpStatusCode.NotFound)
+                if (responseItem.StatusCode != HttpStatusCode.NotFound)
                 {
                     Assert.Fail();
                 }
-                Assert.AreEqual(HttpStatusCode.NotFound, responsePessoa.StatusCode);
+                Assert.AreEqual(HttpStatusCode.NotFound, responseItem.StatusCode);
             }
             catch (Exception ex)
             {
@@ -186,7 +186,7 @@ namespace netbullAPI_Testes.Controllers
         }
         [Fact]
         [Trait("Controller", "Válido")]
-        public async Task TestarPutItemValidoAsync()
+        public async Task TestarPatchItemValidoAsync()
         {
             try
             {
@@ -197,34 +197,30 @@ namespace netbullAPI_Testes.Controllers
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                
+
                 var jsonItem = JsonConvert.SerializeObject(new
                 {
-                    item_id = 0,
-                    item_valor = 0,
-                    item_qtdproduto = 0,
-                    item_idPedido = 0,
-                    item_idProduto = 0,
+                    item_qtdproduto = 7,
                 });
 
-                var requestPessoa = new HttpRequestMessage
+                var requestItem = new HttpRequestMessage
                 {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri($"https://localhost:7035/api/Pessoa"),
+                    Method = HttpMethod.Patch,
+                    RequestUri = new Uri($"https://localhost:7035/api/Item/{3}"),
                     Content = new StringContent(jsonItem, Encoding.UTF8, "application/json"),
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
-                var responsePessoa = await httpClient.SendAsync(requestPessoa).ConfigureAwait(false);
+                var responseItem = await httpClient.SendAsync(requestItem).ConfigureAwait(false);
 
 
-                if (responsePessoa.StatusCode == HttpStatusCode.NotFound)
+                if (responseItem.StatusCode != HttpStatusCode.OK)
                 {
                     Assert.Fail();
                 }
                 else
                 {
-                    Assert.AreEqual(HttpStatusCode.OK, responsePessoa.StatusCode);
+                    Assert.AreEqual(HttpStatusCode.OK, responseItem.StatusCode);
                 }
             }
             catch (Exception ex)
