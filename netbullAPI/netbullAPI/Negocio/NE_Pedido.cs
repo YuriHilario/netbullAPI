@@ -15,6 +15,11 @@ namespace netbullAPI.Negocio
         {
             return daoPedido.BuscaPedidosPessoa(id);
         }
+
+        public List<Pedido> BuscaPedidosUsuario(string nome)
+        {
+            return daoPedido.BuscaPedidosUser(nome);
+        }
         public Pedido AdicionaPedido(Pedido pedido)
         {
             return daoPedido.AdicionaPedido(pedido);

@@ -48,27 +48,75 @@ namespace netbullAPI.Persistencia
             
         }
 
-        public int BuscaPedidosUser(string name)
+        public IEnumerable<RetornaPedidoViewModel> BuscaPedidosUsuario(int id)
         {
-            User user;
-
-            string sqlUser = $@"SELECT user_id FROM users WHERE user_nome = {name}";
-
-            var connection = getConnection();
-
-            using (connection)
+            try
             {
-                connection.Open();
-
-                using (var transaction = connection.BeginTransaction())
+                var user = netbullDBContext.Users.Where(u => u.user_id == id).FirstOrDefault();
+                if (user == null)
                 {
-
-                    user = connection.Query<User>(sqlUser, transaction).FirstOrDefault();
-
-                    transaction.Commit();
+                    Notificar("Usuário informado inexistente");
+                    return null;
+                }
+                else
+                {
+                    var historico_pedidos = from pedido in netbullDBContext.Pedidos
+                                            where pedido.pedido_idUsuario == id
+                                            select new RetornaPedidoViewModel()
+                                            {
+                                                pedido = pedido,
+                                                itens = netbullDBContext.Itens.Where(i => i.item_idPedido == pedido.pedido_id).ToList(),
+                                            };
+                    return historico_pedidos;
                 }
             }
-            return user.user_id;
+            catch (Exception e)
+            {
+                Notificar(e.Message);
+                throw;
+            }
+
+        }
+
+        public List<Pedido> BuscaPedidosUser(string name)
+        {
+            try
+            {
+                User user;
+
+                string sqlUser = $@"SELECT * FROM users WHERE user_nome = '{name}'";
+                var connection = getConnection();
+
+                using (connection)
+                {
+                    connection.Open();
+
+                    using (var transaction = connection.BeginTransaction())
+                    {
+
+                        user = connection.Query<User>(sqlUser, transaction).FirstOrDefault();
+
+                        transaction.Commit();
+                    }
+                }
+
+                if (user == null)
+                {
+                    Notificar("Usuário informado inexistente");
+                    return null;
+                }
+
+                var pedidos = from pedido in netbullDBContext.Pedidos
+                                        where pedido.pedido_idUsuario == user.user_id
+                                        select pedido;
+                return pedidos.ToList();
+            }
+            catch (Exception e)
+            {
+                Notificar(e.Message);
+                throw;
+            }
+            
         }
 
         public bool DeletaPedido(int id)

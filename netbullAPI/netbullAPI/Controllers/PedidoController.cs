@@ -52,6 +52,41 @@ namespace netbullAPI.Controllers
         }
 
         /// <summary>
+        /// Busca lista de pedidos registrado pelo usuario
+        /// </summary>
+        /// <param name="ne_pedido"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("Usuario/{nome}")]
+        public async Task<IActionResult> GetPorIdUsuario([FromServices] NE_Pedido ne_pedido, string nome)
+        {
+            try
+            {
+                var pedidos = ne_pedido.BuscaPedidosUsuario(nome);
+                if (pedidos == null)
+                    return NotFound(new
+                    {
+                        status = HttpStatusCode.NotFound,
+                        Error = Notificacoes()
+                    });
+                else return Ok(new
+                {
+                    pedidos = pedidos,
+                    status = HttpStatusCode.OK,
+                    Error = Notificacoes()
+                });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new
+                {
+                    status = HttpStatusCode.BadRequest,
+                    Error = Notificacoes()
+                });
+            }
+        }
+
+        /// <summary>
         /// Inclusão de um novo pedido para um cliente
         /// </summary>
         /// <param name="ne_pedido"></param>

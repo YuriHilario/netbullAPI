@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using netbullAPI.Entidade;
+using netbullAPI.Security.Models;
 
 namespace netbullAPI.Persistencia
 {
@@ -17,5 +18,6 @@ namespace netbullAPI.Persistencia
 
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<Item> Itens { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
