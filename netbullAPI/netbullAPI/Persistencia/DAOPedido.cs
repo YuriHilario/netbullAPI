@@ -84,34 +84,20 @@ namespace netbullAPI.Persistencia
             return true;
         }
 
-        public bool AlteraStatusPedido(Pedido pedido, EnumStatusPedido status)
+        public Pedido AlteraStatusPedido(int id, EnumStatusPedido status)
         {
-            var pessoa = netbullDBContext.Pessoas.Where(x => x.pessoa_id == pedido.pedido_idPessoa).FirstOrDefault();
-            if (pessoa == null)
-            {
-                Notificar("Cliente informado inexistente");
-                return false;
-            }
-            var pedido_existente = netbullDBContext.Pedidos.Where(p => p.pedido_id == pedido.pedido_id).FirstOrDefault();
+            var pedido_existente = netbullDBContext.Pedidos.Where(p => p.pedido_id == id).FirstOrDefault();
             if(pedido_existente == null)
             {
                 Notificar("Pedido informado inexistente");
-                return false;
+                return null;
             }
             else
             {
-                if (pedido_existente.pedido_idPessoa != pedido.pedido_idPessoa)
-                {
-                    Notificar("Pessoa registrada com este pedido é diferente da informada");
-                    return false;
-                }
-                else
-                {
-                    pedido_existente.pedido_status = status;
-                    netbullDBContext.Update(pedido_existente);
-                    netbullDBContext.SaveChanges();
-                    return true;
-                }
+                pedido_existente.pedido_status = status;
+                netbullDBContext.Update(pedido_existente);
+                netbullDBContext.SaveChanges();
+                return pedido_existente;
             }
         }
 
@@ -127,7 +113,7 @@ namespace netbullAPI.Persistencia
             {
                 Pedido novo_pedido = new Pedido()
                 {
-                    pedido_id = 1,
+                    pedido_id = netbullDBContext.Pedidos.Max(m => m.pedido_id) + 1,
                     pedido_idPessoa = pedido.pedido_idPessoa,
                     pedido_status = EnumStatusPedido.pedido_reservado,
                     pedido_valor = pedido.pedido_valor,

@@ -14,5 +14,7 @@ namespace netbullAPI.Entidade
         public int item_idPedido { get; set; }
         [ForeignKey("Produto")]
         public int item_idProduto { get; set; }
+
+        public decimal CalculaValorItem(int item_qtdproduto, decimal item_valor) { return item_valor * item_qtdproduto; }
     }
 }
