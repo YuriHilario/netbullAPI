@@ -119,8 +119,7 @@ namespace netbullAPI_Testes.Controllers
                 var httpClient = application.CreateClient();
 
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-
-                // Requisição para pegar os telefones
+                               
                 var jsonPessoa = JsonConvert.SerializeObject(new
                 {
                     pessoa_id = 1,

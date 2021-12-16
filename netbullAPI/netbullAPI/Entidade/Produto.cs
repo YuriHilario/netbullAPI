@@ -8,7 +8,7 @@ namespace netbullAPI.Entidade
     {
         [Key]
         [Required]
-        public int produto_id { get; set; }
+        public int produto_id { get; set; } 
         [Required]
         public string produto_nome { get; set; }
         [Required]
