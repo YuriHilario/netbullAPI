@@ -173,11 +173,11 @@ namespace netbullAPI_Testes.Controllers
 
                 var responsePessoa = await httpClient.SendAsync(requestPessoa).ConfigureAwait(false);
 
-                if (responsePessoa.StatusCode != HttpStatusCode.BadRequest)
+                if (responsePessoa.StatusCode != HttpStatusCode.NotFound)
                 {
                     Assert.Fail();
                 }
-                Assert.AreEqual(HttpStatusCode.BadRequest, responsePessoa.StatusCode);
+                Assert.AreEqual(HttpStatusCode.NotFound, responsePessoa.StatusCode);
             }
             catch (Exception ex)
             {
