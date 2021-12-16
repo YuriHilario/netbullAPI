@@ -239,11 +239,12 @@ namespace netbullAPI.Controllers
                             sucesso = true
                         });
                 else
-                    return BadRequest(
+                    return NotFound(
                         new
                         {
-                            mensagem = "Não foi possível deletar registro",
-                            sucesso = false
+                            status = HttpStatusCode.NotFound,
+                            sucesso = false,
+                            Error = Notificacoes()
                         });
             }
             catch (Exception e)

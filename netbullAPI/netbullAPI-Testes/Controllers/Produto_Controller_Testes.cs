@@ -206,7 +206,7 @@ namespace netbullAPI_Testes.Controllers
                 // DELETANDO TESTE CRIADO
                 var prodCreated = JsonConvert.DeserializeObject<Produto>(resultContent);
                 var result = _Client.DeleteAsync($"api/Produto/{prodCreated.produto_id}").GetAwaiter().GetResult();
-       
+
                 Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
             }
             catch (Exception ex)
@@ -270,8 +270,10 @@ namespace netbullAPI_Testes.Controllers
                 string mensagem = ex.Message;
             }
         }
+
         /// <summary>
         /// Teste de integração para alterar nome de produto válido
+        /// result.StatusCode == HttpStatusCode.OK
         /// </summary>
         /// <returns></returns>
         [Fact]
@@ -279,7 +281,7 @@ namespace netbullAPI_Testes.Controllers
         [TestCategory("Controller")]
         public async Task TestarPatchProdutoNomeValido()
         {
-            try 
+            try
             {
                 var application = new WebApplicationFactory<Program>()
                .WithWebHostBuilder(builder => { });
@@ -293,17 +295,17 @@ namespace netbullAPI_Testes.Controllers
                 };
                 var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
 
-                var jsonProduto = JsonConvert.SerializeObject(new
+                var jsonProdutoNome = JsonConvert.SerializeObject(new
                 {
                     produto_id = 1,
-                    produto_nome = "camisa produto teste"
+                    produto_nome = "camisa produto teste muda nome"
                 });
 
                 var requestProduto = new HttpRequestMessage
                 {
                     Method = HttpMethod.Patch,
                     RequestUri = new Uri($"https://localhost:7035/api/Produto/Nome/"),
-                    Content = new StringContent(jsonProduto, Encoding.UTF8, "application/json"),
+                    Content = new StringContent(jsonProdutoNome, Encoding.UTF8, "application/json"),
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
 
@@ -312,18 +314,19 @@ namespace netbullAPI_Testes.Controllers
 
                 if (responseProduto.StatusCode != HttpStatusCode.OK)
                     Assert.Fail();
-               
-                    Assert.AreNotEqual(null, responseProduto);
-               
+
+                Assert.AreEqual(HttpStatusCode.OK, responseProduto.StatusCode);
+
             }
             catch (Exception ex)
             {
                 string mensagem = ex.Message;
             }
         }
+
         /// <summary>
         /// Teste integração para alterar nome de produto inválido
-        /// result.StatusCode != HttpStatusCode.BadRequest
+        /// result.StatusCode != HttpStatusCode.NotFound
         /// </summary>
         /// <returns></returns>
         [Fact]
@@ -347,13 +350,14 @@ namespace netbullAPI_Testes.Controllers
 
                 var jsonProduto = JsonConvert.SerializeObject(new
                 {
-                    produto_nome = "camisa produto teste"
+                    produto_id = 0,
+                    produto_nome = "camisa produto testeee"
                 });
 
                 var requestProduto = new HttpRequestMessage
                 {
                     Method = HttpMethod.Patch,
-                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Nome/{0}"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Nome/"),
                     Content = new StringContent(jsonProduto, Encoding.UTF8, "application/json"),
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
@@ -362,22 +366,26 @@ namespace netbullAPI_Testes.Controllers
                 var responseBodyProduto = await responseProduto.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (responseProduto.StatusCode != HttpStatusCode.NotFound)
-                Assert.Fail();
-                
+                {
+                    Assert.Fail();
+                }
+
                 Assert.AreEqual(HttpStatusCode.NotFound, responseProduto.StatusCode);
-                
+
             }
             catch (Exception ex)
             {
                 string menssage = ex.Message;
             }
         }
+
         /// <summary>
         /// Teste Integração para alterar Valor de Produto Válido
+        /// result.StatusCode != HttpStatusCode.OK
         /// </summary>
         /// <returns></returns>
         [Fact]
-        [Trait("Controller", "Invalido")]
+        [Trait("Controller", "Válido")]
         [TestCategory("Controller")]
         public async Task TestarPatchProdutoValorValido()
         {
@@ -397,13 +405,14 @@ namespace netbullAPI_Testes.Controllers
 
                 var jsonProduto = JsonConvert.SerializeObject(new
                 {
-                    produto_valor = 10
+                    produto_id = 1,
+                    produto_valor = 10000
                 });
 
                 var requestProduto = new HttpRequestMessage
                 {
                     Method = HttpMethod.Patch,
-                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Valor/{1}"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Valor"),
                     Content = new StringContent(jsonProduto, Encoding.UTF8, "application/json"),
                 };
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
@@ -413,16 +422,17 @@ namespace netbullAPI_Testes.Controllers
                 if (responseProduto.StatusCode != HttpStatusCode.OK)
                     Assert.Fail();
 
-                Assert.AreEqual(HttpStatusCode.NotFound, responseProduto.StatusCode);
+                Assert.AreEqual(HttpStatusCode.OK, responseProduto.StatusCode);
             }
             catch (Exception ex)
             {
                 string menssage = ex.Message;
             }
         }
+
         /// <summary>
         /// Teste integração para alterar valor de produto inválido
-        /// result.StatusCode != HttpStatusCode.BadRequest
+        /// result.StatusCode != HttpStatusCode.NotFound
         /// </summary>
         /// <returns></returns>
         [Fact]
@@ -446,13 +456,14 @@ namespace netbullAPI_Testes.Controllers
 
                 var jsonProduto = JsonConvert.SerializeObject(new
                 {
+                    produto_id = 0,
                     produto_valor = 10
                 });
 
                 var requestProduto = new HttpRequestMessage
                 {
                     Method = HttpMethod.Patch,
-                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Valor/{0}"),
+                    RequestUri = new Uri($"https://localhost:7035/api/Produto/Valor"),
                     Content = new StringContent(jsonProduto, Encoding.UTF8, "application/json"),
                 };
 
@@ -461,8 +472,8 @@ namespace netbullAPI_Testes.Controllers
                 var responseProduto = await httpClient.SendAsync(requestProduto).ConfigureAwait(false);
 
                 if (responseProduto.StatusCode != HttpStatusCode.NotFound)
-                Assert.Fail();
-                
+                    Assert.Fail();
+
                 Assert.AreEqual(HttpStatusCode.NotFound, responseProduto.StatusCode);
             }
             catch (Exception ex)
@@ -470,46 +481,10 @@ namespace netbullAPI_Testes.Controllers
                 string menssage = ex.Message;
             }
         }
-        /// <summary>
-        /// Teste integração delete produto invalido
-        /// </summary>
-        /// <returns></returns>
-        [Fact]
-        [Trait("Controller", "Invalido")]
-        [TestCategory("Controller")]
-        public async Task TestarDeleteProdutoInvalidoAsync()
-        {
-            try
-            {
-                var application = new WebApplicationFactory<Program>()
-               .WithWebHostBuilder(builder => { });
 
-                var httpClient = application.CreateClient();
-
-                LoginUserViewModel login = new LoginUserViewModel()
-                {
-                    user_nome = "cassiano",
-                    user_accessKey = "123456"
-                };
-                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
-                                                
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
-                var responseProdutoDelete = httpClient.DeleteAsync($"api/Produto/delete/{0}").GetAwaiter().GetResult();
-
-                if (responseProdutoDelete.StatusCode != HttpStatusCode.NotFound)
-                {
-                    Assert.Fail();
-                }
-                Assert.AreEqual(HttpStatusCode.NotFound, responseProdutoDelete.StatusCode);
-
-            }
-            catch (Exception ex)
-            {
-                string mensagem = ex.Message;
-            }
-        }
         /// <summary>
         /// Teste integração delete produto valido
+        /// result.StatusCode != HttpStatusCode.OK
         /// </summary>
         /// <returns></returns>
         [Fact]
@@ -567,6 +542,46 @@ namespace netbullAPI_Testes.Controllers
             catch (Exception ex)
             {
                 string menssage = ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Teste integração delete produto invalido
+        /// result.StatusCode != HttpStatusCode.NotFound
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        [Trait("Controller", "Invalido")]
+        [TestCategory("Controller")]
+        public async Task TestarDeleteProdutoInvalidoAsync()
+        {
+            try
+            {
+                var application = new WebApplicationFactory<Program>()
+               .WithWebHostBuilder(builder => { });
+
+                var httpClient = application.CreateClient();
+
+                LoginUserViewModel login = new LoginUserViewModel()
+                {
+                    user_nome = "cassiano",
+                    user_accessKey = "123456"
+                };
+                var usuario = await new RequestLoginTeste().RetornaUsuLoginAsync(login);
+
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", usuario.Token);
+                var responseProdutoDelete = httpClient.DeleteAsync($"api/Produto/delete/{0}").GetAwaiter().GetResult();
+
+                if (responseProdutoDelete.StatusCode != HttpStatusCode.NotFound)
+                {
+                    Assert.Fail();
+                }
+                Assert.AreEqual(HttpStatusCode.NotFound, responseProdutoDelete.StatusCode);
+
+            }
+            catch (Exception ex)
+            {
+                string mensagem = ex.Message;
             }
         }
     }
