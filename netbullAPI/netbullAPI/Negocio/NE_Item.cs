@@ -22,9 +22,9 @@ namespace netbullAPI.Negocio
         {
             return daoItem.DeletaItem(id);
         }
-        public bool AlteraQuantidadeProduto(Item item, int quantidade)
+        public bool AlteraQuantidadeProduto(int id, int quantidade)
         {
-            return daoItem.AlteraQuantidadeProduto(item, quantidade);
+            return daoItem.AlteraQuantidadeProduto(id, quantidade);
         }
     }
 }
