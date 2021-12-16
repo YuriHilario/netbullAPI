@@ -18,7 +18,7 @@ using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace netbullAPI_Testes.Controllers
 {
-    public class Item_Controller_Testes
+    public class Pedido_Controller_Testes
     {
         public LoginUserViewModel login = new LoginUserViewModel() { user_nome = "cassiano", user_accessKey = "123456" };
 
@@ -99,7 +99,7 @@ namespace netbullAPI_Testes.Controllers
             }
         }
         [Fact]
-        [Trait("Controller", "Válido")] 
+        [Trait("Controller", "Válido")]
         public async Task TestarPostItemValidoAsync()
         {
             try
@@ -142,7 +142,7 @@ namespace netbullAPI_Testes.Controllers
             }
         }
         [Fact]
-        [Trait("Controller", "Inválido")] 
+        [Trait("Controller", "Inválido")]
         public async Task TestarPostItemInvalidoAsync()
         {
             try
@@ -289,7 +289,7 @@ namespace netbullAPI_Testes.Controllers
                     item_idPedido = 1,
                     item_qtdproduto = 3,
                     item_idProduto = 2,
-                    item_valor = 2*3
+                    item_valor = 2 * 3
                 });
 
                 var requestItemInsercao = new HttpRequestMessage
