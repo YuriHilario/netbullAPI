@@ -1,7 +1,7 @@
 using netbullAPI.Entidade;
 using netbullAPI.Persistencia;
 
-namespace netbullAPI.Negocio
+namespace netbullAPI.MidwareDB
 {
     public class NE_Pessoa
     {

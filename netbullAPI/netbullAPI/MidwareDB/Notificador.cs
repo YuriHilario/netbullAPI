@@ -1,7 +1,7 @@
 ﻿using netbullAPI.Interfaces;
 using netbullAPI.Util;
 
-namespace netbullAPI.Negocio
+namespace netbullAPI.MidwareDB
 {
     public class Notificador : INotificador
     {

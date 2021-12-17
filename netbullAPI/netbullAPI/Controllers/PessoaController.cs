@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using netbullAPI.Entidade;
 using netbullAPI.Extensions;
 using netbullAPI.Interfaces;
-using netbullAPI.Negocio;
+using netbullAPI.MidwareDB;
 using netbullAPI.Util;
 using netbullAPI.ViewModels;
 using System.Net;
@@ -122,11 +122,11 @@ namespace netbullAPI.Controllers
                     var addPessoa = await nePessoa.InserirPessoa(pessoa);
                     if (addPessoa)
                     {
-                        return Ok("Nova Pessoa Inserida com Sucesso!");
+                        return Ok(pessoa);
                     }
                     else
                     {
-                        return NotFound(
+                        return BadRequest(
                     new
                     {
                         status = HttpStatusCode.BadRequest,

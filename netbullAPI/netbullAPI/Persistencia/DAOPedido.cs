@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using netbullAPI.Entidade;
 using netbullAPI.Interfaces;
-using netbullAPI.Negocio;
 using netbullAPI.Security.Models;
 using netbullAPI.Util;
 using netbullAPI.ViewModels;

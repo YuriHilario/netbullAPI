@@ -2,7 +2,7 @@
 using netbullAPI.Persistencia;
 using netbullAPI.ViewModels;
 
-namespace netbullAPI.Negocio
+namespace netbullAPI.MidwareDB
 {
     public class NE_Pedido
     {

@@ -3,7 +3,7 @@ using netbullAPI.Persistencia;
 using netbullAPI.Repository;
 using netbullAPI.ViewModels;
 
-namespace netbullAPI.Negocio
+namespace netbullAPI.MidwareDB
 {
     public class NE_Produto
     {

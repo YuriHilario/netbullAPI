@@ -20,11 +20,11 @@ namespace netbullAPI.Persistencia
                 if (pessoas == null)
                 {
                     Notificar("Não existem cadastros");
-                    return pessoas;
+                    return pessoas.OrderBy(p => p.pessoa_id);
                 }
                 else
                 {
-                    return pessoas;
+                    return pessoas.OrderBy(p => p.pessoa_id); ;
                 }               
             }
             catch (Exception e)
@@ -59,6 +59,7 @@ namespace netbullAPI.Persistencia
         
         public async Task<bool> InserirPessoa(Pessoa pessoa)
         {
+            Pessoa pessoaRetorno = null;
             try
             {
                 var addPessoa = _PessoaContexto.Pessoas.Any(p => p.pessoa_id == pessoa.pessoa_id);
@@ -71,6 +72,11 @@ namespace netbullAPI.Persistencia
                 {
                     _PessoaContexto.Pessoas.Add(pessoa);
                     _PessoaContexto.SaveChanges();
+
+                    pessoaRetorno = _PessoaContexto.Pessoas.Where(p => p.pessoa_documento.Equals(pessoa.pessoa_documento) &&
+                                                                       p.pessoa_nome.Equals(pessoa.pessoa_nome) &&
+                                                                       p.pessoa_tipopessoa == pessoa.pessoa_tipopessoa ).FirstOrDefault();
+                    pessoa = pessoaRetorno;
                     return true;
                 }                
             }
