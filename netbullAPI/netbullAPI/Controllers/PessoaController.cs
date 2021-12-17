@@ -122,11 +122,11 @@ namespace netbullAPI.Controllers
                     var addPessoa = await nePessoa.InserirPessoa(pessoa);
                     if (addPessoa)
                     {
-                        return Ok("Nova Pessoa Inserida com Sucesso!");
+                        return Ok(pessoa);
                     }
                     else
                     {
-                        return NotFound(
+                        return BadRequest(
                     new
                     {
                         status = HttpStatusCode.BadRequest,
